@@ -1,0 +1,468 @@
+[
+    {
+        "id": 1,
+        "namn": "MARGARITA",
+        "kategori": "Pizza",
+        "pris": 115,
+        "familjepris": 270,
+        "beskrivning": "Tomat, ost",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 2,
+        "namn": "VESUVIO",
+        "kategori": "Pizza",
+        "pris": 115,
+        "familjepris": 270,
+        "beskrivning": "Tomat, ost, skinka",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 3,
+        "namn": "CAPRICCIOSA",
+        "kategori": "Pizza",
+        "pris": 120,
+        "familjepris": 300,
+        "beskrivning": "Tomat, ost, skinka, champinjoner",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 4,
+        "namn": "CAPRICCIOSA SPECIAL",
+        "kategori": "Pizza",
+        "pris": 125,
+        "familjepris": 300,
+        "beskrivning": "Tomat, ost, skinka, champinjoner, räkor",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 5,
+        "namn": "HAWAII",
+        "kategori": "Pizza",
+        "pris": 120,
+        "familjepris": 300,
+        "beskrivning": "Tomat, ost, skinka, ananas",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 6,
+        "namn": "AFRICANA",
+        "kategori": "Pizza",
+        "pris": 125,
+        "familjepris": 300,
+        "beskrivning": "Tomat, ost, skinka, banan, curry",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 7,
+        "namn": "SALAMI",
+        "kategori": "Pizza",
+        "pris": 120,
+        "familjepris": 300,
+        "beskrivning": "Tomat, ost, salami",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 8,
+        "namn": "SALAMI SPECIAL",
+        "kategori": "Pizza",
+        "pris": 125,
+        "familjepris": 300,
+        "beskrivning": "Tomat, ost, salami, champinjoner",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 9,
+        "namn": "OPERA",
+        "kategori": "Pizza",
+        "pris": 130,
+        "familjepris": 300,
+        "beskrivning": "Tomat, ost, skinka, salami, räkor",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 10,
+        "namn": "SLAMMER",
+        "kategori": "Pizza",
+        "pris": 130,
+        "familjepris": 300,
+        "beskrivning": "Tomat, ost, skinka, salami, köttfärs, vitlök",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 11,
+        "namn": "MARINARA",
+        "kategori": "Skaldjurspizza, Pizza",
+        "pris": 130,
+        "familjepris": 350,
+        "beskrivning": "Tomat, ost, räkor, musslor",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 12,
+        "namn": "PESCATORE",
+        "kategori": "Skaldjurspizza, Pizza",
+        "pris": 130,
+        "familjepris": 350,
+        "beskrivning": "Tomat, ost, räkor, musslor, tonfisk",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 13,
+        "namn": "TONNO SPECIAL",
+        "kategori": "Skaldjurspizza, Pizza",
+        "pris": 135,
+        "familjepris": 350,
+        "beskrivning": "Tomat, ost, tonfisk, champinjoner, räkor",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 14,
+        "namn": "LOUIS SPECIAL",
+        "kategori": "Skaldjurspizza. Pizza",
+        "pris": 140,
+        "familjepris": 350,
+        "beskrivning": "Tomat, ost, skinka, räkor, champinjoner, curry",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 15,
+        "namn": "SPECIAL TILL LUNCH",
+        "kategori": "Skaldjurspizza, Pizza",
+        "pris": 150,
+        "familjepris": 360,
+        "beskrivning": "Tomat, ost, kebab, kyckling, köttfärs, räkor",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 16,
+        "namn": "VEGETARISK 1",
+        "kategori": "Vegetarisk Pizza, Pizza",
+        "pris": 130,
+        "familjepris": 300,
+        "beskrivning": "Tomat, ost, champinjoner, paprika, lök",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 17,
+        "namn": "FOOD",
+        "kategori": "Vegetarisk Pizza, Pizza",
+        "pris": 130,
+        "familjepris": 300,
+        "beskrivning": "Lök, paprika, oliver, tomat, bearnaisesås",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 18,
+        "namn": "CIAO CIAO",
+        "kategori": "Fläskfilé/Oxfilé, Pizza",
+        "pris": 140,
+        "familjepris": 360,
+        "beskrivning": "Fläskfilé, bearnaisesås",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 19,
+        "namn": "AFRIKANA SPECIAL",
+        "kategori": "Fläskfilé/Oxfilé, Pizza",
+        "pris": 140,
+        "familjepris": 360,
+        "beskrivning": "Fläskfilé, banan, curry, Pizza",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 20,
+        "namn": "HUSETS SPECIAL",
+        "kategori": "Fläskfilé/Oxfilé, Pizza",
+        "pris": 150,
+        "familjepris": 360,
+        "beskrivning": "Fläskfilé, oxfilé, paprika, champinjoner, bearnaisesås",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 21,
+        "namn": "STARK SPECIAL",
+        "kategori": "Fläskfilé/Oxfilé, Pizza",
+        "pris": 150,
+        "familjepris": 360,
+        "beskrivning": "Fläskfilé, oxfilé, lök, peppar, bearnaisesås",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 22,
+        "namn": "KYCKLING",
+        "kategori": "Kycklingpizza, Pizza",
+        "pris": 125,
+        "familjepris": 310,
+        "beskrivning": "Tomat, ost, kyckling, lök, curry",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 23,
+        "namn": "KYCKLING SPECIAL",
+        "kategori": "Kycklingpizza, Pizza",
+        "pris": 130,
+        "familjepris": 310,
+        "beskrivning": "Tomat, ost, kyckling, paprika, ananas",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 24,
+        "namn": "KEBAB",
+        "kategori": "Kebabpizza, Pizza",
+        "pris": 130,
+        "familjepris": 320,
+        "beskrivning": "Tomat, ost, kebabkött, lök, peperoni",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 25,
+        "namn": "KEBAB SPECIAL",
+        "kategori": "Kebabpizza, Pizza",
+        "pris": 135,
+        "familjepris": 320,
+        "beskrivning": "Tomat, ost, kebabkött, lök, peperoni, isbergssallad, tomat, gurka, sås",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 26,
+        "namn": "HAMBURGARE 90g",
+        "kategori": "Hamburgare",
+        "pris": 85,
+        "familjepris": null,
+        "beskrivning": "Med bröd, sallad, dressing",
+        "tillbehor": [],
+        "bild": "hamburgare.jpg"
+    },
+    {
+        "id": 27,
+        "namn": "HAMBURGARE 150g",
+        "kategori": "Hamburgare",
+        "pris": 95,
+        "familjepris": null,
+        "beskrivning": "Med bröd, sallad, dressing",
+        "tillbehor": [],
+        "bild": "hamburgare.jpg"
+    },
+    {
+        "id": 28,
+        "namn": "BACONBURGARE",
+        "kategori": "Hamburgare",
+        "pris": 100,
+        "familjepris": null,
+        "beskrivning": "Med bröd, bacon, sallad, dressing",
+        "tillbehor": [],
+        "bild": "hamburgare.jpg"
+    },
+    {
+        "id": 29,
+        "namn": "OSTBURGARE",
+        "kategori": "Hamburgare",
+        "pris": 90,
+        "familjepris": null,
+        "beskrivning": "Med ost, sallad, dressing",
+        "tillbehor": [],
+        "bild": "hamburgare.jpg"
+    },
+    {
+        "id": 30,
+        "namn": "KEBABSALLAD",
+        "kategori": "Sallad",
+        "pris": 110,
+        "familjepris": null,
+        "beskrivning": "Kebabkött, sallad, tomat, gurka, peperoni, sås",
+        "tillbehor": [],
+        "bild": "sallad.jpg"
+    },
+    {
+        "id": 31,
+        "namn": "KYCKLINGSALLAD",
+        "kategori": "Sallad",
+        "pris": 110,
+        "familjepris": null,
+        "beskrivning": "Kyckling, sallad, tomat, gurka, majs, sås",
+        "tillbehor": [],
+        "bild": "sallad.jpg"
+    },
+    {
+        "id": 32,
+        "namn": "OSTSALLAD",
+        "kategori": "Sallad",
+        "pris": 110,
+        "familjepris": null,
+        "beskrivning": "Ost, sallad, tomat, gurka, majs, sås",
+        "tillbehor": [],
+        "bild": "sallad.jpg"
+    },
+    {
+        "id": 33,
+        "namn": "BARNPIZZA 1",
+        "kategori": "Barnmeny, Pizza",
+        "pris": 90,
+        "familjepris": null,
+        "beskrivning": "Valfri pizza med skinka eller kebab",
+        "tillbehor": [],
+        "bild": "pizza.jpg"
+    },
+    {
+        "id": 34,
+        "namn": "BARNHAMBURGARE",
+        "kategori": "Barnmeny, Hamburgare",
+        "pris": 90,
+        "familjepris": null,
+        "beskrivning": "Hamburgare 90g med pommes",
+        "tillbehor": [],
+        "bild": "hamburgare.jpg"
+    },
+    {
+        "id": 35,
+        "namn": "KEBABRULLE",
+        "kategori": "Rulle",
+        "pris": 110,
+        "familjepris": null,
+        "beskrivning": "Kebabkött, sallad, tomat, gurka, peperoni, sås, bröd",
+        "tillbehor": [],
+        "bild": "rulle.jpg"
+    },
+    {
+        "id": 36,
+        "namn": "KYCKLINGRULLE",
+        "kategori": "Rulle",
+        "pris": 110,
+        "familjepris": null,
+        "beskrivning": "Kyckling, sallad, tomat, gurka, peperoni, sås, bröd",
+        "tillbehor": [],
+        "bild": "rulle.jpg"
+    },
+    {
+        "id": 37,
+        "namn": "FALAFELRULLE",
+        "kategori": "Rulle",
+        "pris": 105,
+        "familjepris": null,
+        "beskrivning": "Falafel, sallad, tomat, gurka, peperoni, sås, bröd",
+        "tillbehor": [],
+        "bild": "rulle.jpg"
+    },
+    {
+        "id": 38,
+        "namn": "KEBABTALLRIK",
+        "kategori": "Tallrik",
+        "pris": 120,
+        "familjepris": null,
+        "beskrivning": "Kebabkött, pommes, sallad, sås",
+        "tillbehor": [],
+        "bild": "tallrik.jpg"
+    },
+    {
+        "id": 39,
+        "namn": "KYCKLINGTALLRIK",
+        "kategori": "Tallrik",
+        "pris": 120,
+        "familjepris": null,
+        "beskrivning": "Kyckling, pommes, sallad, sås",
+        "tillbehor": [],
+        "bild": "kycklingtallrik.jpg"
+    },
+    {
+        "id": 40,
+        "namn": "FALAFELTALLRIK",
+        "kategori": "Tallrik",
+        "pris": 110,
+        "familjepris": null,
+        "beskrivning": "Falafel, pommes, sallad, sås",
+        "tillbehor": [],
+        "bild": "tallrik.jpg"
+    },
+    {
+        "id": 41,
+        "namn": "POMMES",
+        "kategori": "Tillbehör",
+        "pris": 45,
+        "familjepris": null,
+        "beskrivning": "Pommes frites",
+        "tillbehor": [],
+        "bild": "pommes.jpg"
+    },
+    {
+        "id": 42,
+        "namn": "EXTRA KEBABKÖTT",
+        "kategori": "Tillbehör",
+        "pris": 30,
+        "familjepris": null,
+        "beskrivning": "Extra kebabkött som tillbehör",
+        "tillbehor": []
+    },
+    {
+        "id": 43,
+        "namn": "EXTRA SÅS",
+        "kategori": "Tillbehör",
+        "pris": 10,
+        "familjepris": null,
+        "beskrivning": "Valfri sås i burk",
+        "tillbehor": []
+    },
+    {
+        "id": 44,
+        "namn": "BRÖD",
+        "kategori": "Tillbehör",
+        "pris": 10,
+        "familjepris": null,
+        "beskrivning": "1 st bröd",
+        "tillbehor": [],
+        "bild": "bröd.jpg"
+    },
+    {
+        "id": 45,
+        "namn": "LÄSK 33CL",
+        "kategori": "Dryck",
+        "pris": 20,
+        "familjepris": null,
+        "beskrivning": "Cola, Fanta, Sprite etc.",
+        "tillbehor": []
+    },
+    {
+        "id": 46,
+        "namn": "LÄSK 50CL",
+        "kategori": "Dryck",
+        "pris": 25,
+        "familjepris": null,
+        "beskrivning": "Cola, Fanta, Sprite etc.",
+        "tillbehor": [],
+        "bild": "läsk50cl.jpg"
+    },
+    {
+        "id": 47,
+        "namn": "LOKA / RAMLÖSA",
+        "kategori": "Dryck",
+        "pris": 20,
+        "familjepris": null,
+        "beskrivning": "Kolsyrat vatten",
+        "tillbehor": []
+    }
+]
