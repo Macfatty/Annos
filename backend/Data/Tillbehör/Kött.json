@@ -1,0 +1,21 @@
+ [
+    { "id": 300, "namn": "skinka", "typ": "kött" },
+    { "id": 301, "namn": "räkor", "typ": "kött" },
+    { "id": 302, "namn": "bacon", "typ": "kött" },
+    { "id": 303, "namn": "halal salami", "typ": "kött" },
+    { "id": 304, "namn": "tonfisk", "typ": "kött" },
+    { "id": 305, "namn": "musslor", "typ": "kött" },
+    { "id": 306, "namn": "crabfish", "typ": "kött" },
+    { "id": 307, "namn": "fläskfilé", "typ": "kött" },
+    { "id": 308, "namn": "oxfilé", "typ": "kött" },
+    { "id": 309, "namn": "köttfärssås", "typ": "kött" },
+    { "id": 310, "namn": "köttfärs", "typ": "kött" },
+    { "id": 311, "namn": "kyckling", "typ": "kött" },
+    { "id": 312, "namn": "kebabkött", "typ": "kött" },
+    { "id": 313, "namn": "halal nötkött", "typ": "kött" },
+    { "id": 314, "namn": "ägg", "typ": "kött" },
+    { "id": 315, "namn": "kräftstjärtar", "typ": "kött" },
+    { "id": 316, "namn": "parmaskinka", "typ": "kött" },
+    { "id": 317, "namn": "falafel", "typ": "kött" },
+    { "id": 318, "namn": "kycklingkebab", "typ": "kött" }
+]

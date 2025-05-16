@@ -1,0 +1,9 @@
+[
+  {"id": 500, "namn": "extra ost", "typ": "övrigt"},
+  {"id": 501, "namn": "medelhavsost", "typ": "övrigt"},
+  {"id": 502, "namn": "jordnötter", "typ": "övrigt"},
+  {"id": 503, "namn": "gorgonzola", "typ": "övrigt"},
+  {"id": 504, "namn": "pommes frites", "typ": "övrigt"},
+  {"id": 505, "namn": "mozzarella", "typ": "övrigt"},
+  {"id": 506, "namn": "parmesan", "typ": "övrigt"}
+]

@@ -1,0 +1,23 @@
+ [
+    { "id": 400, "namn": "champinjoner", "typ": "grönt" },
+    { "id": 401, "namn": "ananas", "typ": "grönt" },
+    { "id": 402, "namn": "lök", "typ": "grönt" },
+    { "id": 403, "namn": "sparris", "typ": "grönt" },
+    { "id": 404, "namn": "paprika", "typ": "grönt" },
+    { "id": 405, "namn": "oliver", "typ": "grönt" },
+    { "id": 406, "namn": "tomat", "typ": "grönt" },
+    { "id": 407, "namn": "ruccola", "typ": "grönt" },
+    { "id": 408, "namn": "vitlök", "typ": "grönt" },
+    { "id": 409, "namn": "banan", "typ": "grönt" },
+    { "id": 410, "namn": "feferoni", "typ": "grönt" },
+    { "id": 411, "namn": "rödlök", "typ": "grönt" },
+    { "id": 412, "namn": "jalapeño", "typ": "grönt" },
+    { "id": 413, "namn": "isbergssallad", "typ": "grönt" },
+    { "id": 414, "namn": "gurka", "typ": "grönt" },
+    { "id": 415, "namn": "kantareller", "typ": "grönt" },
+    { "id": 416, "namn": "körsbärstomat", "typ": "grönt" },
+    { "id": 417, "namn": "babyspenat", "typ": "grönt" },
+    { "id": 418, "namn": "karamelliserad lök", "typ": "grönt" },
+    { "id": 419, "namn": "picklad rödlök", "typ": "grönt" },
+    { "id": 420, "namn": "citron", "typ": "grönt" }
+]

@@ -1,0 +1,32 @@
+ [
+    { "id": 600, "namn": "Coca-Cola Original 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 601, "namn": "Coca-Cola Zero 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 602, "namn": "Fanta Apelsin 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 603, "namn": "Fanta Exotic 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 604, "namn": "Fanta Zero Lemon 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 605, "namn": "Mountain Dew 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 606, "namn": "Sprite 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 607, "namn": "Trocadero 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 608, "namn": "Pommac 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 609, "namn": "Zingo Apelsin 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 610, "namn": "Zingo Jordgubb Sockerfri 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 611, "namn": "Ramlösa Citrus 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 612, "namn": "Ramlösa Granatäpple 33cl", "typ": "dryck", "pris": 20 },
+    { "id": 613, "namn": "Pripps Blå Lättöl 33cl", "typ": "dryck", "pris": 20 },
+
+    { "id": 614, "namn": "Powerking 25cl", "typ": "dryck", "pris": 20 },
+
+    { "id": 615, "namn": "Coca-Cola Original 50cl", "typ": "dryck", "pris": 25 },
+    { "id": 616, "namn": "Fanta Exotic 50cl", "typ": "dryck", "pris": 25 },
+    { "id": 617, "namn": "Fanta Exotic Zero 50cl", "typ": "dryck", "pris": 25 },
+    { "id": 618, "namn": "Fanta Apelsin 50cl", "typ": "dryck", "pris": 25 },
+
+    { "id": 619, "namn": "Coca-Cola Original 2L", "typ": "dryck", "pris": 40 },
+    { "id": 620, "namn": "Coca-Cola Zero 2L", "typ": "dryck", "pris": 40 },
+    { "id": 621, "namn": "Sprite 2L", "typ": "dryck", "pris": 40 },
+    { "id": 622, "namn": "Fanta Apelsin 2L", "typ": "dryck", "pris": 40 },
+    { "id": 623, "namn": "Fanta Exotic 2L", "typ": "dryck", "pris": 40 },
+
+    { "id": 624, "namn": "Capri-Sun Orange & Peach", "typ": "dryck", "pris": 20 },
+    { "id": 625, "namn": "Capri-Sun Cherry & Pomegranate", "typ": "dryck", "pris": 20 }
+]
