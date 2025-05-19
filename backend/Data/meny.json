@@ -1,873 +1,1327 @@
-
 [
-    {
-        "id": 1,
-        "namn": "MARGARITA",
-        "kategori": "Vegetarisk-Pizza",
-        "pris": 125,
-        "familjepris": 280,
-        "beskrivning": "tomat, ost",
-        "ingredienser": "tomat, ost",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },   
-    {
-        "id": 2,
-        "namn": "VESUVIO",
-        "kategori": "Pizza",
-        "pris": 130,
-        "familjepris": 310,
-        "beskrivning": "skinka",
-        "ingredienser": "skinka",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 3,
-        "namn": "CALZONE",
-        "kategori": "Inbakad,Pizza",
-        "pris": 130,
-        "familjepris": 310,
-        "beskrivning": "skinka",
-        "ingredienser": "skinka",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 4,
-        "namn": "CAPRICCIOSA",
-        "kategori": "Pizza",
-        "pris": 130,
-        "familjepris": 310,
-        "beskrivning": "skinka, champinjoner,",
-        "ingredienser": "skinka, champinjoner",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 5,
-        "namn": "HAWAII",
-        "kategori": "Pizza",
-        "pris": 130,
-        "familjepris": 310,
-        "beskrivning": "skinka, ananas",
-        "ingredienser": "skinka, ananas",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 6,
-        "namn": "JAMAICA",
-        "kategori": "Pizza",
-        "pris": 145,
-        "familjepris": 360,
-        "beskrivning": "handskalade räkor, champinjoner",
-        "ingredienser": "handskalade räkor, champinjoner",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 7,
-        "namn": "TOMASO",
-        "kategori": "Pizza",
-        "pris": 135,
-        "familjepris": 350,
-        "beskrivning": "skinka, handskalade räkor,",
-        "ingredienser": "skinka, handskalade räkor",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 8,
-        "namn": "BELLA",
-        "kategori": "Pizza",
-        "pris": 130,
-        "familjepris": 340,
-        "beskrivning": "skinka, bacon, lök",
-        "ingredienser": "skinka, bacon, lök",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 9,
-        "namn": "LA MARIE",
-        "kategori": "Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "skinka, champinjoner, annanas, handskalade räkor",
-        "ingredienser": "skinka, champinjoner, annanas, handskalade räkor",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 10,
-        "namn": "LA BAMBA",
-        "kategori": "Pizza",
-        "pris": 150,
-        "familjepris": 360,
-        "beskrivning": "skinka, champinjoner, lök, salami, pepparoni",
-        "ingredienser": "skinka, champinjoner, lök, salami, pepparoni",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 11,
-        "namn": "PESCATORE",
-        "kategori": "Skaldjurspizza",
-        "pris": 140,
-        "familjepris": 360,
-        "beskrivning": "handskalade räkor, tonfisk",
-        "ingredienser": "handskalade räkor, tonfisk",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 12,
-        "namn": "MARINARA",
-        "kategori": "Skaldjurspizza",
-        "pris": 140,
-        "familjepris": 360,
-        "beskrivning": "musslor, handskalade räkor",
-        "ingredienser": "musslor, handskalade räkor",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 13,
-        "namn": "LEON SPECIAL",
-        "kategori": "Skaldjurspizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "skinka, champinjoner, handskalade räkor, tonfisk",
-        "ingredienser": "skinka, champinjoner, handskalade räkor, tonfisk",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 14,
-        "namn": "QUATRO",
-        "kategori": "Skaldjurspizza",
-        "pris": 150,
-        "familjepris": 360,
-        "beskrivning": "skinka, championer, handskalade räkor, musslor",
-        "ingredienser": "skinka, championer, handskalade räkor, musslor",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 15,
-        "namn": "PAVAROTI (EJ LUNCH)",
-        "kategori": "Skaldjurspizza",
-        "pris": 160,
-        "familjepris": 410,
-        "beskrivning": "tonfisk, handskalade räkor, musslor, krabfish",
-        "ingredienser": "tonfisk, handskalade räkor, musslor, krabfish",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 16,
-        "namn": "VEGETARISK PIZZA",
-        "kategori": "Vegetarisk-Pizza",
-        "pris": 140,
-        "familjepris": 350,
-        "beskrivning": "championer, ananas, lök, sparris, paprika, oliver ",
-        "ingredienser": "championer, ananas, lök, sparris, paprika, oliver",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 17,
-        "namn": "RODOS",
-        "kategori": "Vegetarisk-Pizza",
-        "pris": 140,
-        "familjepris": 350,
-        "beskrivning": "lök, paprika, oliver, färska tomater, medelhavsost, ruccola",
-        "ingredienser": "lök, paprika, oliver, färska tomater, medelhavsost, ruccola",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 18,
-        "namn": "CIAO CIAO",
-        "kategori": "Fläskfilé/Oxfilé, Inbakad",
-        "pris": 140,
-        "familjepris": 0,
-        "beskrivning": "lök, fläskfile, vitlök, champinjoner", 
-        "ingredienser": "lök, fläskfile, vitlök, champinjoner",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 19,
-        "namn": "AFRIKANA",
-        "kategori": "Fläskfilé/Oxfilé",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "ananas, jordnötter, banan, oxfile, curry",
-        "ingredienser": "ananas, jordnötter, banan, oxfile, curry",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 20,
-        "namn": "HUSETS SPECIAL",
-        "kategori": "Fläskfilé/Oxfilé",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "fläskfilé, lök, färsk tomat, paprika, bearnaisesås", 
-        "ingredienser": "fläskfilé, lök, färsk tomat, paprika, bearnaisesås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 21,
-        "namn": "GISLAVED SPECIAL",
-        "kategori": "Fläskfilé/Oxfilé",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "skinka, handskalade räkor, oxfile, bearnaisesås",
-        "ingredienser": "skinka, handskalade räkor, oxfile, bearnaisesås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 22,
-        "namn": "MADONNA",
-        "kategori": "Fläskfilé/Pizza",
-        "pris": 150,
-        "familjepris": 360,
-        "beskrivning": "lök, champinjoner, fläskfilé, bearnaisesås, vitlök, starksås",
-        "ingredienser": "lök, champinjoner, fläskfilé, bearnaisesås, vitlök, starksås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 23,
-        "namn": "GORGONZOLA",
-        "kategori": "Fläskfilé, Pizza",
-        "pris": 150,
-        "familjepris": 360,
-        "beskrivning": "oxfilé, färsk tomat, gorgonzzola, lök",
-        "ingredienser": "oxfilé, färsk tomat, gorgonzzola, lök",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 24,
-        "namn": "MILLE TAXI",
-        "kategori": "Fläskfilé, Pizza",
-        "pris": 150,
-        "familjepris": 360,
-        "beskrivning": "skinka, champinjoner, sparris, fläskfilé, bearnaisesås",
-        "ingredienser": "skinka, champinjoner, sparris, fläskfilé, bearnaisesås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 25,
-        "namn": "MARKOPOLO",
-        "kategori": "Fläskfilé, Pizza",
-        "pris": 150,
-        "familjepris": 360,
-        "beskrivning": "oxfilé, champinjoner, lök, bearnaisesås, pepparoni",
-        "ingredienser": "oxfilé, champinjoner, lök, bearnaisesås, pepparoni",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 26,
-        "namn": "LOVE YOU",
-        "kategori": "Fläskfilé, Pizza",
-        "pris": 150,
-        "familjepris": 360,
-        "beskrivning": "skinka, fläskfilé, lök, bearnaisesås",
-        "ingredienser": "skinka, fläskfilé, lök, bearnaisesås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 27,
-        "namn": "GSK",
-        "kategori": "Fläskfilé, Pizza",
-        "pris": 150,
-        "familjepris": 360,
-        "beskrivning": "oxfilé, skinka, bacon, rödlök, sås",
-        "ingredienser": "oxfilé, skinka, bacon, rödlök, sås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 28,
-        "namn": "BLACK & WHITE",
-        "kategori": "Fläskfilé, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "halva oxfilé, kebabsås, halva fläskfilé, bearnaisesås",
-        "ingredienser": "halva oxfilé, kebabsås, halva fläskfilé, bearnaisesås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 29,
-        "namn": "DISCO",
-        "kategori": "Köttfärs/köttfärssås, Pizza",
-        "pris": 145,
-        "familjepris": 350,
-        "beskrivning": "skinka, handskalade räkor, köttfärssås",
-        "ingredienser": "skinka, handskalade räkor, köttfärssås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 30,
-        "namn": "ACAPULCO",
-        "kategori": "Köttfärs/köttfärssås, Pizza",
-        "pris": 145,
-        "familjepris": 350,
-        "beskrivning": "skinka, lök, köttfärssås, vitlök, jalapeno, tacosås",
-        "ingredienser": "skinka, lök, köttfärssås, vitlök, jalapeno, tacosås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 31,
-        "namn": "GUDFADER",
-        "kategori": "Köttfärs/köttfärssås, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "skinka, sparris, köttfärssås, handskalade räkor, starksås",
-        "ingredienser": "skinka, sparris, köttfärssås, handskalade räkor, starksås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 32,
-        "namn": "VIKING SPECIAL",
-        "kategori": "Köttfärs/köttfärssås, Pizza",
-        "pris": 160,
-        "familjepris": 380,
-        "beskrivning": "oxfilé, köttfärs, champinjoner, lök, jalapeno",
-        "ingredienser": "oxfilé, köttfärs, champinjoner, lök, jalapeno",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 33,
-        "namn": "MAMMA MIA",
-        "kategori": "Köttfärs/köttfärssås, Pizza",
-        "pris": 140,
-        "familjepris": 350,
-        "beskrivning": "köttfärs, skinka, lök, bacon",
-        "ingredienser": "köttfärs, skinka, lök, bacon",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 34,
-        "namn": "MEXICANA",
-        "kategori": "Köttfärs/köttfärssås, Pizza",
-        "pris": 140,
-        "familjepris": 350,
-        "beskrivning": "champinjoner, lök, paprika, köttfärs, starksås",
-        "ingredienser": "champinjoner, lök, paprika, köttfärs, starksås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 35,
-        "namn": "WESTBO IBK",
-        "kategori": "Kyckling, Pizza",
-        "pris": 150,
-        "familjepris": 380,
-        "beskrivning": "kyckling, pommes, sallad, sås",
-        "ingredienser": "kyckling, pommes, sallad, sås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 36,
-        "namn": "INTERNACIONAL, PIZZA",
-        "kategori": "Kyckling, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "Kyckling, kebabkött, sallad, sås",
-        "ingredienser": "Kyckling, kebabkött, sallad, sås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 37,
-        "namn": "KYCKLINGPIZZA",
-        "kategori": "Kyckling, Pizza",
-        "pris": 145,
-        "familjepris": 350,
-        "beskrivning": "champinjoner, lök, kyckling, kebabsås",
-        "ingredienser": "champinjoner, lök, kyckling, kebabsås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 38,
-        "namn": "ROMA",
-        "kategori": "Kyckling, Pizza",
-        "pris": 145,
-        "familjepris": 350,
-        "beskrivning": "champinjoner, ananas, kyckling, vitlöksås",
-        "ingredienser": "champinjoner, ananas, kyckling, vitlöksås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 39,
-        "namn": "BAMBINO",
-        "kategori": "Kyckling, Pizza",
-        "pris": 145,
-        "familjepris": 350,
-        "beskrivning": "ananas, kycklingfilé, banan, curry, jordnötter",
-        "ingredienser": "ananas, kycklingfilé, banan, curry, jordnötter",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 40,
-        "namn": "KEBABPIZZA",
-        "kategori": "Kebab, Pizza",
-        "pris": 145,
-        "familjepris": 350,
-        "beskrivning": "champinjoner, lök, kebabkött, kebabsås, pepperoni",
-        "ingredienser": "champinjoner, lök, kebabkött, kebabsås, pepperoni",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 41,
-        "namn": "BATMAN",
-        "kategori": "Kebab, Pizza",
-        "pris": 135,
-        "familjepris": 350,
-        "beskrivning": "skinka, lök, kebabkött, kebabsås, pepperoni",
-        "ingredienser": "skinka, lök, kebabkött, kebabsås, pepperoni",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 42,
-        "namn": "AL CAPONE",
-        "kategori": "Kebab, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "skinka, kebabkött, kebabsås, pommes, pepparoni",
-        "ingredienser": "skinka, kebabkött, kebabsås, pommes, pepparoni",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 43,
-        "namn": "CITY SPECIAL",
-        "kategori": "Kebab, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "champinjoner, kebabkött, isbergssallad, lök, gurka, tomat, pepparoni, kebabsås",
-        "ingredienser": "champinjoner, kebabkött, isbergssallad, lök, gurka, tomat, pepparoni, kebabsås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 44,
-        "namn": "CAMPINO SPECIAL",
-        "kategori": "Kebab, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "bacon, lök, vitlök, pommes, kebabkött, kebabsås, pepparoni",
-        "ingredienser": "bacon, lök, vitlök, pommes, kebabkött, kebabsås, pepparoni",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 45,
-        "namn": "BÅTPIZZA",
-        "kategori": "Kebab, halvinbakd, Pizza",
-        "pris": 140,
-        "familjepris": null,
-        "beskrivning": "lök, kebabkött, färsk tomat, bearnaisesås, kebabsås",
-        "ingredienser": "lök, kebabkött, färsk tomat, bearnaisesås, kebabsås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 46,
-        "namn": "TRASTEN SPECIAL",
-        "kategori": "Kebab, Pizza",
-        "pris": 140,
-        "familjepris": 370,
-        "beskrivning": "halal nötkött, ananas, pommes, kebabsås",
-        "ingredienser": "halal nötkött, ananas, pommes, kebabsås",
-        "tillbehor": [],
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 47,
-        "namn": "GIS SPECIAL",
-        "kategori": "Kebab, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "kebabkött, sallad, pommes, kebabsås",
-        "ingredienser": "kebabkött, sallad, pommes, kebabsås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 48,
-        "namn": "VIAGRA SPECIAL",
-        "kategori": "Kebab, Pizza",
-        "pris": 160,
-        "familjepris": 400,
-        "beskrivning": "kebabkött, fläskfilé, oxfilé, kyckling, bearnaisesås, kebabsås",
-        "ingredienser": "kebabkött, fläskfilé, oxfilé, kyckling, bearnaisesås, kebabsås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 49,
-        "namn": "KANTARELLPIZZA",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "kantareller, fläskfilé, färska tomater, lök, färsk vitlök, bearnaisesås",
-        "ingredienser": "kantareller, fläskfilé, färska tomater, lök, färsk vitlök, bearnaisesås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 50,
-        "namn": "JOHN BLUND",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "skinka, bacon, lök, ägg, champinjoner",
-        "ingredienser": "skinka, bacon, lök, ägg, champinjoner",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 51,
-        "namn": "TOMAS SPECIAL",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "mozzarella, oxfilé, champinjoner, vitlök, paprika, färska tomater, bearnaisesås",
-        "ingredienser": "mozzarella, oxfilé, champinjoner, vitlök, paprika, färska tomater, bearnaisesås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 52,
-        "namn": "JAN SPECIAL",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "mozzarella, kycklingfilé, banan, ananas, curry, valfri sås",
-        "ingredienser": "mozzarella, kycklingfilé, banan, ananas, curry, valfri sås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 53,
-        "namn": "BOSNA IF",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "mozarella, kantareller, oxfilé, färska tomater, bearnaisesås",
-        "ingredienser": "mozarella, kantareller, oxfilé, färska tomater, bearnaisesås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 54,
-        "namn": "JAKOB SPECIAL",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "halva oxfilé, halva kycklingfilé, bearnaisesås, kebabsås",
-        "ingredienser": "halva oxfilé, halva kycklingfilé, bearnaisesås, kebabsås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 55,
-        "namn": "RIKU SPECIAL",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": null,
-        "beskrivning": "halva inbakad, tomat, ost, räkor, halva, tomat, ost, fläskfilé, paprika, vitlök, bearnaisesås",
-        "ingredienser": "halva inbakad, tomat, ost, räkor, halva, tomat, ost, fläskfilé, paprika, vitlök, bearnaisesås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 56,
-        "namn": "SANTA MARIA",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": null,
-        "beskrivning": "inbakad, kebabkött, lök, stark kebabsås",
-        "ingredienser": "inbakad, kebabkött, lök, stark kebabsås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 57,
-        "namn": "Mattias Special",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "tunnbröd, kebabkött, pommes, sallad, lök, tomat, gurka, kebabsås",
-        "ingredienser": "tunnbröd, kebabkött, pommes, sallad, lök, tomat, gurka, kebabsås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 58,
-        "namn": "GVK Superettan",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 155,
-        "familjepris": 370,
-        "beskrivning": "ost, skinka, kebabkött, pommes, tomat, gurka, rå lök, kebabsås",
-        "ingredienser": "ost, skinka, kebabkött, pommes, tomat, gurka, rå lök, kebabsås",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 59,
-        "namn": "DELUXE SPECIAL",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 160,
-        "familjepris": 410 ,
-        "beskrivning": "mozzarella, creme fraiche, kräftsjärtar, räkor, färsk vitlök, cayenne, babyspenat, körsbärtomater",
-        "ingredienser": "mozzarella, creme fraiche, kräftsjärtar, räkor, färsk vitlök, cayenne, babyspenat, körsbärtomater",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 60,
-        "namn": "PARMA PARMA",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "mozzarella, parmaskinka, oliver, ruccola, körsbärtomater",
-        "ingredienser": "mozzarella, parmaskinka, oliver, ruccola, körsbärtomater",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 61,
-        "namn": "PAULINA SPECIAL",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "mozzarella, medelhavsost, oliver, färsk paprika, körsbärtomater, babyspenat",
-        "ingredienser": "mozzarella, medelhavsost, oliver, färsk paprika, körsbärtomater, babyspenat",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 62,
-        "namn": "ITALIA SPECIAL",
-        "kategori": "SPECIAL, Pizza",
-        "pris": 150,
-        "familjepris": 370,
-        "beskrivning": "mozzarella, salami, rå rödlök, medelhavsost, babyspenat, oliver",
-        "ingredienser": "mozzarella, salami, rå rödlök, medelhavsost, babyspenat, oliver",
-        "tillbehor": [], 
-        "bild": "pizza.jpg"
-    },
-    {
-        "id": 63,
-        "namn": "CLASSIC 150 G",
-        "kategori": "Home Made Högrevsburgare",
-        "pris": 135,
-        "familjepris": null,
-        "beskrivning": "dressing, sallad, cheddar, tomat",
-        "ingredienser": "dressing, sallad, cheddar, tomat",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 64,
-        "namn": "PEPPER JACK 150 G",
-        "kategori": "Home Made Högrevsburgare",
-        "pris": 145,
-        "familjepris": null,
-        "beskrivning": "dressing, sallad, tomat, picklad lök, pepper jack ost",
-        "ingredienser": "dressing, sallad, tomat, picklad lök, pepper jack ost",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 65,
-        "namn": "INFERNO 150 G",
-        "kategori": "Home Made Högrevsburgare",
-        "pris": 145,
-        "familjepris": null,
-        "beskrivning": "dressing, sallad, cheddar, jalapeno, tomat, karamelliserad lök",
-        "ingredienser": "dressing, sallad, cheddar, jalapeno, tomat, karamelliserad lök",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 66,
-        "namn": "CHICKEN NUGGETS 6 ST",
-        "kategori": "Barnmeny",
-        "pris": 75,
-        "familjepris": null,
-        "beskrivning": "pommes, 1 dip",
-        "ingredienser": "pommes, 1 dip",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 67,
-        "namn": "KEBAB MED BRÖD",
-        "kategori": "KEBAB",
-        "pris": 140,
-        "familjepris": null,
-        "beskrivning": "isbergssallad, lök, kebabkött, kebabsås, pepperoni",
-        "ingredienser": "isbergssallad, lök, kebabkött, kebabsås, pepperoni",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 68,
-        "namn": "KEBABRULLE",
-        "kategori": "KEBAB",
-        "pris": 140,
-        "familjepris": null,
-        "beskrivning": "isbergssallad, lök, kebabkött, kebabsås, pepperoni",
-        "ingredienser": "isbergssallad, lök, kebabkött, kebabsås, pepperoni",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 69,
-        "namn": "KEBABRULLE SPECIAL",
-        "kategori": "KEBAB",
-        "pris": 145,
-        "familjepris": null,
-        "beskrivning": "isbergssallad, lök, kebabkött, kebabsås, pommes, pepperoni",
-        "ingredienser": "isbergssallad, lök, kebabkött, kebabsås, pommes, pepperoni",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 70,
-        "namn": "KEBABTALLRIK",
-        "kategori": "KEBAB",
-        "pris": 140,
-        "familjepris": null,
-        "beskrivning": "isbergssallad, lök, tomat, kebabkött, gurka, kebabsås, pommes, pepperoni",
-        "ingredienser": "isbergssallad, lök, tomat, kebabkött, gurka, kebabsås, pommes, pepperoni",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 71,
-        "namn": "KYCKLINGTALLRIK",
-        "kategori": "KYCKLING",
-        "pris": 140,
-        "familjepris": null,
-        "beskrivning": "isbergssallad, lök, tomat, kyckling, gurka, sås, pommes, pepperoni",
-        "ingredienser": "isbergssallad, lök, tomat, kyckling, gurka, sås, pommes, pepperoni",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 72,
-        "namn": "KYCKLINGRULLE",
-        "kategori": "KYCKLING",
-        "pris": 140,
-        "familjepris": null,
-        "beskrivning": "isbergssallad, lök, kyckling, sås",
-        "ingredienser": "isbergssallad, lök, kyckling, sås",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 73,
-        "namn": "KYCKLINGRULLE SPECIAL",
-        "kategori": "KYCKLING",
-        "pris": 145,
-        "familjepris": null,
-        "beskrivning": "isbergssallad, lök, kyckling, sås, pommes",
-        "ingredienser": "isbergssallad, lök, kyckling, sås, pommes",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 74,
-        "namn": "FRANSK KEBAB STOR",
-        "kategori": "KEBAB",
-        "pris": 145,
-        "familjepris": null,
-        "beskrivning": "isbersallad, lök, tomat, kebabkött eller kyckling, franskbröd, tomat,gurka, sås, pepperoni",
-        "ingredienser": "isbersallad, lök, tomat, kebabkött eller kyckling, franskbröd, tomat,gurka, sås, pepperoni",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 75,
-        "namn": "FRANSK KEBAB lITEN",
-        "kategori": "KEBAB",
-        "pris": 90,
-        "familjepris": null,
-        "beskrivning": "isbersallad, lök, tomat, kebabkött eller kyckling, franskbröd, tomat,gurka, sås, pepperoni",
-        "ingredienser": "isbersallad, lök, tomat, kebabkött eller kyckling, franskbröd, tomat,gurka, sås, pepperoni",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 76,
-        "namn": "FALAFELRULLE",
-        "kategori": "VEGETARISK",
-        "pris": 115,
-        "familjepris": null,
-        "beskrivning": "isbergssallad, lök, tomat, falafel, gurka, vitlöksås, pepperoni",
-        "ingredienser": "isbergssallad, lök, tomat, falafel, gurka, vitlöksås, pepperoni",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 77,
-        "namn": "PITABRÖD MED POMMES OCH SÅS",
-        "kategori": "VEGETARISK",
-        "pris": 80,
-        "familjepris": null,
-        "beskrivning": "pitabröd, pommes, sås",
-        "ingredienser": "pitabröd, pommes, sås",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 78,
-        "namn": "KYCKLINGKEBAB MED RIS",
-        "kategori": "KYCKLING",
-        "pris": 140,
-        "familjepris": null,
-        "beskrivning": "kycklingkebab, ris",
-        "ingredienser": "kycklingkebab, ris",
-        "tillbehor": [], 
-        "bild": ""
-    },
-    {
-        "id": 79,
-        "namn": "KEBAB MED RIS",
-        "kategori": "KEBAB",
-        "pris": 140,
-        "familjepris": 400,
-        "beskrivning": "kebabkött, ris",
-        "ingredienser": "kebabkött, ris",
-        "tillbehor": [], 
-        "bild": ""
-    }
-   
+  {
+    "id": 1,
+    "namn": "MARGARITA",
+    "kategori": "Vegetarisk-Pizza",
+    "pris": 125,
+    "familjepris": 280,
+    "beskrivning": "tomat, ost",
+    "ingredienser": "tomat, ost",
+    "tillbehor": [
+      406,
+      500
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 2,
+    "namn": "VESUVIO",
+    "kategori": "Pizza",
+    "pris": 130,
+    "familjepris": 310,
+    "beskrivning": "skinka",
+    "ingredienser": "skinka",
+    "tillbehor": [
+      300
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 3,
+    "namn": "CALZONE",
+    "kategori": "Inbakad,Pizza",
+    "pris": 130,
+    "familjepris": 310,
+    "beskrivning": "skinka",
+    "ingredienser": "skinka",
+    "tillbehor": [
+      300
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 4,
+    "namn": "CAPRICCIOSA",
+    "kategori": "Pizza",
+    "pris": 130,
+    "familjepris": 310,
+    "beskrivning": "skinka, champinjoner,",
+    "ingredienser": "skinka, champinjoner",
+    "tillbehor": [
+      300,
+      400
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 5,
+    "namn": "HAWAII",
+    "kategori": "Pizza",
+    "pris": 130,
+    "familjepris": 310,
+    "beskrivning": "skinka, ananas",
+    "ingredienser": "skinka, ananas",
+    "tillbehor": [
+      300,
+      401
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 6,
+    "namn": "JAMAICA",
+    "kategori": "Pizza",
+    "pris": 145,
+    "familjepris": 360,
+    "beskrivning": "handskalade räkor, champinjoner",
+    "ingredienser": "räkor, champinjoner",
+    "tillbehor": [
+      301,
+      400
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 7,
+    "namn": "TOMASO",
+    "kategori": "Pizza",
+    "pris": 135,
+    "familjepris": 350,
+    "beskrivning": "skinka, handskalade räkor,",
+    "ingredienser": "skinka, räkor",
+    "tillbehor": [
+      300,
+      301
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 8,
+    "namn": "BELLA",
+    "kategori": "Pizza",
+    "pris": 130,
+    "familjepris": 340,
+    "beskrivning": "skinka, bacon, lök",
+    "ingredienser": "skinka, bacon, lök",
+    "tillbehor": [
+      300,
+      302,
+      402
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 9,
+    "namn": "LA MARIE",
+    "kategori": "Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "skinka, champinjoner, ananas, handskalade räkor",
+    "ingredienser": "skinka, champinjoner, ananas, räkor",
+    "tillbehor": [
+      300,
+      400,
+      401,
+      301
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 10,
+    "namn": "LA BAMBA",
+    "kategori": "Pizza",
+    "pris": 150,
+    "familjepris": 360,
+    "beskrivning": "skinka, champinjoner, lök, salami, pepperoni",
+    "ingredienser": "skinka, champinjoner, lök, salami, pepperoni",
+    "tillbehor": [
+      300,
+      400,
+      402,
+      319,
+      320
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 11,
+    "namn": "PESCATORE",
+    "kategori": "Skaldjurspizza",
+    "pris": 140,
+    "familjepris": 360,
+    "beskrivning": "handskalade räkor, tonfisk",
+    "ingredienser": "räkor, tonfisk",
+    "tillbehor": [
+      301,
+      304
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 12,
+    "namn": "MARINARA",
+    "kategori": "Skaldjurspizza",
+    "pris": 140,
+    "familjepris": 360,
+    "beskrivning": "musslor, handskalade räkor",
+    "ingredienser": "musslor, räkor",
+    "tillbehor": [
+      305,
+      301
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 13,
+    "namn": "LEON SPECIAL",
+    "kategori": "Skaldjurspizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "skinka, champinjoner, handskalade räkor, tonfisk",
+    "ingredienser": "skinka, champinjoner, räkor, tonfisk",
+    "tillbehor": [
+      300,
+      400,
+      301,
+      304
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 14,
+    "namn": "QUATRO",
+    "kategori": "Skaldjurspizza",
+    "pris": 150,
+    "familjepris": 360,
+    "beskrivning": "skinka, champinjoner, handskalade räkor, musslor",
+    "ingredienser": "skinka, champinjoner, räkor, musslor",
+    "tillbehor": [
+      300,
+      400,
+      301,
+      305
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 15,
+    "namn": "PAVAROTI (EJ LUNCH)",
+    "kategori": "Skaldjurspizza",
+    "pris": 160,
+    "familjepris": 410,
+    "beskrivning": "tonfisk, handskalade räkor, musslor, krabfish",
+    "ingredienser": "tonfisk, räkor, musslor, crabfish",
+    "tillbehor": [
+      304,
+      301,
+      305,
+      306
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 16,
+    "namn": "VEGETARISK PIZZA",
+    "kategori": "Vegetarisk-Pizza",
+    "pris": 140,
+    "familjepris": 350,
+    "beskrivning": "champinjoner, ananas, lök, sparris, paprika, oliver ",
+    "ingredienser": "champinjoner, ananas, lök, sparris, paprika, oliver",
+    "tillbehor": [
+      400,
+      401,
+      402,
+      403,
+      404,
+      405
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 17,
+    "namn": "RODOS",
+    "kategori": "Vegetarisk-Pizza",
+    "pris": 140,
+    "familjepris": 350,
+    "beskrivning": "lök, paprika, oliver, färska tomater, medelhavsost, ruccola",
+    "ingredienser": "lök, paprika, oliver, tomat, medelhavsost, ruccola",
+    "tillbehor": [
+      402,
+      404,
+      405,
+      406,
+      501,
+      407
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 18,
+    "namn": "CIAO CIAO",
+    "kategori": "Fläskfilé/Oxfilé, Inbakad",
+    "pris": 140,
+    "familjepris": 0,
+    "beskrivning": "lök, fläskfilé, vitlök, champinjoner",
+    "ingredienser": "lök, fläskfilé, vitlök, champinjoner",
+    "tillbehor": [
+      402,
+      307,
+      408,
+      400
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 19,
+    "namn": "AFRIKANA",
+    "kategori": "Fläskfilé/Oxfilé",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "ananas, jordnötter, banan, oxfilé, curry",
+    "ingredienser": "ananas, jordnötter, banan, oxfilé, curry",
+    "tillbehor": [
+      401,
+      502,
+      409,
+      308,
+      200
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 20,
+    "namn": "HUSETS SPECIAL",
+    "kategori": "Fläskfilé/Oxfilé",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "fläskfilé, lök, färsk tomat, paprika, bearnaisesås",
+    "ingredienser": "fläskfilé, lök, tomat, paprika, bearnaisesås",
+    "tillbehor": [
+      307,
+      402,
+      406,
+      404,
+      209
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 21,
+    "namn": "GISLAVED SPECIAL",
+    "kategori": "Fläskfilé/Oxfilé",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "skinka, handskalade räkor, oxfilé, bearnaisesås",
+    "ingredienser": "skinka, räkor, oxfilé, bearnaisesås",
+    "tillbehor": [
+      300,
+      301,
+      308,
+      209
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 22,
+    "namn": "MADONNA",
+    "kategori": "Fläskfilé/Pizza",
+    "pris": 150,
+    "familjepris": 360,
+    "beskrivning": "lök, champinjoner, fläskfilé, bearnaisesås, vitlök, starksås",
+    "ingredienser": "lök, champinjoner, fläskfilé, bearnaisesås, vitlök, starksås",
+    "tillbehor": [
+      402,
+      400,
+      307,
+      209,
+      408,
+      210
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 23,
+    "namn": "GORGONZOLA",
+    "kategori": "Fläskfilé, Pizza",
+    "pris": 150,
+    "familjepris": 360,
+    "beskrivning": "oxfilé, färsk tomat, gorgonzola, lök",
+    "ingredienser": "oxfilé, tomat, gorgonzola, lök",
+    "tillbehor": [
+      308,
+      406,
+      503,
+      402
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 24,
+    "namn": "MILLE TAXI",
+    "kategori": "Fläskfilé, Pizza",
+    "pris": 150,
+    "familjepris": 360,
+    "beskrivning": "skinka, champinjoner, sparris, fläskfilé, bearnaisesås",
+    "ingredienser": "skinka, champinjoner, sparris, fläskfilé, bearnaisesås",
+    "tillbehor": [
+      300,
+      400,
+      403,
+      307,
+      209
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 25,
+    "namn": "MARKOPOLO",
+    "kategori": "Fläskfilé, Pizza",
+    "pris": 150,
+    "familjepris": 360,
+    "beskrivning": "oxfilé, champinjoner, lök, bearnaisesås, pepperoni",
+    "ingredienser": "oxfilé, champinjoner, lök, bearnaisesås, pepperoni",
+    "tillbehor": [
+      308,
+      400,
+      402,
+      209,
+      320
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 26,
+    "namn": "LOVE YOU",
+    "kategori": "Fläskfilé, Pizza",
+    "pris": 150,
+    "familjepris": 360,
+    "beskrivning": "skinka, fläskfilé, lök, bearnaisesås",
+    "ingredienser": "skinka, fläskfilé, lök, bearnaisesås",
+    "tillbehor": [
+      300,
+      307,
+      402,
+      209
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 27,
+    "namn": "GSK",
+    "kategori": "Fläskfilé, Pizza",
+    "pris": 150,
+    "familjepris": 360,
+    "beskrivning": "oxfilé, skinka, bacon, rödlök, valfrisås",
+    "ingredienser": "oxfilé, skinka, bacon, rödlök, valfrisås",
+    "tillbehor": [
+      308,
+      300,
+      302,
+      411,
+      211
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 28,
+    "namn": "BLACK & WHITE",
+    "kategori": "Fläskfilé, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": " oxfilé, kebabsås,  fläskfilé, bearnaisesås",
+    "ingredienser": "oxfilé, kebabsås mild, fläskfilé, bearnaisesås",
+    "tillbehor": [
+      308,
+      204,
+      307,
+      209
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 29,
+    "namn": "DISCO",
+    "kategori": "Köttfärs/köttfärssås, Pizza",
+    "pris": 145,
+    "familjepris": 350,
+    "beskrivning": "skinka, handskalade räkor, köttfärssås",
+    "ingredienser": "skinka, räkor, köttfärssås",
+    "tillbehor": [
+      300,
+      301,
+      309
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 30,
+    "namn": "ACAPULCO",
+    "kategori": "Köttfärs/köttfärssås, Pizza",
+    "pris": 145,
+    "familjepris": 350,
+    "beskrivning": "skinka, lök, köttfärssås, vitlök, jalapeño, tacosås",
+    "ingredienser": "skinka, lök, köttfärssås, vitlök, jalapeño, tacosås",
+    "tillbehor": [
+      300,
+      402,
+      309,
+      408,
+      412,
+      207
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 31,
+    "namn": "GUDFADER",
+    "kategori": "Köttfärs/köttfärssås, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "skinka, sparris, köttfärssås, handskalade räkor, starksås",
+    "ingredienser": "skinka, sparris, köttfärssås, räkor, starksås",
+    "tillbehor": [
+      300,
+      403,
+      309,
+      301,
+      210
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 32,
+    "namn": "VIKING SPECIAL",
+    "kategori": "Köttfärs/köttfärssås, Pizza",
+    "pris": 160,
+    "familjepris": 380,
+    "beskrivning": "oxfilé, köttfärs, champinjoner, lök, jalapeño",
+    "ingredienser": "oxfilé, köttfärs, champinjoner, lök, jalapeño",
+    "tillbehor": [
+      308,
+      310,
+      400,
+      402,
+      412
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 33,
+    "namn": "MAMMA MIA",
+    "kategori": "Köttfärs/köttfärssås, Pizza",
+    "pris": 140,
+    "familjepris": 350,
+    "beskrivning": "köttfärs, skinka, lök, bacon",
+    "ingredienser": "köttfärs, skinka, lök, bacon",
+    "tillbehor": [
+      310,
+      300,
+      402,
+      302
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 34,
+    "namn": "MEXICANA",
+    "kategori": "Köttfärs/köttfärssås, Pizza",
+    "pris": 140,
+    "familjepris": 350,
+    "beskrivning": "champinjoner, lök, paprika, köttfärs, starksås",
+    "ingredienser": "champinjoner, lök, paprika, köttfärs, starksås",
+    "tillbehor": [
+      400,
+      402,
+      404,
+      310,
+      210
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 35,
+    "namn": "WESTBO IBK",
+    "kategori": "Kyckling, Pizza",
+    "pris": 150,
+    "familjepris": 380,
+    "beskrivning": "kyckling, pommes, sallad, valfrisås",
+    "ingredienser": "kyckling, pommes frites, isbergssallad, valfrisås",
+    "tillbehor": [
+      311,
+      504,
+      413,
+      211
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 36,
+    "namn": "INTERNACIONAL, PIZZA",
+    "kategori": "Kyckling, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "Kyckling, kebabkött, sallad, valfrisås",
+    "ingredienser": "Kyckling, kebabkött, isbergssallad, valfrisås",
+    "tillbehor": [
+      311,
+      312,
+      413,
+      211
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 37,
+    "namn": "KYCKLINGPIZZA",
+    "kategori": "Kyckling, Pizza",
+    "pris": 145,
+    "familjepris": 350,
+    "beskrivning": "champinjoner, lök, kyckling, kebabsås",
+    "ingredienser": "champinjoner, lök, kyckling, kebabsås mild",
+    "tillbehor": [
+      400,
+      402,
+      311,
+      204
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 38,
+    "namn": "ROMA",
+    "kategori": "Kyckling, Pizza",
+    "pris": 145,
+    "familjepris": 350,
+    "beskrivning": "champinjoner, ananas, kyckling, vitlöksås",
+    "ingredienser": "champinjoner, ananas, kyckling, vitlöksås",
+    "tillbehor": [
+      400,
+      401,
+      311,
+      206
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 39,
+    "namn": "BAMBINO",
+    "kategori": "Kyckling, Pizza",
+    "pris": 145,
+    "familjepris": 350,
+    "beskrivning": "ananas, kycklingfilé, banan, curry, jordnötter",
+    "ingredienser": "ananas, kycklingfilé, banan, curry, jordnötter",
+    "tillbehor": [
+      401,
+      321,
+      409,
+      200,
+      502
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 40,
+    "namn": "KEBABPIZZA",
+    "kategori": "Kebab, Pizza",
+    "pris": 145,
+    "familjepris": 350,
+    "beskrivning": "champinjoner, lök, kebabkött, kebabsås, pepperoni",
+    "ingredienser": "champinjoner, lök, kebabkött, kebabsås mild, pepperoni",
+    "tillbehor": [
+      400,
+      402,
+      312,
+      204,
+      320
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 41,
+    "namn": "BATMAN",
+    "kategori": "Kebab, Pizza",
+    "pris": 135,
+    "familjepris": 350,
+    "beskrivning": "skinka, lök, kebabkött, kebabsås, pepperoni",
+    "ingredienser": "skinka, lök, kebabkött, kebabsås mild, pepperoni",
+    "tillbehor": [
+      300,
+      402,
+      312,
+      204,
+      320
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 42,
+    "namn": "AL CAPONE",
+    "kategori": "Kebab, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "skinka, kebabkött, kebabsås, pommes, pepperoni",
+    "ingredienser": "skinka, kebabkött, kebabsås mild, pommes frites, pepperoni",
+    "tillbehor": [
+      300,
+      312,
+      204,
+      504,
+      320
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 43,
+    "namn": "CITY SPECIAL",
+    "kategori": "Kebab, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "champinjoner, kebabkött, isbergssallad, lök, gurka, tomat, pepperoni, kebabsås",
+    "ingredienser": "champinjoner, kebabkött, isbergssallad, lök, gurka, tomat, pepperoni, kebabsås mild",
+    "tillbehor": [
+      400,
+      312,
+      413,
+      402,
+      414,
+      406,
+      320,
+      204
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 44,
+    "namn": "CAMPINO SPECIAL",
+    "kategori": "Kebab, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "bacon, lök, vitlök, pommes, kebabkött, kebabsås, pepperoni",
+    "ingredienser": "bacon, lök, vitlök, pommes frites, kebabkött, kebabsås mild, pepperoni",
+    "tillbehor": [
+      302,
+      402,
+      408,
+      504,
+      312,
+      204,
+      320
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 45,
+    "namn": "BÅTPIZZA",
+    "kategori": "Kebab, halvinbakd, Pizza",
+    "pris": 140,
+    "familjepris": null,
+    "beskrivning": "lök, kebabkött, färsk tomat, bearnaisesås, kebabsås",
+    "ingredienser": "lök, kebabkött, tomat, bearnaisesås, kebabsås mild",
+    "tillbehor": [
+      402,
+      312,
+      406,
+      209,
+      204
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 46,
+    "namn": "TRASTEN SPECIAL",
+    "kategori": "Kebab, Pizza",
+    "pris": 140,
+    "familjepris": 370,
+    "beskrivning": "halal nötkött, ananas, pommes, kebabsås",
+    "ingredienser": "halal nötkött, ananas, pommes frites, kebabsås mild",
+    "tillbehor": [
+      313,
+      401,
+      504,
+      204
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 47,
+    "namn": "GIS SPECIAL",
+    "kategori": "Kebab, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "kebabkött, sallad, pommes, kebabsås",
+    "ingredienser": "kebabkött, isbergssallad, pommes frites, kebabsås mild",
+    "tillbehor": [
+      312,
+      413,
+      504,
+      204
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 48,
+    "namn": "VIAGRA SPECIAL",
+    "kategori": "Kebab, Pizza",
+    "pris": 160,
+    "familjepris": 400,
+    "beskrivning": "kebabkött, fläskfilé, oxfilé, kyckling, bearnaisesås, kebabsås",
+    "ingredienser": "kebabkött, fläskfilé, oxfilé, kyckling, bearnaisesås, kebabsås mild",
+    "tillbehor": [
+      312,
+      307,
+      308,
+      311,
+      209,
+      204
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 49,
+    "namn": "KANTARELLPIZZA",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "kantareller, fläskfilé, färska tomater, lök, färsk vitlök, bearnaisesås",
+    "ingredienser": "kantareller, fläskfilé, tomat, lök, vitlök, bearnaisesås",
+    "tillbehor": [
+      415,
+      307,
+      406,
+      402,
+      408,
+      209
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 50,
+    "namn": "JOHN BLUND",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "skinka, bacon, lök, ägg, champinjoner",
+    "ingredienser": "skinka, bacon, lök, ägg, champinjoner",
+    "tillbehor": [
+      300,
+      302,
+      402,
+      314,
+      400
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 51,
+    "namn": "TOMAS SPECIAL",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "mozzarella, oxfilé, champinjoner, vitlök, paprika, färska tomater, bearnaisesås",
+    "ingredienser": "mozzarella, oxfilé, champinjoner, vitlök, paprika, tomat, bearnaisesås",
+    "tillbehor": [
+      505,
+      308,
+      400,
+      408,
+      404,
+      406,
+      209
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 52,
+    "namn": "JAN SPECIAL",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "mozzarella, kycklingfilé, banan, ananas, curry, valfrisås",
+    "ingredienser": "mozzarella, kycklingfilé, banan, ananas, curry, valfrisås",
+    "tillbehor": [
+      505,
+      321,
+      409,
+      401,
+      200,
+      211
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 53,
+    "namn": "BOSNA IF",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "mozzarella, kantareller, oxfilé, färska tomater, bearnaisesås",
+    "ingredienser": "mozzarella, kantareller, oxfilé, tomat, bearnaisesås",
+    "tillbehor": [
+      505,
+      415,
+      308,
+      406,
+      209
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 54,
+    "namn": "JAKOB SPECIAL",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": " halva oxfilé, halva kycklingfilé, bearnaisesås, kebabsås",
+    "ingredienser": " oxfilé,  kycklingfilé, bearnaisesås, kebabsås mild",
+    "tillbehor": [
+      308,
+      321,
+      209,
+      204
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 55,
+    "namn": "RIKU SPECIAL",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": null,
+    "beskrivning": "halva inbakad, tomat, ost, räkor, halva, tomat, ost, fläskfilé, paprika, vitlök, bearnaisesås",
+    "ingredienser": " inbakad, tomat, ost, räkor, fläskfilé, paprika, vitlök, bearnaisesås",
+    "tillbehor": [
+      509,
+      406,
+      500,
+      301,
+      307,
+      404,
+      408,
+      209
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 56,
+    "namn": "SANTA MARIA",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": null,
+    "beskrivning": "inbakad, kebabkött, lök, stark kebabsås",
+    "ingredienser": "inbakad, kebabkött, lök, kebabsås stark",
+    "tillbehor": [
+      509,
+      312,
+      402,
+      205
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 57,
+    "namn": "Mattias Special",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "tunnbröd, kebabkött, pommes, sallad, lök, tomat, gurka, kebabsås",
+    "ingredienser": "tunnbröd, kebabkött, pommes frites, isbergssallad, lök, tomat, gurka, kebabsås mild",
+    "tillbehor": [
+      510,
+      312,
+      504,
+      413,
+      402,
+      406,
+      414,
+      204
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 58,
+    "namn": "GVK Superettan",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 155,
+    "familjepris": 370,
+    "beskrivning": "ost, skinka, kebabkött, pommes, tomat, gurka, rå lök, kebabsås",
+    "ingredienser": "ost, skinka, kebabkött, pommes frites, tomat, gurka, lök, kebabsås mild",
+    "tillbehor": [
+      500,
+      300,
+      312,
+      504,
+      406,
+      414,
+      402,
+      204
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 59,
+    "namn": "DELUXE SPECIAL",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 160,
+    "familjepris": 410,
+    "beskrivning": "mozzarella, crème fraiche, kräftstjärtar, räkor, färsk vitlök, cayenne, babyspenat, körsbärtomater",
+    "ingredienser": "mozzarella, crème fraiche, kräftstjärtar, räkor, vitlök, cayenne, babyspenat, körsbärstomat",
+    "tillbehor": [
+      505,
+      201,
+      315,
+      301,
+      408,
+      202,
+      417,
+      416
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 60,
+    "namn": "PARMA PARMA",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "mozzarella, parmaskinka, oliver, ruccola, körsbärtomater",
+    "ingredienser": "mozzarella, parmaskinka, oliver, ruccola, körsbärstomat",
+    "tillbehor": [
+      505,
+      316,
+      405,
+      407,
+      416
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 61,
+    "namn": "PAULINA SPECIAL",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "mozzarella, medelhavsost, oliver, färsk paprika, körsbärtomater, babyspenat",
+    "ingredienser": "mozzarella, medelhavsost, oliver, paprika, körsbärstomat, babyspenat",
+    "tillbehor": [
+      505,
+      501,
+      405,
+      404,
+      416,
+      417
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 62,
+    "namn": "ITALIA SPECIAL",
+    "kategori": "SPECIAL, Pizza",
+    "pris": 150,
+    "familjepris": 370,
+    "beskrivning": "mozzarella, salami, rå rödlök, medelhavsost, babyspenat, oliver",
+    "ingredienser": "mozzarella, salami, rödlök, medelhavsost, babyspenat, oliver",
+    "tillbehor": [
+      505,
+      319,
+      411,
+      501,
+      417,
+      405
+    ],
+    "bild": "pizza.jpg"
+  },
+  {
+    "id": 63,
+    "namn": "CLASSIC 150 G",
+    "kategori": "Home Made Högrevsburgare",
+    "pris": 135,
+    "familjepris": null,
+    "beskrivning": "dressing, sallad, cheddar, tomat",
+    "ingredienser": "dressing, isbergssallad, cheddar, tomat",
+    "tillbehor": [
+      511,
+      413,
+      421,
+      406
+    ],
+    "bild": ""
+  },
+  {
+    "id": 64,
+    "namn": "PEPPER JACK 150 G",
+    "kategori": "Home Made Högrevsburgare",
+    "pris": 145,
+    "familjepris": null,
+    "beskrivning": "dressing, sallad, tomat, picklad rödlök, pepperjack ost",
+    "ingredienser": "dressing, isbergssallad, tomat, picklad rödlök, pepperjack ost",
+    "tillbehor": [
+      511,
+      413,
+      406,
+      419,
+      516
+    ],
+    "bild": ""
+  },
+  {
+    "id": 65,
+    "namn": "INFERNO 150 G",
+    "kategori": "Home Made Högrevsburgare",
+    "pris": 145,
+    "familjepris": null,
+    "beskrivning": "dressing, sallad, cheddar, jalapeño, tomat, karamelliserad lök",
+    "ingredienser": "dressing, isbergssallad, cheddar, jalapeño, tomat, karamelliserad lök",
+    "tillbehor": [
+      511,
+      413,
+      421,
+      412,
+      406,
+      418
+    ],
+    "bild": ""
+  },
+  {
+    "id": 66,
+    "namn": "CHICKEN NUGGETS 6 ST",
+    "kategori": "Barnmeny",
+    "pris": 75,
+    "familjepris": null,
+    "beskrivning": "pommes, 1 dip",
+    "ingredienser": "pommes frites, dip",
+    "tillbehor": [
+      504,
+      512
+    ],
+    "bild": ""
+  },
+  {
+    "id": 67,
+    "namn": "KEBAB MED BRÖD",
+    "kategori": "KEBAB",
+    "pris": 140,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, kebabkött, kebabsås, pepperoni",
+    "ingredienser": "isbergssallad, lök, kebabkött, kebabsås mild, pepperoni",
+    "tillbehor": [
+      413,
+      402,
+      312,
+      204,
+      320
+    ],
+    "bild": ""
+  },
+  {
+    "id": 68,
+    "namn": "KEBABRULLE",
+    "kategori": "KEBAB",
+    "pris": 140,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, kebabkött, kebabsås, pepperoni",
+    "ingredienser": "isbergssallad, lök, kebabkött, kebabsås mild, pepperoni",
+    "tillbehor": [
+      413,
+      402,
+      312,
+      204,
+      320
+    ],
+    "bild": ""
+  },
+  {
+    "id": 69,
+    "namn": "KEBABRULLE SPECIAL",
+    "kategori": "KEBAB",
+    "pris": 145,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, kebabkött, kebabsås, pommes, pepperoni",
+    "ingredienser": "isbergssallad, lök, kebabkött, kebabsås mild, pommes frites, pepperoni",
+    "tillbehor": [
+      413,
+      402,
+      312,
+      204,
+      504,
+      320
+    ],
+    "bild": ""
+  },
+  {
+    "id": 70,
+    "namn": "KEBABTALLRIK",
+    "kategori": "KEBAB",
+    "pris": 140,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, tomat, kebabkött, gurka, kebabsås, pommes, pepperoni",
+    "ingredienser": "isbergssallad, lök, tomat, kebabkött, gurka, kebabsås mild, pommes frites, pepperoni",
+    "tillbehor": [
+      413,
+      402,
+      406,
+      312,
+      414,
+      204,
+      504,
+      320
+    ],
+    "bild": ""
+  },
+  {
+    "id": 71,
+    "namn": "KYCKLINGTALLRIK",
+    "kategori": "KYCKLING",
+    "pris": 140,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, tomat, kyckling, gurka, valfrisås, pommes, pepperoni",
+    "ingredienser": "isbergssallad, lök, tomat, kyckling, gurka, valfrisås, pommes frites, pepperoni",
+    "tillbehor": [
+      413,
+      402,
+      406,
+      311,
+      414,
+      211,
+      504,
+      320
+    ],
+    "bild": ""
+  },
+  {
+    "id": 72,
+    "namn": "KYCKLINGRULLE",
+    "kategori": "KYCKLING",
+    "pris": 140,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, kyckling, valfrisås",
+    "ingredienser": "isbergssallad, lök, kyckling, valfrisås",
+    "tillbehor": [
+      413,
+      402,
+      311,
+      211
+    ],
+    "bild": ""
+  },
+  {
+    "id": 73,
+    "namn": "KYCKLINGRULLE SPECIAL",
+    "kategori": "KYCKLING",
+    "pris": 145,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, kyckling, valfrisås, pommes",
+    "ingredienser": "isbergssallad, lök, kyckling, valfrisås, pommes frites",
+    "tillbehor": [
+      413,
+      402,
+      311,
+      211,
+      504
+    ],
+    "bild": ""
+  },
+  {
+    "id": 74,
+    "namn": "FRANSK KEBAB STOR",
+    "kategori": "KEBAB",
+    "pris": 145,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, tomat, kebabkött eller kyckling, franskbröd, tomat,gurka, valfrisås, pepperoni",
+    "ingredienser": "isbergssallad, kebabkött, kyckling, franskbröd, tomat,gurka, valfrisås, pepperoni",
+    "tillbehor": [
+      413,
+      312,
+      311,
+      513,
+      406,
+      414,
+      211,
+      320
+    ],
+    "bild": ""
+  },
+  {
+    "id": 75,
+    "namn": "FRANSK KEBAB lITEN",
+    "kategori": "KEBAB",
+    "pris": 90,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, tomat, kebabkött eller kyckling, franskbröd, tomat,gurka, valfrisås, pepperoni",
+    "ingredienser": "isbergssallad, lök, tomat, kebabkött, kyckling, franskbröd, tomat,gurka, valfrisås, pepperoni",
+    "tillbehor": [
+      413,
+      402,
+      406,
+      312,
+      311,
+      513,
+      406,
+      414,
+      211,
+      320
+    ],
+    "bild": ""
+  },
+  {
+    "id": 76,
+    "namn": "FALAFELRULLE",
+    "kategori": "VEGETARISK",
+    "pris": 115,
+    "familjepris": null,
+    "beskrivning": "isbergssallad, lök, tomat, falafel, gurka, vitlöksås, pepperoni",
+    "ingredienser": "isbergssallad, lök, tomat, falafel, gurka, vitlöksås, pepperoni",
+    "tillbehor": [
+      413,
+      402,
+      406,
+      317,
+      414,
+      206,
+      320
+    ],
+    "bild": ""
+  },
+  {
+    "id": 77,
+    "namn": "PITABRÖD MED POMMES OCH SÅS",
+    "kategori": "VEGETARISK",
+    "pris": 80,
+    "familjepris": null,
+    "beskrivning": "pitabröd, pommes, valfrisås",
+    "ingredienser": "pitabröd, pommes frites, valfrisås",
+    "tillbehor": [
+      514,
+      504,
+      211
+    ],
+    "bild": ""
+  },
+  {
+    "id": 78,
+    "namn": "KYCKLINGKEBAB MED RIS",
+    "kategori": "KYCKLING",
+    "pris": 140,
+    "familjepris": null,
+    "beskrivning": "kycklingkebab, ris",
+    "ingredienser": "kycklingkebab, ris",
+    "tillbehor": [
+      318,
+      515
+    ],
+    "bild": ""
+  },
+  {
+    "id": 79,
+    "namn": "KEBAB MED RIS",
+    "kategori": "KEBAB",
+    "pris": 140,
+    "familjepris": 400,
+    "beskrivning": "kebabkött, ris",
+    "ingredienser": "kebabkött, ris",
+    "tillbehor": [
+      312,
+      515
+    ],
+    "bild": ""
+  }
 ]
