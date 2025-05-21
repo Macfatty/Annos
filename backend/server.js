@@ -108,12 +108,12 @@ app.post("/api/admin/orders/:id/klart", (req, res) => {
 
 // 🆕 REGISTRERING
 app.post("/api/register", async (req, res) => {
-  const { email, password, namn, telefon, adress } = req.body;
-  if (!email || !password || !namn) {
+  const { email, losenord, namn, telefon, adress } = req.body;
+  if (!email || !losenord || !namn) {
     return res.status(400).json({ error: "Saknar fält" });
   }
 
-  const hashed = await bcrypt.hash(password, 10);
+  const hashed = await bcrypt.hash(losenord, 10);
   const sql = `INSERT INTO users (email, password, namn, telefon, adress) VALUES (?, ?, ?, ?, ?)`;
 
   db.run(sql, [email, hashed, namn, telefon, adress], function (err) {
@@ -125,16 +125,17 @@ app.post("/api/register", async (req, res) => {
   });
 });
 
+
 // 🆕 LOGIN
 app.post("/api/login", (req, res) => {
-  const { email, password } = req.body;
+  const { email, losenord } = req.body;
   const sql = `SELECT * FROM users WHERE email = ?`;
 
   db.get(sql, [email], async (err, user) => {
     if (err || !user)
       return res.status(401).json({ error: "Fel e-post eller lösenord" });
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(losenord, user.password);
     if (!match)
       return res.status(401).json({ error: "Fel e-post eller lösenord" });
 
