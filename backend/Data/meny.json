@@ -11,7 +11,7 @@
       406,
       500
     ],
-    "bild": "pizza.jpg"
+    "bild": "Magarita.png"
   },
   {
     "id": 2,
@@ -24,7 +24,7 @@
     "tillbehor": [
       300
     ],
-    "bild": "pizza.jpg"
+    "bild": "Vesuvio.jpg"
   },
   {
     "id": 3,
@@ -37,7 +37,7 @@
     "tillbehor": [
       300
     ],
-    "bild": "pizza.jpg"
+    "bild": "Calzone.jpg"
   },
   {
     "id": 4,
@@ -65,7 +65,7 @@
       300,
       401
     ],
-    "bild": "pizza.jpg"
+    "bild": "Hawaii.jpg"
   },
   {
     "id": 6,
