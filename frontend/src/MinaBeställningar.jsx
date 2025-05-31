@@ -1,113 +1,93 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import "./App.css";
 
-function MinaBeställningar() {
-  const [ordrar, setOrdrar] = useState([]);
+function MinaBeställningar({ onBeställIgen }) {
+  const [bestallningar, setBestallningar] = useState([]);
   const [fel, setFel] = useState(null);
+  const [laddar, setLaddar] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token)
-      return setFel("Du måste vara inloggad för att se dina beställningar.");
 
-    fetch("http://localhost:3001/api/my-orders", {
+    if (!token) {
+      setFel("Du är inte inloggad.");
+      return;
+    }
+
+    fetch("/api/my-orders", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setOrdrar(data);
-        } else {
-          setFel(data.error || "Kunde inte hämta beställningar.");
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Kunde inte ladda beställningar.");
         }
+        return res.json();
       })
-      .catch(() => {
-        setFel("Tekniskt fel vid hämtning av beställningar.");
+      .then((data) => {
+        const bearbetade = (data || []).map((order) => {
+          let rader = [];
+          try {
+            rader = JSON.parse(order.order_json || "[]");
+          } catch {
+            rader = [];
+          }
+          return { ...order, rader };
+        });
+        setBestallningar(bearbetade);
+        setLaddar(false);
+      })
+      .catch((err) => {
+        setFel(err.message);
+        setLaddar(false);
       });
   }, []);
 
-  const formateraTid = (timestamp) => {
-    return new Date(timestamp).toLocaleString("sv-SE", {
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  if (laddar) {
+    return <p>Laddar dina tidigare beställningar...</p>;
+  }
 
-  const beställIgen = (innehall) => {
-    localStorage.setItem("varukorg", JSON.stringify(innehall));
-    alert("✅ Beställningen har lagts till i kundvagnen");
-    window.location.href = "/kundvagn";
-  };
+  if (fel) {
+    return <p style={{ color: "red" }}>{fel}</p>;
+  }
+
+  if (bestallningar.length === 0) {
+    return <p>Du har inga tidigare beställningar.</p>;
+  }
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>📦 Mina Beställningar</h1>
-
-      {fel && <p style={{ color: "red" }}>{fel}</p>}
-      {ordrar.length === 0 && !fel && (
-        <p>Du har inga tidigare beställningar.</p>
-      )}
-
-      {ordrar.map((order) => {
-        const innehall = JSON.parse(order.order_json);
-
-        return (
-          <div
-            key={order.id}
-            style={{
-              border: "1px solid #ccc",
-              marginBottom: "1rem",
-              padding: "1rem",
-              borderRadius: "8px",
-            }}
-          >
-            <p>
-              <strong>🕒 Tid:</strong> {formateraTid(order.created_at)}
-            </p>
-            <p>
-              <strong>📍 Adress:</strong> {order.adress}
-            </p>
-            {order.extraInfo && (
-              <p>
-                <strong>📝 Info:</strong> {order.extraInfo}
-              </p>
-            )}
-            <ul>
-              {innehall.map((rätt, i) => (
-                <li key={i}>
-                  🍕 <strong>{rätt.namn}</strong> – {rätt.total} kr
-                  {rätt.tillval?.length > 0 && (
-                    <ul>
-                      {rätt.tillval.map((t, j) => (
-                        <li key={j}>
-                          ➕ {t.namn} ({t.pris} kr)
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {rätt.borttagna?.length > 0 && (
-                    <ul style={{ color: "red", fontSize: "0.9rem" }}>
-                      {rätt.borttagna.map((b, j) => (
-                        <li key={j}>❌ {b.namn}</li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
-
+    <div className="bestallningar">
+      <h2>Tidigare beställningar</h2>
+      {bestallningar.map((order) => (
+        <div key={order.id} className="bestallningskort">
+          <p><strong>Datum:</strong> {new Date(order.created_at).toLocaleString("sv-SE")}</p>
+          <p><strong>Totalt:</strong> {order.total} kr</p>
+          <p><strong>Status:</strong> {order.status}</p>
+          <ul>
+            {order.rader.map((rad, index) => (
+              <li key={index}>
+                {rad.namn} – {rad.pris} kr
+                {Array.isArray(rad.tillval) && rad.tillval.length > 0 && (
+                  <ul>
+                    {rad.tillval.map((t, i) => (
+                      <li key={i}>{t.namn}</li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+          {onBeställIgen && (
             <button
-              onClick={() => beställIgen(innehall)}
-              style={{ marginTop: "1rem" }}
+              onClick={() => onBeställIgen(order.rader)}
+              aria-label="Beställ igen"
             >
               🔁 Beställ igen
             </button>
-          </div>
-        );
-      })}
+          )}
+        </div>
+      ))}
     </div>
   );
 }

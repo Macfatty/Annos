@@ -14,6 +14,8 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Tack from "./Tack";
 
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function App() {
   const [meny, setMeny] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,6 @@ function App() {
   const location = useLocation();
   const [inloggad, setInloggad] = useState(!!localStorage.getItem("token"));
 
-  // 🌗 Tema (mörk/ljust läge)
   const [tema, setTema] = useState(() => {
     return localStorage.getItem("tema") || "light";
   });
@@ -40,7 +41,9 @@ function App() {
   }, [tema]);
 
   const växlaTema = () => {
-    setTema((prev) => (prev === "light" ? "dark" : "light"));
+    setTema((prev) => {
+      return prev === "light" ? "dark" : "light";
+    });
   };
 
   useEffect(() => {
@@ -50,8 +53,10 @@ function App() {
   useEffect(() => {
     const fetchMeny = async () => {
       try {
-        const res = await fetch("http://localhost:3001/api/meny");
-        if (!res.ok) throw new Error("Något gick fel vid hämtning");
+        const res = await fetch(`${BASE_URL}/api/meny`);
+        if (!res.ok) {
+          throw new Error("Något gick fel vid hämtning");
+        }
         const data = await res.json();
         setMeny(data);
       } catch (error) {
@@ -68,8 +73,10 @@ function App() {
   useEffect(() => {
     const fetchTillbehor = async () => {
       try {
-        const res = await fetch("http://localhost:3001/api/tillbehor");
-        if (!res.ok) throw new Error("Kunde inte ladda tillbehör");
+        const res = await fetch(`${BASE_URL}/api/tillbehor`);
+        if (!res.ok) {
+          throw new Error("Kunde inte ladda tillbehör");
+        }
         const data = await res.json();
         setTillbehor(data);
       } catch (error) {
@@ -81,9 +88,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const observer = () => setInloggad(!!localStorage.getItem("token"));
+    const observer = () => {
+      setInloggad(!!localStorage.getItem("token"));
+    };
     window.addEventListener("storage", observer);
-    return () => window.removeEventListener("storage", observer);
+    return () => {
+      window.removeEventListener("storage", observer);
+    };
   }, []);
 
   return (
@@ -100,45 +111,17 @@ function App() {
           flexWrap: "wrap",
         }}
       >
-        {!["/", "/restaurang", "/login", "/register"].includes(
-          location.pathname
-        ) && (
+        {!["/", "/restaurang", "/login", "/register"].includes(location.pathname) && (
           <>
             {!inloggad ? (
               <>
-                <button
-                  onClick={() => navigate("/")}
-                  aria-label="Gå till startsidan"
-                >
-                  🏠 Startsida
-                </button>
-                <button
-                  onClick={() => navigate("/valj-restaurang")}
-                  aria-label="Välj restaurang"
-                >
-                  🍽️ Restauranger
-                </button>
+                <button onClick={() => navigate("/")}>🏠 Startsida</button>
+                <button onClick={() => navigate("/valj-restaurang")}>🍽️ Restauranger</button>
               </>
             ) : (
               <>
-                <button
-                  onClick={() => navigate("/profil")}
-                  aria-label="Profil och konto"
-                >
-                  👤 Min profil
-                </button>
-                <button
-                  onClick={() => navigate("/mina-bestallningar")}
-                  aria-label="Mina beställningar"
-                >
-                  📦 Mina beställningar
-                </button>
-                <button
-                  onClick={() => navigate("/valj-restaurang")}
-                  aria-label="Välj restaurang"
-                >
-                  🏠 Välj restaurang
-                </button>
+                <button onClick={() => navigate("/profil")}>👤 Min profil</button>
+                <button onClick={() => navigate("/valj-restaurang")}>🏠 Välj restaurang</button>
                 <button
                   onClick={() => {
                     localStorage.clear();
@@ -146,7 +129,6 @@ function App() {
                     navigate("/");
                     setInloggad(false);
                   }}
-                  aria-label="Logga ut"
                 >
                   🚪 Logga ut
                 </button>
@@ -155,10 +137,7 @@ function App() {
           </>
         )}
 
-        <button
-          onClick={växlaTema}
-          aria-label="Växla mellan mörkt och ljust läge"
-        >
+        <button onClick={växlaTema} aria-label="Växla mellan mörkt och ljust läge">
           {tema === "light" ? "🌙 Mörkt läge" : "☀️ Ljust läge"}
         </button>
       </div>
@@ -183,11 +162,7 @@ function App() {
             )
           }
         />
-
-        <Route
-          path="/checkout"
-          element={<Checkout varukorg={varukorg} setVarukorg={setVarukorg} />}
-        />
+        <Route path="/checkout" element={<Checkout varukorg={varukorg} setVarukorg={setVarukorg} />} />
         <Route path="/tack" element={<Tack />} />
         <Route path="/restaurang" element={<Restaurang />} />
         <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
@@ -209,9 +184,7 @@ function App() {
                       className="menu-card"
                       onClick={() => {
                         if (!inloggad) {
-                          alert(
-                            "🔒 Du måste logga in för att kunna göra en beställning."
-                          );
+                          alert("🔒 Du måste logga in för att kunna göra en beställning.");
                           return navigate("/login");
                         }
                         setValdRatt(ratt);
@@ -222,7 +195,9 @@ function App() {
                         src={`/bilder/${ratt.bild}`}
                         alt={ratt.namn}
                         className="menu-image"
-                        onError={(e) => (e.target.src = "/bilder/default.jpg")}
+                        onError={(e) => {
+                          e.target.src = "/bilder/default.jpg";
+                        }}
                       />
                       <h2>{ratt.namn}</h2>
                       <p>{ratt.beskrivning}</p>
@@ -232,6 +207,7 @@ function App() {
                     </div>
                   ))}
               </div>
+
               {valdRatt && (
                 <Undermeny
                   ratt={valdRatt}
@@ -255,9 +231,9 @@ function App() {
         />
       </Routes>
 
-      {location.pathname !== "/restaurang" &&
-        location.pathname !== "/" &&
-        inloggad && (
+      {/* ✅ Dölj kundvagnsflyt på profil/start/restaurang */}
+      {inloggad &&
+        !["/profil", "/restaurang", "/"].includes(location.pathname) && (
           <button
             onClick={() => navigate("/kundvagn")}
             className="kundvagn-flyt"

@@ -1,5 +1,4 @@
-// Start.jsx – uppdaterad med popup och footer-länkar
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Start() {
@@ -7,8 +6,13 @@ function Start() {
   const [visaPopup, setVisaPopup] = useState(false);
   const [visaInfo, setVisaInfo] = useState(null); // "om", "support", "villkor"
 
-  const öppnaInfo = (typ) => setVisaInfo(typ);
-  const stängInfo = () => setVisaInfo(null);
+  const öppnaInfo = (typ) => {
+    setVisaInfo(typ);
+  };
+
+  const stängInfo = () => {
+    setVisaInfo(null);
+  };
 
   const texter = {
     om: {

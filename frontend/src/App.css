@@ -307,3 +307,114 @@ body.dark button {
     border-radius: 6px;
   }
 }
+@media (max-width: 768px) {
+  .profil-container {
+    flex-direction: column;
+  }
+
+  .profil-container aside {
+    width: 100% !important;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .profil-container main {
+    width: 100%;
+  }
+
+  .profil-container input,
+  .profil-container textarea {
+    width: 100%;
+    max-width: 100%;
+    font-size: 1rem;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+}
+/* === PROFILVY === */
+
+.profil-container {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 80vh;
+  font-family: sans-serif;
+}
+
+.profil-container aside {
+  width: 240px;
+  padding: 1rem;
+  background-color: #f5f5f5;
+}
+
+body.dark .profil-container aside {
+  background-color: #1e1e1e;
+}
+
+.profil-container main {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Snygga och tydliga inputs */
+.profil-container input,
+.profil-container textarea {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  font-size: 1.1rem;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background-color: white;
+  color: black;
+}
+
+body.dark .profil-container input,
+body.dark .profil-container textarea {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #555;
+}
+
+body.dark .profil-container input::placeholder,
+body.dark .profil-container textarea::placeholder {
+  color: #bbb;
+}
+
+.profil-container label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+  color: inherit;
+}
+
+/* === RESPONSIV PROFIL === */
+@media (max-width: 768px) {
+  .profil-container {
+    flex-direction: column;
+  }
+
+  .profil-container aside {
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .profil-container main {
+    width: 100%;
+  }
+
+  .profil-container input,
+  .profil-container textarea {
+    width: 100%;
+    max-width: 100%;
+    font-size: 1rem;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+}

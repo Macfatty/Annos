@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Kundvagn({ varukorg, setVarukorg, setValdRatt, setRedigeringsIndex, meny }) {
@@ -14,11 +14,14 @@ function Kundvagn({ varukorg, setVarukorg, setValdRatt, setRedigeringsIndex, men
   const ändra = (index) => {
     const rätt = varukorg[index];
     const match = meny.find((r) => r.namn === rätt.namn);
-    if (!match) return alert("❌ Kunde inte hitta ursprungsrätten.");
+    if (!match) {
+      alert("❌ Kunde inte hitta ursprungsrätten.");
+      return;
+    }
 
     setValdRatt(match);
     setRedigeringsIndex(index);
-    navigate("/");
+    navigate(`/${sessionStorage.getItem("senasteRestaurang") || "valj-restaurang"}`);
   };
 
   const total = varukorg.reduce((sum, item) => sum + item.total, 0);
@@ -56,8 +59,16 @@ function Kundvagn({ varukorg, setVarukorg, setValdRatt, setRedigeringsIndex, men
 
       <p><strong>Totalt att betala:</strong> {total} kr</p>
 
-      <button onClick={() => navigate("/")}>Tillbaka till meny</button>
-      <button onClick={() => { setLaddar(true); navigate("/checkout"); }} disabled={varukorg.length === 0}>
+      <button onClick={() => navigate(`/${sessionStorage.getItem("senasteRestaurang") || "valj-restaurang"}`)}>
+        Tillbaka till meny
+      </button>
+      <button
+        onClick={() => {
+          setLaddar(true);
+          navigate("/checkout");
+        }}
+        disabled={varukorg.length === 0}
+      >
         ✅ Gå vidare till betalning
       </button>
     </div>

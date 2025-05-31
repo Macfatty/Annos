@@ -1,0 +1,46 @@
+
+Göra listan--- 
+
+¤
+hitta ett företag som jag kan beställa matbox och desing från, jacka-tröja-och behållare för mat/produkten 
+Ta bild på personla som kan användas backgrund på alla sidor
+Vi måste bestämma företagets färg och logga 
+ide kolla om någon på den lokala skolan kan desingna något för en liten summa ? 
+
+
+STARTSIDAN som inte medlem kund
+Mörk läge fungerar
+ 
+-_-Titta på resturanger knappen leder till välja resturang funkar, Ta bort resturanger knappen jämte startsidan när kund har kommit till välja resturang sida, det är helt onödig att den finns där när du ändå är i själva välj resturang sida
+
+ fungerar att gå tillbaka till startsidan från att trycka på titta på resturanger 
+
+efter valt resturang mörkläge fungerar, gå tillbaka till startsidan fungerar med fungerar att gå tillbaka till välja resturangsidan med. 
+
+Försökte trycka på en beställning men det gick inte, popupp fönster ( 🔒 Du måste logga in för att kunna göra en beställning.) trycker ok och det leder till logga in sidan vilket är bra 
+
+SOM INLOGGAD 
+trcykte registera och det funkade att skapa konto, konto heter Lamis@outlook.com lösernord Lamismn96 
+
+-_-måste skaffa bild på campino så vi kan läga det i resturangval så de synns 
+
+-_-min profil, spalten till höger matchar inte färgen i mörkläge blir det vit och i ljustläge blir det  mörkt måste fixas 
+
+Hej lamis står det, jättebra 
+-_-trcyker på mina beställningar (Se dina tidigare beställningar (funktion kopplas till MinaBeställningar.jsx).
+-_-trcyker på min information, står information men behöver lägga jämte inputbxerna -Namn -Epostadress -telefonnummer -adress -övright så att kunden vet vad som står i inputboxerna 
+ -_- trycker på säkerhet och lösernord, samma sak gäller här, det ska stå jämte inputboxerna -Lösernord -Epostadress och sedan ska de finnas en kanppt för att ändra lösernord eller ändra epostadress, (framtiden koppla till epostadress för att bekräfta bytet av lösernord samma gäller för epostadress. 
+-_-trycker på Exportera data, knappen ladda ner JSon ska laddad ner beställningshistori med information om användare namn adress nummer epostadress
+trycker på radera konto, Där ska kunden kunna radera sitt konto och inom 30 dagar ska kontot raderas från systemet permament 
+sen har vi logga ut knappen i samma spalt och den ska logga ut kunden 
+
+Mörk läge fungerar som inloggad testar gör en bestäälning
+--trcyker på magarita vi har dubbla rader av undermeny kött,grönt,såser,drick,övrigt ska endast vara en av dem, undermenyn följer inte med måste skrolla ner för avälja ett alternativ och scrolla upp för att stänga alternatvien för att kunna se min beställning det är inte bra.  måste kunna komma åt lägg till i varukorgen knappen utan att behöva scrolla upp för att stänga tillbehöermenyn. 
+lägger en beställning på magarita med tomat, ost grundpris 125 kr tillbehör lägger jag en Coca-Cola Original 33cl (+20 kr) sås alternativen har inte så man kan trycka in stor box de ser inte logist ut du kan endast trycka in liten box 
+
+vi lägger beställningen och trycker gå till kundvangen allt ser bra ut där
+trcyker på gå vidare till betalningen kundens inomration finns inte med, kunden ska inte behöva fylla boxerna igen de ska vara aoutomatiskt de enda de ska kanse behöva fylla på är skriv ett medelande till resturangen boxen.  de ska stå där även jämte input boxerna -NAMN -EPOSTADRESS -NUMMER -ADRESS -ÖVRIGT 
+
+TRYCKER SKICKA beställning, popupp kommer som säger Beställningen är skickad! men den vill jag trycker på ok för att forsätta, Det ska vi inte behöva göra utan det sak direkt till tack för din beställning sida där det ska stå resturangen har fått din beställning och du får medelande när förare är på väg med din beställning och sen en stor knapp med tillabaka till resturangval eller min profil eller logga ut, i framtiden (kunden ska kunna kolla på sin beställning hur det går från att resturangen aceptera deras beställning till att föraren har plockat upp den och är påväg eller få en notis att föraren närmar deras hem.) 
+
+trycker okej och blir skickad till startsidan vilken vi inte ska bli som inloggad kund.... måste fixa det 
