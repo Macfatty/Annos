@@ -67,6 +67,7 @@ npm run dev
 ### 7. Kör kodkvalitetskontroller
 ```bash
 cd frontend
+npm install  # installera paket innan lint
 npm run lint
 cd ../backend
 npm test
