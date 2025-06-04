@@ -5,6 +5,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("./authMiddleware");
+const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -51,18 +52,25 @@ app.get("/api/tillbehor", (req, res) => {
 });
 
 // SPARA ORDER + KUNDBESTÄLLNING
-app.post("/api/order", verifyToken, (req, res) => {
-  const { kund, order } = req.body;
+app.post(
+  "/api/order",
+  verifyToken,
+  [
+    body("kund.namn").trim().escape().notEmpty(),
+    body("kund.telefon").trim().escape().notEmpty(),
+    body("kund.adress").trim().escape().notEmpty(),
+    body("kund.ovrigt").optional().trim().escape(),
+    body("kund.email").isEmail().normalizeEmail(),
+    body("order").isArray({ min: 1 }),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  if (!kund || !order || !Array.isArray(order)) {
-    return res.status(400).json({ message: "Saknar kund eller orderdata" });
-  }
-
-  const { namn, telefon, adress, ovrigt, email } = kund;
-
-  if (!namn || !telefon || !adress || !email) {
-    return res.status(400).json({ message: "Ofullständig kundinformation" });
-  }
+    const { kund, order } = req.body;
+    const { namn, telefon, adress, ovrigt, email } = kund;
 
   const order_json = JSON.stringify(order);
   const total = order.reduce((sum, rad) => {
@@ -132,28 +140,50 @@ app.post("/api/admin/orders/:id/klart", verifyToken, (req, res) => {
 });
 
 // REGISTRERING
-app.post("/api/register", async (req, res) => {
-  const { email, losenord, namn, telefon, adress } = req.body;
-
-  if (!email || !losenord || !namn) {
-    return res.status(400).json({ error: "Saknar fält" });
-  }
-
-  const hashed = await bcrypt.hash(losenord, 10);
-  const sql = `INSERT INTO users (email, password, namn, telefon, adress) VALUES (?, ?, ?, ?, ?)`;
-
-  db.run(sql, [email, hashed, namn, telefon, adress], function (err) {
-    if (err) {
-      console.error("❌ Registreringsfel:", err.message);
-      return res.status(400).json({ error: "E-post finns redan" });
+app.post(
+  "/api/register",
+  [
+    body("email").isEmail().normalizeEmail(),
+    body("losenord").isStrongPassword(),
+    body("namn").trim().escape().notEmpty(),
+    body("telefon").optional().trim().escape(),
+    body("adress").optional().trim().escape(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
-    res.status(201).json({ message: "Användare skapad" });
-  });
-});
+
+    const { email, losenord, namn, telefon, adress } = req.body;
+
+    const hashed = await bcrypt.hash(losenord, 10);
+    const sql = `INSERT INTO users (email, password, namn, telefon, adress) VALUES (?, ?, ?, ?, ?)`;
+
+    db.run(sql, [email, hashed, namn, telefon, adress], function (err) {
+      if (err) {
+        console.error("❌ Registreringsfel:", err.message);
+        return res.status(400).json({ error: "E-post finns redan" });
+      }
+      res.status(201).json({ message: "Användare skapad" });
+    });
+  }
+);
 
 // LOGIN
-app.post("/api/login", (req, res) => {
-  const { email, losenord } = req.body;
+app.post(
+  "/api/login",
+  [
+    body("email").isEmail().normalizeEmail(),
+    body("losenord").notEmpty(),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, losenord } = req.body;
   const sql = `SELECT * FROM users WHERE email = ?`;
 
   db.get(sql, [email], async (err, user) => {
