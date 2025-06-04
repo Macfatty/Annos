@@ -15,7 +15,11 @@ const {
   db,
 } = require("./orderDB");
 
-const SECRET = "hemligKod123"; // byt till process.env.JWT_SECRET i produktion
+const SECRET = process.env.JWT_SECRET;
+if (!SECRET) {
+  console.error("JWT_SECRET saknas. Lägg till variabeln i din miljö eller .env-fil.");
+  process.exit(1);
+}
 
 app.use(cors());
 app.use(express.json());
