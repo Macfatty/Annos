@@ -38,7 +38,10 @@ npm list express
 npm list cors
 ```
 
-### 3. Starta backend-servern
+### 3. Skapa en `.env`-fil
+Kopiera `.env.example` och döp den till `.env`. Sätt ett eget värde för `JWT_SECRET`.
+
+### 4. Starta backend-servern
 ```bash
 node server.js
 ```
@@ -46,13 +49,13 @@ node server.js
 
 ---
 
-### 4. Installera frontend-beroenden
+### 5. Installera frontend-beroenden
 ```bash
 cd ../frontend
 npm install
 ```
 
-### 5. Starta frontend (Vite)
+### 6. Starta frontend (Vite)
 ```bash
 npm run dev
 ```
@@ -60,7 +63,7 @@ npm run dev
 
 ---
 
-### 6. Testa att frontend <--> backend fungerar:
+### 7. Testa att frontend <--> backend fungerar:
 - Gå till frontend i webbläsaren
 - Klicka på "Testa backend-anslutning"
 - Du bör se: `Backend funkar!`
