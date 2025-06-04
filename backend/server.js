@@ -5,6 +5,9 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("./authMiddleware");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const app = express();
 const PORT = 3001;
@@ -16,7 +19,6 @@ const {
   db,
 } = require("./orderDB");
 
-const SECRET = "hemligKod123"; // byt till process.env.JWT_SECRET i produktion
 
 app.use(cors());
 app.use(express.json());
@@ -164,7 +166,7 @@ app.post("/api/login", (req, res) => {
       return res.status(401).json({ error: "Fel e-post eller lösenord" });
     }
 
-    const token = jwt.sign({ userId: user.id }, SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
     res.json({
       token,
@@ -184,7 +186,7 @@ app.get("/api/profile", (req, res) => {
   }
 
   try {
-    const payload = jwt.verify(token, SECRET);
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
     db.get(
       "SELECT id, email, namn, telefon, adress FROM users WHERE id = ?",
       [payload.userId],
@@ -223,7 +225,7 @@ app.get("/api/my-orders", (req, res) => {
   }
 
   try {
-    const payload = jwt.verify(token, SECRET);
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
     const userSql = `SELECT email FROM users WHERE id = ?`;
 
     db.get(userSql, [payload.userId], (err, user) => {
