@@ -3,11 +3,20 @@ const bcrypt = require("bcrypt");
 
 const db = new sqlite3.Database("./orders.sqlite");
 
-const email = "admin@example.com";
-const losenord = "admin123";
-const namn = "Admin Test";
-const telefon = "0700000000";
-const adress = "Testgatan 1";
+const {
+  ADMIN_EMAIL: email,
+  ADMIN_PASSWORD: losenord,
+  ADMIN_NAME: namn,
+  ADMIN_PHONE: telefon,
+  ADMIN_ADDRESS: adress,
+} = process.env;
+
+if (!email || !losenord || !namn) {
+  console.error(
+    "❌ Ange ADMIN_EMAIL, ADMIN_PASSWORD och ADMIN_NAME som miljövariabler"
+  );
+  process.exit(1);
+}
 
 bcrypt.hash(losenord, 10, (err, hash) => {
   if (err) return console.error("❌ Fel vid hash:", err);
