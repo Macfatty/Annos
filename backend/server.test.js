@@ -1,9 +1,11 @@
 const request = require('supertest');
-const app = require('./server');
-const { db } = require('./orderDB');
 const jwt = require('jsonwebtoken');
 
 const SECRET = process.env.JWT_SECRET || 'test-secret';
+process.env.JWT_SECRET = SECRET;
+
+const app = require('./server');
+const { db } = require('./orderDB');
 
 describe('API endpoints', () => {
   afterAll((done) => {

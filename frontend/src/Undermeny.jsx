@@ -158,8 +158,9 @@ function Undermeny({ ratt, tillbehor, onClose, onAddToCart }) {
               <div style={{ marginLeft: "1rem" }}>
                 {grupperade[oppenKategori].map((item) => (
                   <div key={item.id} style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                    <label style={{ flex: 1 }}>
+                    <label htmlFor={`chk-${item.id}`} style={{ flex: 1 }}>
                       <input
+                        id={`chk-${item.id}`}
                         type="checkbox"
                         checked={valda[item.id] > 0}
                         onChange={(e) => ändraVal(item.id, e.target.checked)}
