@@ -15,6 +15,8 @@ db.serialize(() => {
       adress TEXT,
       extraInfo TEXT,
       order_json TEXT,
+      total REAL,
+      restaurangSlug TEXT,
       status TEXT DEFAULT 'aktiv',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
