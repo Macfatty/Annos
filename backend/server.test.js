@@ -1,6 +1,9 @@
 const request = require('supertest');
 const app = require('./server');
 const { db } = require('./orderDB');
+const jwt = require('jsonwebtoken');
+
+const SECRET = 'hemligKod123';
 
 describe('API endpoints', () => {
   afterAll((done) => {
@@ -28,7 +31,11 @@ describe('API endpoints', () => {
       ]
     };
 
-    const res = await request(app).post('/api/order').send(newOrder);
+    const token = jwt.sign({ userId: 1 }, SECRET);
+    const res = await request(app)
+      .post('/api/order')
+      .set('Authorization', `Bearer ${token}`)
+      .send(newOrder);
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty('orderId');
 
@@ -41,5 +48,12 @@ describe('API endpoints', () => {
 
     expect(inserted).toBeDefined();
     expect(inserted.namn).toBe(newOrder.kund.namn);
+  });
+
+  test('POST /api/order returns 401 without token', async () => {
+    const res = await request(app)
+      .post('/api/order')
+      .send({});
+    expect(res.statusCode).toBe(401);
   });
 });
