@@ -9,7 +9,7 @@
 
 - Frontend: React (via Vite)
 - Backend: Node.js + Express
-- Databas: MongoDB
+- Databas: SQLite (via SQLite3)
 - Betalning: Swish (via API, i framtiden)
 - Språk: Svenska
 
@@ -64,6 +64,13 @@ npm run dev
 - Gå till frontend i webbläsaren
 - Klicka på "Testa backend-anslutning"
 - Du bör se: `Backend funkar!`
+### 7. Kör kodkvalitetskontroller
+```bash
+cd frontend
+npm run lint
+cd ../backend
+npm test
+```
 
 ## 📌 Funktioner (MVP)
 
