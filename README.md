@@ -33,6 +33,8 @@ cd Annos
 ```bash
 cd backend
 npm install
+# Skapa .env med JWT_SECRET
+echo "JWT_SECRET=din-hemliga-kod" > .env
 # Kontrollera att du har express & cors
 npm list express
 npm list cors
