@@ -241,6 +241,10 @@ app.get("/api/my-orders", (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Servern körs på http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Servern körs på http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
