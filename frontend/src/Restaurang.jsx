@@ -1,16 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Restaurang() {
+  const navigate = useNavigate();
   const [dagensOrdrar, setDagensOrdrar] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fel, setFel] = useState(null);
 
-  const hamtaOrdrar = async () => {
+  const hamtaOrdrar = useCallback(async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/admin/orders/today`);
-      if (!res.ok) {throw new Error("Kunde inte hämta dagens ordrar");}
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      const res = await fetch(`${BASE_URL}/api/admin/orders/today`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.status === 401) {
+        navigate("/login");
+        return;
+      }
+      if (!res.ok) {
+        throw new Error("Kunde inte hämta dagens ordrar");
+      }
       const data = await res.json();
       setDagensOrdrar(data);
       setFel(null);
@@ -20,7 +35,7 @@ function Restaurang() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
   useEffect(() => {
     hamtaOrdrar();
@@ -28,13 +43,26 @@ function Restaurang() {
       hamtaOrdrar();
     }, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [hamtaOrdrar]);
 
   const markeraSomKlar = async (orderId) => {
     try {
-      await fetch(`${BASE_URL}/api/admin/orders/${orderId}/klart`, {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      const res = await fetch(`${BASE_URL}/api/admin/orders/${orderId}/klart`, {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
       });
+      if (res.status === 401) {
+        navigate("/login");
+        return;
+      }
+      if (!res.ok) {
+        throw new Error("Kunde inte markera order som klar");
+      }
       setDagensOrdrar((prev) => prev.filter((o) => o.id !== orderId));
     } catch (err) {
       alert("❌ Kunde inte markera som klar");
