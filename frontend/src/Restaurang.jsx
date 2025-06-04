@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,8 +9,10 @@ function Restaurang() {
 
   const hamtaOrdrar = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/admin/orders/today`);
-      if (!res.ok) throw new Error("Kunde inte hämta dagens ordrar");
+    const res = await fetch(`${BASE_URL}/api/admin/orders/today`);
+    if (!res.ok) {
+      throw new Error("Kunde inte hämta dagens ordrar");
+    }
       const data = await res.json();
       setDagensOrdrar(data);
       setFel(null);
@@ -78,15 +80,22 @@ function Restaurang() {
           const nu = new Date();
           const diffMin = (nu - tid) / (1000 * 60);
 
-          let färg = "white";
-          if (order.status === "klar") färg = "lightgreen";
-          else if (diffMin < 1) färg = "lightcoral";
+    let färg = "white";
+    if (order.status === "klar") {
+      färg = "lightgreen";
+    } else if (diffMin < 1) {
+      färg = "lightcoral";
+    }
 
-          if (ärMörktLäge) {
-            if (order.status === "klar") färg = "#2e7031";
-            else if (diffMin < 1) färg = "#803333";
-            else färg = "#2a2a2a";
-          }
+    if (ärMörktLäge) {
+      if (order.status === "klar") {
+        färg = "#2e7031";
+      } else if (diffMin < 1) {
+        färg = "#803333";
+      } else {
+        färg = "#2a2a2a";
+      }
+    }
 
           return (
             <div
