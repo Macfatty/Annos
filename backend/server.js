@@ -20,6 +20,21 @@ const SECRET = "hemligKod123"; // byt till process.env.JWT_SECRET i produktion
 app.use(cors());
 app.use(express.json());
 
+function authenticateToken(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ error: "Ingen token" });
+  }
+
+  try {
+    const payload = jwt.verify(token, SECRET);
+    req.user = payload;
+    next();
+  } catch {
+    return res.status(401).json({ error: "Ogiltig token" });
+  }
+}
+
 app.get("/", (req, res) => {
   res.send("backend funkar!");
 });
@@ -48,7 +63,7 @@ app.get("/api/tillbehor", (req, res) => {
 });
 
 // SPARA ORDER + KUNDBESTÄLLNING
-app.post("/api/order", (req, res) => {
+app.post("/api/order", authenticateToken, (req, res) => {
   const { kund, order } = req.body;
 
   if (!kund || !order || !Array.isArray(order)) {
@@ -94,7 +109,7 @@ app.post("/api/order", (req, res) => {
 });
 
 // ADMIN – HÄMTA ORDRAR
-app.get("/api/admin/orders/today", (req, res) => {
+app.get("/api/admin/orders/today", authenticateToken, (req, res) => {
   hamtaDagensOrdrar((err, ordrar) => {
     if (err) {
       console.error("Fel vid hämtning av dagens ordrar:", err);
@@ -104,7 +119,7 @@ app.get("/api/admin/orders/today", (req, res) => {
   });
 });
 
-app.get("/api/admin/orders/latest", (req, res) => {
+app.get("/api/admin/orders/latest", authenticateToken, (req, res) => {
   hamtaSenasteOrder((err, order) => {
     if (err) {
       console.error("Fel vid hämtning av senaste order:", err);
@@ -114,7 +129,7 @@ app.get("/api/admin/orders/latest", (req, res) => {
   });
 });
 
-app.post("/api/admin/orders/:id/klart", (req, res) => {
+app.post("/api/admin/orders/:id/klart", authenticateToken, (req, res) => {
   const orderId = req.params.id;
   markeraOrderSomKlar(orderId, (err) => {
     if (err) {
@@ -173,15 +188,9 @@ app.post("/api/login", (req, res) => {
 });
 
 // PROFIL – INKL. BESTÄLLNINGSHISTORIK
-app.get("/api/profile", (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ error: "Ingen token" });
-  }
-
-  try {
-    const payload = jwt.verify(token, SECRET);
-    db.get(
+app.get("/api/profile", authenticateToken, (req, res) => {
+  const payload = req.user;
+  db.get(
       "SELECT id, email, namn, telefon, adress FROM users WHERE id = ?",
       [payload.userId],
       (err, user) => {
@@ -206,39 +215,27 @@ app.get("/api/profile", (req, res) => {
         });
       }
     );
-  } catch {
-    return res.status(401).json({ error: "Ogiltig token" });
-  }
 });
 
 // MINA BESTÄLLNINGAR
-app.get("/api/my-orders", (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ error: "Ingen token" });
-  }
+app.get("/api/my-orders", authenticateToken, (req, res) => {
+  const payload = req.user;
+  const userSql = `SELECT email FROM users WHERE id = ?`;
 
-  try {
-    const payload = jwt.verify(token, SECRET);
-    const userSql = `SELECT email FROM users WHERE id = ?`;
+  db.get(userSql, [payload.userId], (err, user) => {
+    if (err || !user) {
+      return res.status(404).json({ error: "Användare saknas" });
+    }
 
-    db.get(userSql, [payload.userId], (err, user) => {
-      if (err || !user) {
-        return res.status(404).json({ error: "Användare saknas" });
+    const orderSql = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
+    db.all(orderSql, [user.email], (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: "Kunde inte hämta beställningar" });
       }
 
-      const orderSql = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
-      db.all(orderSql, [user.email], (err, rows) => {
-        if (err) {
-          return res.status(500).json({ error: "Kunde inte hämta beställningar" });
-        }
-
-        res.json(rows);
-      });
+      res.json(rows);
     });
-  } catch {
-    return res.status(401).json({ error: "Ogiltig token" });
-  }
+  });
 });
 
 app.listen(PORT, () => {
