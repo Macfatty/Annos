@@ -138,3 +138,5 @@ dist
 node_modules/
 dist/
 .env
+
+Annos-bugg-och-fix.txt
