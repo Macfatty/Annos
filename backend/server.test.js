@@ -3,7 +3,7 @@ const app = require('./server');
 const { db } = require('./orderDB');
 const jwt = require('jsonwebtoken');
 
-const SECRET = 'hemligKod123';
+const SECRET = process.env.JWT_SECRET || 'test-secret';
 
 describe('API endpoints', () => {
   afterAll((done) => {
