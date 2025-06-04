@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Kundvagn({ varukorg, setVarukorg, setValdRatt, setRedigeringsIndex, meny }) {
+function Kundvagn({
+  varukorg,
+  setVarukorg,
+  setValdRatt,
+  setRedigeringsIndex,
+  meny,
+  restaurangSlug,
+}) {
   const navigate = useNavigate();
   const [laddar, setLaddar] = useState(false);
 
@@ -21,7 +28,7 @@ function Kundvagn({ varukorg, setVarukorg, setValdRatt, setRedigeringsIndex, men
 
     setValdRatt(match);
     setRedigeringsIndex(index);
-    navigate(`/${sessionStorage.getItem("senasteRestaurang") || "valj-restaurang"}`);
+    navigate(`/${restaurangSlug || "valj-restaurang"}`);
   };
 
   const total = varukorg.reduce((sum, item) => sum + item.total, 0);
@@ -37,37 +44,68 @@ function Kundvagn({ varukorg, setVarukorg, setValdRatt, setRedigeringsIndex, men
       ) : (
         <ul style={{ listStyle: "none", padding: 0 }}>
           {varukorg.map((ratt, index) => (
-            <li key={index} style={{ marginBottom: "1.5rem", padding: "1rem", border: "1px solid #ccc", borderRadius: "8px" }}>
+            <li
+              key={index}
+              style={{
+                marginBottom: "1.5rem",
+                padding: "1rem",
+                border: "1px solid #ccc",
+                borderRadius: "8px",
+              }}
+            >
               <strong>{ratt.namn}</strong> – {ratt.total} kr
               {ratt.tillval.length > 0 && (
-                <ul style={{ fontSize: "0.9rem", paddingLeft: "1rem", marginTop: "0.5rem" }}>
+                <ul
+                  style={{
+                    fontSize: "0.9rem",
+                    paddingLeft: "1rem",
+                    marginTop: "0.5rem",
+                  }}
+                >
                   {ratt.tillval.map((t, i) => (
-                    <li key={i}>+ {t.namn} ({t.pris} kr)</li>
+                    <li key={i}>
+                      + {t.namn} ({t.pris} kr)
+                    </li>
                   ))}
                 </ul>
               )}
               <div style={{ marginTop: "0.5rem" }}>
-                <button onClick={() => ändra(index)} style={{ marginRight: "0.5rem" }}>
+                <button
+                  type="button"
+                  onClick={() => ändra(index)}
+                  style={{ marginRight: "0.5rem" }}
+                >
                   Ändra
                 </button>
-                <button onClick={() => taBort(index)}>🗑️ Ta bort</button>
+                <button type="button" onClick={() => taBort(index)}>
+                  🗑️ Ta bort
+                </button>
               </div>
             </li>
           ))}
         </ul>
       )}
 
-      <p><strong>Totalt att betala:</strong> {total} kr</p>
+      <p>
+        <strong>Totalt att betala:</strong> {total} kr
+      </p>
 
-      <button onClick={() => navigate(`/${sessionStorage.getItem("senasteRestaurang") || "valj-restaurang"}`)}>
-        Tillbaka till meny
-      </button>
       <button
+        type="button"
+        onClick={() => navigate(`/${restaurangSlug || "valj-restaurang"}`)}
+        aria-label="Gå tillbaka till menyn"
+      >
+        🍕 Tillbaka till meny
+      </button>
+
+      <button
+        type="button"
         onClick={() => {
           setLaddar(true);
           navigate("/checkout");
         }}
         disabled={varukorg.length === 0}
+        aria-label="Fortsätt till betalning"
       >
         ✅ Gå vidare till betalning
       </button>

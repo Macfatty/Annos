@@ -34,8 +34,13 @@ db.serialize(() => {
 
 // Spara order
 function sparaOrder(kund, order, callback) {
-  const sql = `INSERT INTO orders (namn, telefon, email, adress, extraInfo, order_json) VALUES (?, ?, ?, ?, ?, ?)`;
-  const jsonData = JSON.stringify(order);
+  const sql = `
+    INSERT INTO orders (namn, telefon, email, adress, extraInfo, order_json, total, restaurangSlug)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const jsonData = JSON.stringify(order.varor || []);
+  const total = order.total || 0;
+  const slug = order.restaurangSlug || "";
 
   db.run(
     sql,
@@ -46,6 +51,8 @@ function sparaOrder(kund, order, callback) {
       kund.adress,
       kund.extraInfo || "",
       jsonData,
+      total,
+      slug,
     ],
     function (err) {
       if (err) return callback(err);
@@ -57,7 +64,6 @@ function sparaOrder(kund, order, callback) {
 // Hämta senaste order
 function hamtaSenasteOrder(callback) {
   const sql = `SELECT * FROM orders ORDER BY created_at DESC LIMIT 1`;
-
   db.get(sql, [], (err, row) => {
     if (err) return callback(err);
     callback(null, row);
@@ -88,11 +94,10 @@ function hamtaDagensOrdrar(callback) {
   });
 }
 
-// Exportera funktioner
 module.exports = {
   sparaOrder,
   hamtaDagensOrdrar,
   hamtaSenasteOrder,
   markeraOrderSomKlar,
-  db, // 👈 för att kunna användas i server.js (login/register)
+  db,
 };

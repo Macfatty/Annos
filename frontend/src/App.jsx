@@ -13,10 +13,12 @@ import MinProfil from "./MinProfil";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Tack from "./Tack";
 
-
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [meny, setMeny] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,24 +29,22 @@ function App() {
     return sparad ? JSON.parse(sparad) : [];
   });
   const [tillbehor, setTillbehor] = useState([]);
-  const navigate = useNavigate();
-  const location = useLocation();
   const [inloggad, setInloggad] = useState(!!localStorage.getItem("token"));
+  const [tema, setTema] = useState(() => localStorage.getItem("tema") || "light");
+  const [restaurangSlug, setRestaurangSlug] = useState("campino");
 
-  const [tema, setTema] = useState(() => {
-    return localStorage.getItem("tema") || "light";
-  });
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const slug = query.get("restaurang");
+    if (slug) {
+      setRestaurangSlug(slug);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     document.body.className = tema;
     localStorage.setItem("tema", tema);
   }, [tema]);
-
-  const växlaTema = () => {
-    setTema((prev) => {
-      return prev === "light" ? "dark" : "light";
-    });
-  };
 
   useEffect(() => {
     localStorage.setItem("varukorg", JSON.stringify(varukorg));
@@ -59,14 +59,13 @@ function App() {
         }
         const data = await res.json();
         setMeny(data);
-      } catch (error) {
-        console.error("Fel:", error);
+      } catch (err) {
+        console.error("Fel:", err);
         setError("Kunde inte ladda menydata från servern.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchMeny();
   }, []);
 
@@ -79,11 +78,10 @@ function App() {
         }
         const data = await res.json();
         setTillbehor(data);
-      } catch (error) {
-        console.error("Fel vid tillbehör:", error);
+      } catch (err) {
+        console.error("Fel vid tillbehör:", err);
       }
     };
-
     fetchTillbehor();
   }, []);
 
@@ -97,6 +95,10 @@ function App() {
     };
   }, []);
 
+  const växlaTema = () => {
+    setTema((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
   return (
     <>
       <div
@@ -108,7 +110,7 @@ function App() {
           gap: "1rem",
           marginBottom: "1rem",
           padding: "1rem",
-          flexWrap: "wrap",
+          flexWrap: "wrap"
         }}
       >
         {!["/", "/restaurang", "/login", "/register"].includes(location.pathname) && (
@@ -125,6 +127,7 @@ function App() {
                 <button
                   onClick={() => {
                     localStorage.clear();
+                    window.dispatchEvent(new Event("storage"));
                     alert("Du är nu utloggad.");
                     navigate("/");
                     setInloggad(false);
@@ -146,6 +149,7 @@ function App() {
         <Route path="/" element={<Start />} />
         <Route path="/valj-restaurang" element={<ValjRestaurang />} />
         <Route path="/profil" element={<MinProfil />} />
+        <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
         <Route
           path="/kundvagn"
           element={
@@ -156,16 +160,26 @@ function App() {
                 setValdRatt={setValdRatt}
                 setRedigeringsIndex={setRedigeringsIndex}
                 meny={meny}
+                navigate={navigate}
+                restaurangSlug={restaurangSlug}
               />
             ) : (
               <Start />
             )
           }
         />
-        <Route path="/checkout" element={<Checkout varukorg={varukorg} setVarukorg={setVarukorg} />} />
+        <Route
+          path="/checkout"
+          element={
+            <Checkout
+              varukorg={varukorg}
+              setVarukorg={setVarukorg}
+              restaurang={restaurangSlug}
+            />
+          }
+        />
         <Route path="/tack" element={<Tack />} />
         <Route path="/restaurang" element={<Restaurang />} />
-        <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
@@ -185,7 +199,8 @@ function App() {
                       onClick={() => {
                         if (!inloggad) {
                           alert("🔒 Du måste logga in för att kunna göra en beställning.");
-                          return navigate("/login");
+                          navigate("/login");
+                          return;
                         }
                         setValdRatt(ratt);
                       }}
@@ -231,11 +246,10 @@ function App() {
         />
       </Routes>
 
-      {/* ✅ Dölj kundvagnsflyt på profil/start/restaurang */}
       {inloggad &&
-        !["/profil", "/restaurang", "/"].includes(location.pathname) && (
+        !["/profil", "/restaurang", "/", "/checkout"].includes(location.pathname) && (
           <button
-            onClick={() => navigate("/kundvagn")}
+            onClick={() => navigate(`/checkout?restaurang=${restaurangSlug}`)}
             className="kundvagn-flyt"
             aria-label="Gå till kundvagn"
           >

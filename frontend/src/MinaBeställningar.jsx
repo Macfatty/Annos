@@ -8,7 +8,6 @@ function MinaBeställningar({ onBeställIgen }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       setFel("Du är inte inloggad.");
       return;
@@ -62,7 +61,7 @@ function MinaBeställningar({ onBeställIgen }) {
       {bestallningar.map((order) => (
         <div key={order.id} className="bestallningskort">
           <p><strong>Datum:</strong> {new Date(order.created_at).toLocaleString("sv-SE")}</p>
-          <p><strong>Totalt:</strong> {order.total} kr</p>
+          <p><strong>Restaurang:</strong> {order.restaurangSlug || "Okänd"}</p>
           <p><strong>Status:</strong> {order.status}</p>
           <ul>
             {order.rader.map((rad, index) => (
@@ -78,6 +77,7 @@ function MinaBeställningar({ onBeställIgen }) {
               </li>
             ))}
           </ul>
+          <p><strong>Total:</strong> {order.total} kr</p>
           {onBeställIgen && (
             <button
               onClick={() => onBeställIgen(order.rader)}
