@@ -83,11 +83,14 @@ app.post("/api/order", verifyToken, (req, res) => {
         return res.status(500).json({ message: "Internt serverfel" });
       }
 
-      console.log("📦 Beställning mottagen och sparad:");
-      console.log("🔢 Order ID:", this.lastID);
-      console.log("👤 Kundinfo:", kund);
-      console.log("🧾 Orderinnehåll:", order);
-      console.log("🕒 Tid:", new Date().toLocaleString("sv-SE"));
+      console.log("Ny beställning sparad");
+
+      if (process.env.NODE_ENV === "development") {
+        console.log("Order ID:", this.lastID);
+        console.log("Kundinfo:", kund);
+        console.log("Orderinnehåll:", order);
+        console.log("Tid:", new Date().toLocaleString("sv-SE"));
+      }
 
       res.status(201).json({ message: "Beställning mottagen", orderId: this.lastID });
     }
