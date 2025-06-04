@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const app = express();
 const PORT = 3001;
@@ -15,7 +16,7 @@ const {
   db,
 } = require("./orderDB");
 
-const SECRET = "hemligKod123"; // byt till process.env.JWT_SECRET i produktion
+const SECRET = process.env.JWT_SECRET;
 
 app.use(cors());
 app.use(express.json());
