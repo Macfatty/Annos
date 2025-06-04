@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const verifyToken = require("./authMiddleware");
 
 const app = express();
 const PORT = 3001;
@@ -48,7 +49,7 @@ app.get("/api/tillbehor", (req, res) => {
 });
 
 // SPARA ORDER + KUNDBESTÄLLNING
-app.post("/api/order", (req, res) => {
+app.post("/api/order", verifyToken, (req, res) => {
   const { kund, order } = req.body;
 
   if (!kund || !order || !Array.isArray(order)) {
@@ -94,7 +95,7 @@ app.post("/api/order", (req, res) => {
 });
 
 // ADMIN – HÄMTA ORDRAR
-app.get("/api/admin/orders/today", (req, res) => {
+app.get("/api/admin/orders/today", verifyToken, (req, res) => {
   hamtaDagensOrdrar((err, ordrar) => {
     if (err) {
       console.error("Fel vid hämtning av dagens ordrar:", err);
@@ -104,7 +105,7 @@ app.get("/api/admin/orders/today", (req, res) => {
   });
 });
 
-app.get("/api/admin/orders/latest", (req, res) => {
+app.get("/api/admin/orders/latest", verifyToken, (req, res) => {
   hamtaSenasteOrder((err, order) => {
     if (err) {
       console.error("Fel vid hämtning av senaste order:", err);
@@ -114,7 +115,7 @@ app.get("/api/admin/orders/latest", (req, res) => {
   });
 });
 
-app.post("/api/admin/orders/:id/klart", (req, res) => {
+app.post("/api/admin/orders/:id/klart", verifyToken, (req, res) => {
   const orderId = req.params.id;
   markeraOrderSomKlar(orderId, (err) => {
     if (err) {
