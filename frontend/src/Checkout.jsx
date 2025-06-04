@@ -93,50 +93,45 @@ function Checkout({ varukorg, setVarukorg, restaurang }) {
           skickaBestallning();
         }}
       >
-        <label>
-          Namn:
-          <input
-            type="text"
-            value={kundinfo.namn}
-            onChange={(e) => setKundinfo({ ...kundinfo, namn: e.target.value })}
-            required
-          />
-        </label>
-        <label>
-          E-post:
-          <input
-            type="email"
-            value={kundinfo.email}
-            onChange={(e) => setKundinfo({ ...kundinfo, email: e.target.value })}
-            required
-          />
-        </label>
-        <label>
-          Telefon:
-          <input
-            type="tel"
-            value={kundinfo.telefon}
-            onChange={(e) => setKundinfo({ ...kundinfo, telefon: e.target.value })}
-            required
-          />
-        </label>
-        <label>
-          Adress:
-          <input
-            type="text"
-            value={kundinfo.adress}
-            onChange={(e) => setKundinfo({ ...kundinfo, adress: e.target.value })}
-            required
-          />
-        </label>
-        <label>
-          Övrigt:
-          <textarea
-            value={kundinfo.ovrigt}
-            onChange={(e) => setKundinfo({ ...kundinfo, ovrigt: e.target.value })}
-            aria-label="Övrig information till restaurangen"
-          />
-        </label>
+        <label htmlFor="coNamn">Namn:</label>
+        <input
+          id="coNamn"
+          type="text"
+          value={kundinfo.namn}
+          onChange={(e) => setKundinfo({ ...kundinfo, namn: e.target.value })}
+          required
+        />
+        <label htmlFor="coEmail">E-post:</label>
+        <input
+          id="coEmail"
+          type="email"
+          value={kundinfo.email}
+          onChange={(e) => setKundinfo({ ...kundinfo, email: e.target.value })}
+          required
+        />
+        <label htmlFor="coTelefon">Telefon:</label>
+        <input
+          id="coTelefon"
+          type="tel"
+          value={kundinfo.telefon}
+          onChange={(e) => setKundinfo({ ...kundinfo, telefon: e.target.value })}
+          required
+        />
+        <label htmlFor="coAdress">Adress:</label>
+        <input
+          id="coAdress"
+          type="text"
+          value={kundinfo.adress}
+          onChange={(e) => setKundinfo({ ...kundinfo, adress: e.target.value })}
+          required
+        />
+        <label htmlFor="coOvrigt">Övrigt:</label>
+        <textarea
+          id="coOvrigt"
+          value={kundinfo.ovrigt}
+          onChange={(e) => setKundinfo({ ...kundinfo, ovrigt: e.target.value })}
+          aria-label="Övrig information till restaurangen"
+        />
 
         <div
           style={{
