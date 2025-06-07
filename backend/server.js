@@ -209,72 +209,55 @@ app.post(
 });
 
 // PROFIL – INKL. BESTÄLLNINGSHISTORIK
-app.get("/api/profile", (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ error: "Ingen token" });
-  }
+app.get("/api/profile", verifyToken, (req, res) => {
+  const userId = req.user.userId;
 
-  try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    db.get(
-      "SELECT id, email, namn, telefon, adress FROM users WHERE id = ?",
-      [payload.userId],
-      (err, user) => {
-        if (err || !user) {
-          return res.status(404).json({ error: "Användare finns inte" });
-        }
-
-        const sql = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
-        db.all(sql, [user.email], (err, orders) => {
-          if (err) {
-            console.error("Fel vid hämtning av beställningar:", err);
-            return res.status(500).json({ error: "Kunde inte hämta beställningar" });
-          }
-
-          res.json({
-            namn: user.namn,
-            email: user.email,
-            telefon: user.telefon,
-            adress: user.adress,
-            bestallningar: orders || [],
-          });
-        });
-      }
-    );
-  } catch {
-    return res.status(401).json({ error: "Ogiltig token" });
-  }
-});
-
-// MINA BESTÄLLNINGAR
-app.get("/api/my-orders", (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ error: "Ingen token" });
-  }
-
-  try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    const userSql = `SELECT email FROM users WHERE id = ?`;
-
-    db.get(userSql, [payload.userId], (err, user) => {
+  db.get(
+    "SELECT id, email, namn, telefon, adress FROM users WHERE id = ?",
+    [userId],
+    (err, user) => {
       if (err || !user) {
-        return res.status(404).json({ error: "Användare saknas" });
+        return res.status(404).json({ error: "Användare finns inte" });
       }
 
-      const orderSql = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
-      db.all(orderSql, [user.email], (err, rows) => {
+      const sql = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
+      db.all(sql, [user.email], (err, orders) => {
         if (err) {
+          console.error("Fel vid hämtning av beställningar:", err);
           return res.status(500).json({ error: "Kunde inte hämta beställningar" });
         }
 
-        res.json(rows);
+        res.json({
+          namn: user.namn,
+          email: user.email,
+          telefon: user.telefon,
+          adress: user.adress,
+          bestallningar: orders || [],
+        });
       });
+    }
+  );
+});
+
+// MINA BESTÄLLNINGAR
+app.get("/api/my-orders", verifyToken, (req, res) => {
+  const userId = req.user.userId;
+  const userSql = `SELECT email FROM users WHERE id = ?`;
+
+  db.get(userSql, [userId], (err, user) => {
+    if (err || !user) {
+      return res.status(404).json({ error: "Användare saknas" });
+    }
+
+    const orderSql = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
+    db.all(orderSql, [user.email], (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: "Kunde inte hämta beställningar" });
+      }
+
+      res.json(rows);
     });
-  } catch {
-    return res.status(401).json({ error: "Ogiltig token" });
-  }
+  });
 });
 
 if (require.main === module) {
