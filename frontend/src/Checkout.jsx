@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function Checkout({ varukorg, setVarukorg, restaurang }) {
   const navigate = useNavigate();
 
@@ -57,7 +59,7 @@ function Checkout({ varukorg, setVarukorg, restaurang }) {
       order: varukorg, // ✅ Skickar bara maträtter
     };
 
-    fetch("/api/order", {
+    fetch(`${BASE_URL}/api/order`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
