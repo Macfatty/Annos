@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 function Start() {
   const navigate = useNavigate();
-  const [visaPopup, setVisaPopup] = useState(false);
   const [visaInfo, setVisaInfo] = useState(null); // "om", "support", "villkor"
 
   const öppnaInfo = (typ) => {
@@ -53,40 +52,6 @@ function Start() {
         </button>
       </div>
 
-      {visaPopup && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          background: "rgba(0,0,0,0.6)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 999
-        }}>
-          <div style={{
-            background: "white",
-            padding: "2rem",
-            borderRadius: "10px",
-            maxWidth: "400px",
-            width: "90%",
-            textAlign: "center",
-            color: "black"
-          }}>
-            <h2>🔒 Inloggning krävs</h2>
-            <p>Du måste vara inloggad för att kunna beställa.</p>
-            <div style={{ marginTop: "1rem", display: "flex", justifyContent: "center", gap: "1rem" }}>
-              <button onClick={() => navigate("/login")}>🔐 Logga in</button>
-              <button onClick={() => navigate("/register")}>🧾 Registrera</button>
-            </div>
-            <button onClick={() => setVisaPopup(false)} style={{ marginTop: "1rem" }}>
-              ❌ Stäng
-            </button>
-          </div>
-        </div>
-      )}
 
       {visaInfo && (
         <div style={{
