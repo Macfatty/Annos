@@ -101,7 +101,26 @@ function Restaurang() {
         <p>Inga beställningar idag.</p>
       ) : (
         dagensOrdrar.map((order) => {
-          const innehall = JSON.parse(order.order_json);
+          let innehall = [];
+          try {
+            innehall = JSON.parse(order.order_json);
+          } catch (err) {
+            console.error("Kunde inte parsa order_json", err);
+            return (
+              <div
+                key={order.id}
+                className="restaurang-kort"
+                style={{
+                  border: "2px solid #ccc",
+                  padding: "1rem",
+                  marginBottom: "1.5rem",
+                  borderRadius: "10px",
+                }}
+              >
+                <p style={{ color: "red" }}>Felaktig orderdata.</p>
+              </div>
+            );
+          }
           const tid = new Date(order.created_at);
           const nu = new Date();
           const diffMin = (nu - tid) / (1000 * 60);
