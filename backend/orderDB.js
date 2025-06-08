@@ -34,34 +34,6 @@ db.serialize(() => {
   `);
 });
 
-// Spara order
-function sparaOrder(kund, order, callback) {
-  const sql = `
-    INSERT INTO orders (namn, telefon, email, adress, extraInfo, order_json, total, restaurangSlug)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-  const jsonData = JSON.stringify(order.varor || []);
-  const total = order.total || 0;
-  const slug = order.restaurangSlug || "";
-
-  db.run(
-    sql,
-    [
-      kund.namn,
-      kund.telefon,
-      kund.email,
-      kund.adress,
-      kund.extraInfo || "",
-      jsonData,
-      total,
-      slug,
-    ],
-    function (err) {
-      if (err) return callback(err);
-      callback(null, this.lastID);
-    }
-  );
-}
 
 // Hämta senaste order
 function hamtaSenasteOrder(callback) {
@@ -97,7 +69,6 @@ function hamtaDagensOrdrar(callback) {
 }
 
 module.exports = {
-  sparaOrder,
   hamtaDagensOrdrar,
   hamtaSenasteOrder,
   markeraOrderSomKlar,
