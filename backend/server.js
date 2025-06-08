@@ -1,7 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const fs = require("fs");
-const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("./authMiddleware");
@@ -13,6 +11,7 @@ dotenv.config();
 const app = express();
 const PORT = 3001;
 const meny = require("./Data/menuData.js");
+const tillbehor = require("./Data/tillbehorData.js");
 const {
   hamtaDagensOrdrar,
   hamtaSenasteOrder,
@@ -35,16 +34,7 @@ app.get("/api/meny", (req, res) => {
 
 app.get("/api/tillbehor", (req, res) => {
   try {
-    const base = path.join(__dirname, "Data", "Tillbehör");
-
-    const kött = JSON.parse(fs.readFileSync(path.join(base, "Kött.json")));
-    const grönt = JSON.parse(fs.readFileSync(path.join(base, "grönt.json")));
-    const såser = JSON.parse(fs.readFileSync(path.join(base, "såser.json")));
-    const drycker = JSON.parse(fs.readFileSync(path.join(base, "drycker.json")));
-    const övrigt = JSON.parse(fs.readFileSync(path.join(base, "övrigt.json")));
-
-    const alla = [...kött, ...grönt, ...såser, ...drycker, ...övrigt];
-    res.json(alla);
+    res.json(tillbehor);
   } catch (err) {
     console.error("Fel vid laddning av tillbehör:", err);
     res.status(500).json({ fel: "Kunde inte ladda tillbehör" });
