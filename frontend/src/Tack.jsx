@@ -1,17 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
 
 function Tack() {
   const navigate = useNavigate();
+  const initial = useRef({ done: false });
 
   useEffect(() => {
+    if (initial.current.done) return;
     const tillganglig = sessionStorage.getItem("tack");
     if (!tillganglig) {
       navigate("/");
     } else {
       sessionStorage.removeItem("tack");
     }
+    initial.current.done = true;
   }, [navigate]);
 
   return (
