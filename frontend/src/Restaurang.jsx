@@ -16,6 +16,11 @@ function Restaurang() {
         navigate("/login");
         return;
       }
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      if (!payload.isAdmin) {
+        navigate("/");
+        return;
+      }
       const res = await fetch(`${BASE_URL}/api/admin/orders/today`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -50,6 +55,11 @@ function Restaurang() {
       const token = localStorage.getItem("token");
       if (!token) {
         navigate("/login");
+        return;
+      }
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      if (!payload.isAdmin) {
+        navigate("/");
         return;
       }
       const res = await fetch(`${BASE_URL}/api/admin/orders/${orderId}/klart`, {
