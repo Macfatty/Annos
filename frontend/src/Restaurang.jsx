@@ -53,7 +53,7 @@ function Restaurang() {
         return;
       }
       const res = await fetch(`${BASE_URL}/api/admin/orders/${orderId}/klart`, {
-        method: "POST",
+        method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.status === 401) {

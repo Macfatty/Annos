@@ -128,7 +128,7 @@ app.get("/api/admin/orders/latest", verifyToken, (req, res) => {
   });
 });
 
-app.post("/api/admin/orders/:id/klart", verifyToken, (req, res) => {
+app.patch("/api/admin/orders/:id/klart", verifyToken, (req, res) => {
   const orderId = req.params.id;
   markeraOrderSomKlar(orderId, (err) => {
     if (err) {
