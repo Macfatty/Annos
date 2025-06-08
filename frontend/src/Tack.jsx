@@ -7,7 +7,9 @@ function Tack() {
   const initial = useRef({ done: false });
 
   useEffect(() => {
-    if (initial.current.done) return;
+    if (initial.current.done) {
+      return;
+    }
     const tillganglig = sessionStorage.getItem("tack");
     if (!tillganglig) {
       navigate("/");
