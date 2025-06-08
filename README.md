@@ -33,6 +33,7 @@ cd Annos
 ```bash
 cd backend
 npm install
+# Detta laddar ner bland annat Jest som dev-dependency
 # Kontrollera att du har express & cors
 npm list express
 npm list cors
@@ -56,6 +57,7 @@ node server.js
 ```bash
 cd ../frontend
 npm install
+# Detta installerar ESLint och @eslint/js samt andra dev-beroenden
 ```
 
 ### 6. Starta frontend (Vite)
