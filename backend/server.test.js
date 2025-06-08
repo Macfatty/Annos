@@ -33,7 +33,7 @@ describe('API endpoints', () => {
       ]
     };
 
-    const token = jwt.sign({ userId: 1 }, SECRET);
+    const token = jwt.sign({ userId: 1, isAdmin: true }, SECRET);
     const res = await request(app)
       .post('/api/order')
       .set('Authorization', `Bearer ${token}`)
@@ -53,7 +53,7 @@ describe('API endpoints', () => {
   });
 
   test('PATCH /api/admin/orders/:id/klart marks order as done', async () => {
-    const token = jwt.sign({ userId: 1 }, SECRET);
+    const token = jwt.sign({ userId: 1, isAdmin: true }, SECRET);
 
     const newOrder = {
       kund: {

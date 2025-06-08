@@ -29,7 +29,8 @@ db.serialize(() => {
       password TEXT,
       namn TEXT,
       telefon TEXT,
-      adress TEXT
+      adress TEXT,
+      isAdmin INTEGER DEFAULT 0
     )
   `);
 });

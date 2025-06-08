@@ -14,5 +14,14 @@ function verifyToken(req, res, next) {
   }
 }
 
-module.exports = verifyToken;
+function verifyAdmin(req, res, next) {
+  verifyToken(req, res, () => {
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ error: "Ingen adminbehörighet" });
+    }
+    next();
+  });
+}
+
+module.exports = { verifyToken, verifyAdmin };
 

@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const verifyToken = require("./authMiddleware");
+const { verifyToken, verifyAdmin } = require("./authMiddleware");
 const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
 
@@ -98,7 +98,7 @@ app.post(
 });
 
 // ADMIN – HÄMTA ORDRAR
-app.get("/api/admin/orders/today", verifyToken, (req, res) => {
+app.get("/api/admin/orders/today", verifyAdmin, (req, res) => {
   hamtaDagensOrdrar((err, ordrar) => {
     if (err) {
       console.error("Fel vid hämtning av dagens ordrar:", err);
@@ -108,7 +108,7 @@ app.get("/api/admin/orders/today", verifyToken, (req, res) => {
   });
 });
 
-app.get("/api/admin/orders/latest", verifyToken, (req, res) => {
+app.get("/api/admin/orders/latest", verifyAdmin, (req, res) => {
   hamtaSenasteOrder((err, order) => {
     if (err) {
       console.error("Fel vid hämtning av senaste order:", err);
@@ -118,7 +118,7 @@ app.get("/api/admin/orders/latest", verifyToken, (req, res) => {
   });
 });
 
-app.patch("/api/admin/orders/:id/klart", verifyToken, (req, res) => {
+app.patch("/api/admin/orders/:id/klart", verifyAdmin, (req, res) => {
   const orderId = req.params.id;
   markeraOrderSomKlar(orderId, (err) => {
     if (err) {
@@ -186,7 +186,11 @@ app.post(
       return res.status(401).json({ error: "Fel e-post eller lösenord" });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign(
+      { userId: user.id, isAdmin: user.isAdmin === 1 },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     res.json({
       token,
@@ -194,6 +198,7 @@ app.post(
       email: user.email,
       telefon: user.telefon,
       adress: user.adress || "",
+      isAdmin: user.isAdmin === 1,
     });
   });
 });
