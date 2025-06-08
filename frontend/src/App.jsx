@@ -18,6 +18,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const path = location.pathname.toLowerCase();
 
   const [meny, setMeny] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +114,7 @@ function App() {
           flexWrap: "wrap"
         }}
       >
-        {!["/", "/restaurang", "/login", "/register"].includes(location.pathname) && (
+        {!["/", "/restaurang", "/login", "/register"].includes(path) && (
           <>
             {!inloggad ? (
               <>
@@ -247,7 +248,7 @@ function App() {
       </Routes>
 
       {inloggad &&
-        !["/profil", "/restaurang", "/", "/checkout"].includes(location.pathname) && (
+        !["/profil", "/restaurang", "/", "/checkout"].includes(path) && (
           <button
             onClick={() => navigate(`/checkout?restaurang=${restaurangSlug}`)}
             className="kundvagn-flyt"
