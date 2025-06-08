@@ -33,6 +33,12 @@ db.serialize(() => {
       isAdmin INTEGER DEFAULT 0
     )
   `);
+
+  db.all('PRAGMA table_info(users)', (err, cols) => {
+    if (!err && !cols.some((c) => c.name === 'isAdmin')) {
+      db.run('ALTER TABLE users ADD COLUMN isAdmin INTEGER DEFAULT 0');
+    }
+  });
 });
 
 
