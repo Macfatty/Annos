@@ -69,7 +69,14 @@ npm install
 # Detta installerar ESLint och @eslint/js samt andra dev-beroenden
 ```
 
-### 7. Starta frontend (Vite)
+### 7. Skapa `.env` i frontend
+Lägg till följande i `frontend/.env`:
+```
+VITE_API_BASE_URL=http://localhost:3001
+```
+Ange adressen till din backend om du har ändrat port eller värd. Variabeln behövs
+för att inloggning, profilsidor och orderhistorik ska fungera.
+### 8. Starta frontend (Vite)
 ```bash
 npm run dev
 ```
@@ -77,11 +84,11 @@ npm run dev
 
 ---
 
-### 8. Testa att frontend <--> backend fungerar:
+### 9. Testa att frontend <--> backend fungerar:
 - Gå till frontend i webbläsaren
 - Klicka på "Testa backend-anslutning"
 - Du bör se: `Backend funkar!`
-### 9. Kör kodkvalitetskontroller
+### 10. Kör kodkvalitetskontroller
 ```bash
 cd frontend
 npm run lint
