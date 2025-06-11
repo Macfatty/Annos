@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function MinaBeställningar({ onBeställIgen }) {
   const [bestallningar, setBestallningar] = useState([]);
   const [fel, setFel] = useState(null);
@@ -13,7 +15,7 @@ function MinaBeställningar({ onBeställIgen }) {
       return;
     }
 
-    fetch("/api/my-orders", {
+    fetch(`${BASE_URL}/api/my-orders`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
