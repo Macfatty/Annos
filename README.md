@@ -43,6 +43,8 @@ npm list cors
 Lägg till följande i `backend/.env`:
 ```
 JWT_SECRET=your-secret
+# Valfritt: ange egen port
+PORT=3001
 ```
 
 ### 4. Starta backend-servern
