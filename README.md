@@ -102,10 +102,6 @@ npm test
 - Lägg till mat i varukorg
 - Beställning & betalning via Swish
 
-## 📅 Projektledning
-
-Projektet följer Scrum och är uppdelat i sprintar. Se [GitHub Projects](https://github.com/Macfatty/Annos/projects) för backlog och status.
-
 ## 📃 Licens
 
 MIT
