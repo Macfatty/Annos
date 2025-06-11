@@ -47,7 +47,14 @@ JWT_SECRET=your-secret
 PORT=3001
 ```
 
-### 4. Starta backend-servern
+### 4. Skapa admin-konto
+Kör skriptet nedan för att skapa ett första administratörskonto. Standarduppgifterna är `admin@example.com` och `admin123`.
+```bash
+node backend/skapaAdmin.js
+```
+När både backend och frontend körs kan du navigera till `/admin` för att logga in med dessa uppgifter.
+
+### 5. Starta backend-servern
 ```bash
 node server.js
 ```
@@ -55,14 +62,14 @@ node server.js
 
 ---
 
-### 5. Installera frontend-beroenden
+### 6. Installera frontend-beroenden
 ```bash
 cd ../frontend
 npm install
 # Detta installerar ESLint och @eslint/js samt andra dev-beroenden
 ```
 
-### 6. Starta frontend (Vite)
+### 7. Starta frontend (Vite)
 ```bash
 npm run dev
 ```
@@ -70,11 +77,11 @@ npm run dev
 
 ---
 
-### 7. Testa att frontend <--> backend fungerar:
+### 8. Testa att frontend <--> backend fungerar:
 - Gå till frontend i webbläsaren
 - Klicka på "Testa backend-anslutning"
 - Du bör se: `Backend funkar!`
-### 8. Kör kodkvalitetskontroller
+### 9. Kör kodkvalitetskontroller
 ```bash
 cd frontend
 npm run lint
