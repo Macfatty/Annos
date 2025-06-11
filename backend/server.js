@@ -9,7 +9,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const meny = require("./Data/menuData.js");
 const tillbehor = require("./Data/tillbehorData.js");
 const {
