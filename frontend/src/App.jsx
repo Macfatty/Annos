@@ -12,6 +12,7 @@ import ValjRestaurang from "./ValjRestaurang";
 import MinProfil from "./MinProfil";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Tack from "./Tack";
+import AdminPanel from "./AdminPanel";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -31,6 +32,18 @@ function App() {
   });
   const [tillbehor, setTillbehor] = useState([]);
   const [inloggad, setInloggad] = useState(!!localStorage.getItem("token"));
+  const [isAdmin, setIsAdmin] = useState(() => {
+    const t = localStorage.getItem("token");
+    if (!t) {
+      return false;
+    }
+    try {
+      const payload = JSON.parse(atob(t.split(".")[1]));
+      return !!payload.isAdmin;
+    } catch {
+      return false;
+    }
+  });
   const [tema, setTema] = useState(() => localStorage.getItem("tema") || "light");
   const [restaurangSlug, setRestaurangSlug] = useState("campino");
 
@@ -88,7 +101,18 @@ function App() {
 
   useEffect(() => {
     const observer = () => {
-      setInloggad(!!localStorage.getItem("token"));
+      const tok = localStorage.getItem("token");
+      setInloggad(!!tok);
+      if (!tok) {
+        setIsAdmin(false);
+        return;
+      }
+      try {
+        const payload = JSON.parse(atob(tok.split(".")[1]));
+        setIsAdmin(!!payload.isAdmin);
+      } catch {
+        setIsAdmin(false);
+      }
     };
     window.addEventListener("storage", observer);
     return () => {
@@ -125,6 +149,9 @@ function App() {
               <>
                 <button onClick={() => navigate("/profil")}>👤 Min profil</button>
                 <button onClick={() => navigate("/valj-restaurang")}>🏠 Välj restaurang</button>
+                {isAdmin && (
+                  <button onClick={() => navigate("/admin")}>🛠 Adminpanel</button>
+                )}
                 <button
                   onClick={() => {
                     localStorage.clear();
@@ -151,6 +178,7 @@ function App() {
         <Route path="/valj-restaurang" element={<ValjRestaurang />} />
         <Route path="/profil" element={<MinProfil />} />
         <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
+        <Route path="/admin" element={<AdminPanel />} />
         <Route
           path="/kundvagn"
           element={
