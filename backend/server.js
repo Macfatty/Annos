@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { verifyToken, verifyAdmin } = require("./authMiddleware");
+const { verifyToken, verifyRole } = require("./authMiddleware");
 const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
 
@@ -98,7 +98,7 @@ app.post(
 });
 
 // ADMIN – HÄMTA ORDRAR
-app.get("/api/admin/orders/today", verifyAdmin, (req, res) => {
+app.get("/api/admin/orders/today", verifyRole("admin"), (req, res) => {
   hamtaDagensOrdrar((err, ordrar) => {
     if (err) {
       console.error("Fel vid hämtning av dagens ordrar:", err);
@@ -108,7 +108,7 @@ app.get("/api/admin/orders/today", verifyAdmin, (req, res) => {
   });
 });
 
-app.get("/api/admin/orders/latest", verifyAdmin, (req, res) => {
+app.get("/api/admin/orders/latest", verifyRole("admin"), (req, res) => {
   hamtaSenasteOrder((err, order) => {
     if (err) {
       console.error("Fel vid hämtning av senaste order:", err);
@@ -118,7 +118,7 @@ app.get("/api/admin/orders/latest", verifyAdmin, (req, res) => {
   });
 });
 
-app.patch("/api/admin/orders/:id/klart", verifyAdmin, (req, res) => {
+app.patch("/api/admin/orders/:id/klart", verifyRole("admin"), (req, res) => {
   const orderId = req.params.id;
   markeraOrderSomKlar(orderId, (err) => {
     if (err) {
@@ -187,7 +187,7 @@ app.post(
     }
 
     const token = jwt.sign(
-      { userId: user.id, isAdmin: user.isAdmin === 1 },
+      { userId: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -198,7 +198,7 @@ app.post(
       email: user.email,
       telefon: user.telefon,
       adress: user.adress || "",
-      isAdmin: user.isAdmin === 1,
+      role: user.role,
     });
   });
 });

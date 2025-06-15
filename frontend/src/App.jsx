@@ -33,18 +33,20 @@ function App() {
   });
   const [tillbehor, setTillbehor] = useState([]);
   const [inloggad, setInloggad] = useState(!!localStorage.getItem("token"));
-  const [isAdmin, setIsAdmin] = useState(() => {
+  const [role, setRole] = useState(() => {
     const t = localStorage.getItem("token");
     if (!t) {
-      return false;
+      return "";
     }
     try {
       const payload = JSON.parse(atob(t.split(".")[1]));
-      return !!payload.isAdmin;
+      return payload.role || "";
     } catch {
-      return false;
+      return "";
     }
   });
+  const isAdmin = role === "admin";
+  const isCourier = role === "courier";
   const [tema, setTema] = useState(
     () => localStorage.getItem("tema") || "light"
   );
@@ -107,14 +109,14 @@ function App() {
       const tok = localStorage.getItem("token");
       setInloggad(!!tok);
       if (!tok) {
-        setIsAdmin(false);
+        setRole("");
         return;
       }
       try {
         const payload = JSON.parse(atob(tok.split(".")[1]));
-        setIsAdmin(!!payload.isAdmin);
+        setRole(payload.role || "");
       } catch {
-        setIsAdmin(false);
+        setRole("");
       }
     };
     window.addEventListener("storage", observer);
@@ -162,6 +164,9 @@ function App() {
                   <button onClick={() => navigate("/admin")}>
                     🛠 Adminpanel
                   </button>
+                )}
+                {isCourier && (
+                  <button onClick={() => navigate("/kurir")}>🚚 Kurirpanel</button>
                 )}
                 <button
                   onClick={() => {
@@ -303,7 +308,7 @@ function App() {
             🛒 Kundvagn ({varukorg.length})
           </button>
         )}
-        {isAdmin && <button onClick={() => navigate("/kurir")}>🚚 Kurirpanel</button>}
+        {isCourier && <button onClick={() => navigate("/kurir")}>🚚 Kurirpanel</button>}
 
     </>
   );

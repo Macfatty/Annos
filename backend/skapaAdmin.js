@@ -12,8 +12,8 @@ const adress = "Testgatan 1";
 bcrypt.hash(losenord, 10, (err, hash) => {
   if (err) return console.error("❌ Fel vid hash:", err);
 
-  const sql = `INSERT INTO users (email, password, namn, telefon, adress, isAdmin) VALUES (?, ?, ?, ?, ?, ?)`;
-  db.run(sql, [email, hash, namn, telefon, adress, 1], function (err) {
+  const sql = `INSERT INTO users (email, password, namn, telefon, adress, role) VALUES (?, ?, ?, ?, ?, ?)`;
+  db.run(sql, [email, hash, namn, telefon, adress, 'admin'], function (err) {
     if (err) {
       return console.error("❌ Kunde inte skapa användare:", err.message);
     }
