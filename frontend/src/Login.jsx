@@ -40,6 +40,52 @@ function Login() {
     }
   };
 
+  const loggaInMedGoogle = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: window.googleToken || "" }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.accessToken);
+        window.dispatchEvent(new Event("storage"));
+        navigate("/valj-restaurang");
+      } else {
+        alert("Kunde inte logga in med Google");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Kunde inte logga in med Google.");
+    }
+  };
+
+  const loggaInMedApple = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/auth/apple`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identityToken: window.appleToken || "" }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.accessToken);
+        window.dispatchEvent(new Event("storage"));
+        navigate("/valj-restaurang");
+      } else {
+        alert("Kunde inte logga in med Apple");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Kunde inte logga in med Apple.");
+    }
+  };
+
   return (
     <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto", textAlign: "center" }}>
       <h1>🔐 Logga in</h1>
@@ -68,6 +114,15 @@ function Login() {
       <button onClick={loggaIn} style={{ marginBottom: "1rem" }}>
         Logga in
       </button>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem" }}>
+        <button onClick={loggaInMedGoogle} aria-label="Logga in med Google">
+          Logga in med Google
+        </button>
+        <button onClick={loggaInMedApple} aria-label="Logga in med Apple">
+          Logga in med Apple
+        </button>
+      </div>
 
       <div style={{ marginTop: "1rem" }}>
         <button onClick={() => navigate("/register")}>🧾 Registrera dig</button>
