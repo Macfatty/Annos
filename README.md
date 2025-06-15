@@ -37,12 +37,20 @@ npm install
 # Kontrollera att du har express & cors
 npm list express
 npm list cors
+# Om nya autentiseringsmoduler lagts till (t.ex. `google-auth-library` och
+# `apple-signin-auth`), kör `npm install` igen efter att du hämtat uppdaterad
+# kod.
 ```
 
 ### 3. Skapa `.env`-fil
 Lägg till följande i `backend/.env`:
 ```
 JWT_SECRET=your-secret
+# Används för att signera refresh tokens
+REFRESH_SECRET=your-refresh-secret
+# OAuth-nycklar
+GOOGLE_CLIENT_ID=din-google-client-id
+APPLE_CLIENT_ID=din-apple-client-id
 # Valfritt: ange egen port
 PORT=3001
 ```
@@ -67,6 +75,8 @@ node server.js
 cd ../frontend
 npm install
 # Detta installerar ESLint och @eslint/js samt andra dev-beroenden
+# Kör även `npm install` igen om du hämtar ny kod för att säkerställa att alla
+# paket finns tillgängliga.
 ```
 
 ### 7. Skapa `.env` i frontend
