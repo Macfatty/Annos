@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { verifyToken, verifyRole } = require("./authMiddleware");
 const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
+const authRouter = require("./routes/auth");
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ const {
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/auth', authRouter);
 
 app.get("/", (req, res) => {
   res.send("backend funkar!");
