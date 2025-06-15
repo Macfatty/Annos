@@ -13,6 +13,7 @@ import MinProfil from "./MinProfil";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Tack from "./Tack";
 import AdminPanel from "./AdminPanel";
+import KurirVy from "./KurirVy";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -44,7 +45,9 @@ function App() {
       return false;
     }
   });
-  const [tema, setTema] = useState(() => localStorage.getItem("tema") || "light");
+  const [tema, setTema] = useState(
+    () => localStorage.getItem("tema") || "light"
+  );
   const [restaurangSlug, setRestaurangSlug] = useState("campino");
 
   useEffect(() => {
@@ -135,7 +138,7 @@ function App() {
           gap: "1rem",
           marginBottom: "1rem",
           padding: "1rem",
-          flexWrap: "wrap"
+          flexWrap: "wrap",
         }}
       >
         {!["/", "/restaurang", "/login", "/register"].includes(path) && (
@@ -143,14 +146,22 @@ function App() {
             {!inloggad ? (
               <>
                 <button onClick={() => navigate("/")}>🏠 Startsida</button>
-                <button onClick={() => navigate("/valj-restaurang")}>🍽️ Restauranger</button>
+                <button onClick={() => navigate("/valj-restaurang")}>
+                  🍽️ Restauranger
+                </button>
               </>
             ) : (
               <>
-                <button onClick={() => navigate("/profil")}>👤 Min profil</button>
-                <button onClick={() => navigate("/valj-restaurang")}>🏠 Välj restaurang</button>
+                <button onClick={() => navigate("/profil")}>
+                  👤 Min profil
+                </button>
+                <button onClick={() => navigate("/valj-restaurang")}>
+                  🏠 Välj restaurang
+                </button>
                 {isAdmin && (
-                  <button onClick={() => navigate("/admin")}>🛠 Adminpanel</button>
+                  <button onClick={() => navigate("/admin")}>
+                    🛠 Adminpanel
+                  </button>
                 )}
                 <button
                   onClick={() => {
@@ -168,7 +179,10 @@ function App() {
           </>
         )}
 
-        <button onClick={växlaTema} aria-label="Växla mellan mörkt och ljust läge">
+        <button
+          onClick={växlaTema}
+          aria-label="Växla mellan mörkt och ljust läge"
+        >
           {tema === "light" ? "🌙 Mörkt läge" : "☀️ Ljust läge"}
         </button>
       </div>
@@ -179,6 +193,8 @@ function App() {
         <Route path="/profil" element={<MinProfil />} />
         <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/kurir" element={<KurirVy />} />
+
         <Route
           path="/kundvagn"
           element={
@@ -227,7 +243,9 @@ function App() {
                       className="menu-card"
                       onClick={() => {
                         if (!inloggad) {
-                          alert("🔒 Du måste logga in för att kunna göra en beställning.");
+                          alert(
+                            "🔒 Du måste logga in för att kunna göra en beställning."
+                          );
                           navigate("/login");
                           return;
                         }
@@ -285,6 +303,8 @@ function App() {
             🛒 Kundvagn ({varukorg.length})
           </button>
         )}
+        {isAdmin && <button onClick={() => navigate("/kurir")}>🚚 Kurirpanel</button>}
+
     </>
   );
 }
