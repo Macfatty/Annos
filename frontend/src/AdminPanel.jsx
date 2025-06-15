@@ -21,7 +21,7 @@ function AdminPanel() {
 
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
-      if (!payload.isAdmin) {
+      if (payload.role !== "admin") {
         navigate("/");
       }
     } catch (err) {

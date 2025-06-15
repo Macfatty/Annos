@@ -14,14 +14,15 @@ function verifyToken(req, res, next) {
   }
 }
 
-function verifyAdmin(req, res, next) {
-  verifyToken(req, res, () => {
-    if (!req.user.isAdmin) {
-      return res.status(403).json({ error: "Ingen adminbehörighet" });
-    }
-    next();
-  });
+function verifyRole(requiredRole) {
+  return (req, res, next) => {
+    verifyToken(req, res, () => {
+      if (req.user.role !== requiredRole) {
+        return res.status(403).json({ error: "Otillräcklig behörighet" });
+      }
+      next();
+    });
+  };
 }
-
-module.exports = { verifyToken, verifyAdmin };
+module.exports = { verifyToken, verifyRole };
 

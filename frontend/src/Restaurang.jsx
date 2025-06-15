@@ -17,7 +17,7 @@ function Restaurang() {
         return;
       }
       const payload = JSON.parse(atob(token.split(".")[1]));
-      if (!payload.isAdmin) {
+      if (payload.role !== "admin") {
         navigate("/");
         return;
       }
@@ -58,7 +58,7 @@ function Restaurang() {
         return;
       }
       const payload = JSON.parse(atob(token.split(".")[1]));
-      if (!payload.isAdmin) {
+      if (payload.role !== "admin") {
         navigate("/");
         return;
       }

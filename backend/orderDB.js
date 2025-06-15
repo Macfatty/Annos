@@ -30,13 +30,13 @@ db.serialize(() => {
       namn TEXT,
       telefon TEXT,
       adress TEXT,
-      isAdmin INTEGER DEFAULT 0
+      role TEXT DEFAULT 'customer'
     )
   `);
 
   db.all('PRAGMA table_info(users)', (err, cols) => {
-    if (!err && !cols.some((c) => c.name === 'isAdmin')) {
-      db.run('ALTER TABLE users ADD COLUMN isAdmin INTEGER DEFAULT 0');
+    if (!err && !cols.some((c) => c.name === 'role')) {
+      db.run("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'customer'");
     }
   });
 });

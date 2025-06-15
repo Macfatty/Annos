@@ -19,7 +19,7 @@ function KurirVy() {
 
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
-      if (!payload.isAdmin) {
+      if (payload.role !== "courier") {
         navigate("/");
       }
     } catch {
@@ -32,7 +32,9 @@ function KurirVy() {
       const res = await fetch(`${BASE_URL}/api/admin/orders/today`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("Kunde inte hämta ordrar");
+      if (!res.ok) {
+        throw new Error("Kunde inte hämta ordrar");
+      }
       const data = await res.json();
       setOrdrar(data);
     } catch (err) {
@@ -51,9 +53,12 @@ function KurirVy() {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("Kunde inte markera som klar");
+      if (!res.ok) {
+        throw new Error("Kunde inte markera som klar");
+      }
       setOrdrar((prev) => prev.filter((o) => o.id !== id));
     } catch (err) {
+      console.error(err);
       alert("❌ Kunde inte markera som levererad.");
     }
   };
