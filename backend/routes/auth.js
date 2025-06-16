@@ -18,16 +18,16 @@ function generateTokens(user) {
 // 📧 E-postinloggning
 router.post("/login", [
   body("email").isEmail().normalizeEmail(),
-  body("password").notEmpty(),
+  body("losenord").notEmpty(),
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const { email, password } = req.body;
+  const { email, losenord } = req.body;
 
   db.get("SELECT * FROM users WHERE email = ?", [email], async (err, user) => {
     if (err || !user) return res.status(401).json({ error: "Fel inloggningsuppgifter" });
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(losenord, user.password);
     if (!match) return res.status(401).json({ error: "Fel inloggningsuppgifter" });
 
     const { accessToken, refreshToken } = generateTokens(user);
