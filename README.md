@@ -51,6 +51,8 @@ REFRESH_SECRET=your-refresh-secret
 # OAuth-nycklar
 GOOGLE_CLIENT_ID=din-google-client-id
 APPLE_CLIENT_ID=din-apple-client-id
+# Adressen som får skicka cookies till backend
+FRONTEND_ORIGIN=http://localhost:5173
 # Valfritt: ange egen port
 PORT=3001
 ```
