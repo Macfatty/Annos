@@ -32,7 +32,8 @@ router.post("/login", [
 
     const { accessToken, refreshToken } = generateTokens(user);
     res.cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 604800000 });
-    res.json({ accessToken });
+    res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "lax", maxAge: 15 * 60 * 1000 });
+    res.json({});
   });
 });
 
@@ -50,7 +51,8 @@ router.post("/google", async (req, res) => {
     const handleUser = (id) => {
       const { accessToken, refreshToken } = generateTokens({ id, role: "customer" });
       res.cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 604800000 });
-      res.json({ accessToken });
+      res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "lax", maxAge: 15 * 60 * 1000 });
+      res.json({});
     };
 
     if (!user) {
@@ -80,7 +82,8 @@ router.post("/apple", async (req, res) => {
       const handleUser = (id) => {
         const { accessToken, refreshToken } = generateTokens({ id, role: "customer" });
         res.cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 604800000 });
-        res.json({ accessToken });
+        res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "lax", maxAge: 15 * 60 * 1000 });
+        res.json({});
       };
 
       if (!user) {
@@ -107,7 +110,8 @@ router.post("/refresh", (req, res) => {
     db.get("SELECT id, role FROM users WHERE id = ?", [payload.userId], (err, user) => {
       if (err || !user) return res.status(401).json({ error: "Ogiltig användare" });
       const accessToken = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "15m" });
-      res.json({ accessToken });
+      res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "lax", maxAge: 15 * 60 * 1000 });
+      res.json({});
     });
   } catch {
     res.status(403).json({ error: "Ogiltig refresh token" });
@@ -116,6 +120,7 @@ router.post("/refresh", (req, res) => {
 
 // 🚪 Logout
 router.post("/logout", (req, res) => {
+  res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
   res.json({ message: "Utloggad" });
 });
