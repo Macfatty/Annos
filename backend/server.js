@@ -21,11 +21,16 @@ const {
   db,
 } = require("./orderDB");
 
+app.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN,
+    credentials: true,
+  })
+);
 
-app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
-app.use('/api/auth', authRouter);
+app.use("/api/auth", authRouter);
 
 app.get("/", (req, res) => {
   res.send("backend funkar!");
@@ -66,40 +71,43 @@ app.post(
     const { kund, order } = req.body;
     const { namn, telefon, adress, ovrigt, email } = kund;
 
-  const order_json = JSON.stringify(order);
-  const total = order.reduce((sum, rad) => {
-    return sum + (rad.total || 0);
-  }, 0);
-  const status = "aktiv";
+    const order_json = JSON.stringify(order);
+    const total = order.reduce((sum, rad) => {
+      return sum + (rad.total || 0);
+    }, 0);
+    const status = "aktiv";
 
-  const sql = `
+    const sql = `
     INSERT INTO orders 
     (namn, telefon, adress, extraInfo, order_json, status, total, email, created_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
   `;
 
-  db.run(
-    sql,
-    [namn, telefon, adress, ovrigt, order_json, status, total, email],
-    function (err) {
-      if (err) {
-        console.error("Kunde inte spara order:", err.message);
-        return res.status(500).json({ message: "Internt serverfel" });
+    db.run(
+      sql,
+      [namn, telefon, adress, ovrigt, order_json, status, total, email],
+      function (err) {
+        if (err) {
+          console.error("Kunde inte spara order:", err.message);
+          return res.status(500).json({ message: "Internt serverfel" });
+        }
+
+        console.log("Ny beställning sparad");
+
+        if (process.env.NODE_ENV === "development") {
+          console.log("Order ID:", this.lastID);
+          console.log("Kundinfo:", kund);
+          console.log("Orderinnehåll:", order);
+          console.log("Tid:", new Date().toLocaleString("sv-SE"));
+        }
+
+        res
+          .status(201)
+          .json({ message: "Beställning mottagen", orderId: this.lastID });
       }
-
-      console.log("Ny beställning sparad");
-
-      if (process.env.NODE_ENV === "development") {
-        console.log("Order ID:", this.lastID);
-        console.log("Kundinfo:", kund);
-        console.log("Orderinnehåll:", order);
-        console.log("Tid:", new Date().toLocaleString("sv-SE"));
-      }
-
-      res.status(201).json({ message: "Beställning mottagen", orderId: this.lastID });
-    }
-  );
-});
+    );
+  }
+);
 
 // ADMIN – HÄMTA ORDRAR
 app.get("/api/admin/orders/today", verifyRole("admin"), (req, res) => {
@@ -127,7 +135,9 @@ app.patch("/api/admin/orders/:id/klart", verifyRole("admin"), (req, res) => {
   markeraOrderSomKlar(orderId, (err) => {
     if (err) {
       console.error("❌ Fel vid markering:", err);
-      return res.status(500).json({ message: "Kunde inte markera order som klar" });
+      return res
+        .status(500)
+        .json({ message: "Kunde inte markera order som klar" });
     }
     res.json({ message: "Order markerad som klar" });
   });
@@ -167,10 +177,7 @@ app.post(
 // LOGIN
 app.post(
   "/api/login",
-  [
-    body("email").isEmail().normalizeEmail(),
-    body("losenord").notEmpty(),
-  ],
+  [body("email").isEmail().normalizeEmail(), body("losenord").notEmpty()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -178,39 +185,40 @@ app.post(
     }
 
     const { email, losenord } = req.body;
-  const sql = `SELECT * FROM users WHERE email = ?`;
+    const sql = `SELECT * FROM users WHERE email = ?`;
 
-  db.get(sql, [email], async (err, user) => {
-    if (err || !user) {
-      return res.status(401).json({ error: "Fel e-post eller lösenord" });
-    }
+    db.get(sql, [email], async (err, user) => {
+      if (err || !user) {
+        return res.status(401).json({ error: "Fel e-post eller lösenord" });
+      }
 
-    const match = await bcrypt.compare(losenord, user.password);
-    if (!match) {
-      return res.status(401).json({ error: "Fel e-post eller lösenord" });
-    }
+      const match = await bcrypt.compare(losenord, user.password);
+      if (!match) {
+        return res.status(401).json({ error: "Fel e-post eller lösenord" });
+      }
 
-    const accessToken = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+      const accessToken = jwt.sign(
+        { userId: user.id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+      );
 
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 15 * 60 * 1000,
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        sameSite: "lax",
+        maxAge: 15 * 60 * 1000,
+      });
+
+      res.json({
+        namn: user.namn,
+        email: user.email,
+        telefon: user.telefon,
+        adress: user.adress || "",
+        role: user.role,
+      });
     });
-
-    res.json({
-      namn: user.namn,
-      email: user.email,
-      telefon: user.telefon,
-      adress: user.adress || "",
-      role: user.role,
-    });
-  });
-});
+  }
+);
 
 // PROFIL – INKL. BESTÄLLNINGSHISTORIK
 app.get("/api/profile", verifyToken, (req, res) => {
@@ -228,7 +236,9 @@ app.get("/api/profile", verifyToken, (req, res) => {
       db.all(sql, [user.email], (err, orders) => {
         if (err) {
           console.error("Fel vid hämtning av beställningar:", err);
-          return res.status(500).json({ error: "Kunde inte hämta beställningar" });
+          return res
+            .status(500)
+            .json({ error: "Kunde inte hämta beställningar" });
         }
 
         res.json({
@@ -256,7 +266,9 @@ app.get("/api/my-orders", verifyToken, (req, res) => {
     const orderSql = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
     db.all(orderSql, [user.email], (err, rows) => {
       if (err) {
-        return res.status(500).json({ error: "Kunde inte hämta beställningar" });
+        return res
+          .status(500)
+          .json({ error: "Kunde inte hämta beställningar" });
       }
 
       res.json(rows);
