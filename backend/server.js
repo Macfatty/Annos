@@ -200,6 +200,11 @@ app.post(
       const accessToken = jwt.sign(
         { userId: user.id, role: user.role },
         process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+      );
+      const refreshToken = jwt.sign(
+        { userId: user.id },
+        process.env.REFRESH_SECRET,
         { expiresIn: "7d" }
       );
 
@@ -207,6 +212,10 @@ app.post(
         httpOnly: true,
         sameSite: "lax",
         maxAge: 15 * 60 * 1000,
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
       res.json({

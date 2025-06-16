@@ -13,14 +13,13 @@ function Login() {
       const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, losenord }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem("token", data.token);
-
         // 🔐 Spara användarinfo för profil & checkout
         localStorage.setItem("kundinfo", JSON.stringify({
           namn: data.namn,
@@ -45,13 +44,13 @@ function Login() {
       const res = await fetch(`${BASE_URL}/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ token: window.googleToken || "" }),
       });
 
-      const data = await res.json();
+      await res.json();
 
       if (res.ok) {
-        localStorage.setItem("token", data.accessToken);
         window.dispatchEvent(new Event("storage"));
         navigate("/valj-restaurang");
       } else {
@@ -68,13 +67,13 @@ function Login() {
       const res = await fetch(`${BASE_URL}/api/auth/apple`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ identityToken: window.appleToken || "" }),
       });
 
-      const data = await res.json();
+      await res.json();
 
       if (res.ok) {
-        localStorage.setItem("token", data.accessToken);
         window.dispatchEvent(new Event("storage"));
         navigate("/valj-restaurang");
       } else {
