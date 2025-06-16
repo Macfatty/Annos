@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const { verifyToken, verifyRole } = require("./authMiddleware");
 const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
@@ -23,6 +24,7 @@ const {
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use('/api/auth', authRouter);
 
 app.get("/", (req, res) => {
@@ -188,14 +190,19 @@ app.post(
       return res.status(401).json({ error: "Fel e-post eller lösenord" });
     }
 
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 15 * 60 * 1000,
+    });
+
     res.json({
-      token,
       namn: user.namn,
       email: user.email,
       telefon: user.telefon,
