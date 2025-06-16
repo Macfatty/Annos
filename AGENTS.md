@@ -12,42 +12,82 @@ This document describes how agents should contribute to the Annos fullstack weba
 - Follow ESLint hook rules strictly: no React hooks inside loops, conditions or nested callbacks.
 - `useRef` may only be used as `useRef({})` or via `React.createRef()` if multiple dynamic refs are required.
 - Do not use `useMemo` to create refs.
-- Do not create `useRef` or `useState` inside loops such as `for`, `forEach` or `map`.
-- Code must work on both mobile and desktop browsers (iOS, Android, Chrome, Safari).
-- Use `position: sticky` with `top: 0` and appropriate `zIndex` when needed.
-- Ensure all buttons and inputs are keyboard accessible.
-- Prefer semantic HTML with `aria-label` for accessibility.
-- Components should be reusable when reasonable and separated logically (routing, views, shared elements, API handling).
-- Avoid duplicates in submenus; accessories like meat/sauce/drinks must not appear twice.
-- Submenu categories should be sticky on mobile for better UX.
-- The cart must scale so it does not cover the entire mobile view.
-- During checkout, prefill the user’s details (name, email, phone, address, other information).
-- Non-logged in users can only access start page, choose restaurant, login and register.
-- Logged in customers can access profile pages, restaurant + menu views, cart, checkout and thank you page. Hide login/register links when logged in.
-- Restaurant view only shows incoming orders with an option to mark them as done.
-- Future courier view will show new orders, restaurant names, customer info and allow marking deliveries as complete.
+- Do not create `useRef` or `useState` inside loops such as `map`, `forEach`, `for`, etc.
+- Code must work on both mobile and desktop (iOS, Android, Chrome, Safari).
+- Sticky category nav: Use `position: sticky` with `top: 0` and appropriate `z-index`.
+- All buttons and inputs must be keyboard-accessible (a11y).
+- Use semantic HTML tags + `aria-label` for accessibility.
+- Separate components logically (routes, views, shared UI, API handling).
+- Avoid duplicate accessories in submenus (e.g., meat/sauce/drinks must not appear twice).
+- Submenu categories should stay sticky for better UX on mobile.
+- Shopping cart should not take over full screen on mobile — layout must scale smartly.
+- Checkout should prefill user data: name, email, phone, address, other.
 
-## Backend guidelines
-- Separate API routes clearly and use the correct HTTP methods (GET, POST, PUT, DELETE).
-- Authentication is JWT based; protected endpoints (e.g. `/api/profile`, `/api/order`) require a bearer token.
-- Use `.env` to store sensitive data – never hardcode secrets.
-- Validate and sanitize all client input (emails, passwords, free text).
-- Log errors clearly but do not leak internals to the user.
-- Structure the code so it can migrate to a relational database in the future.
-- Only logged in users can place orders; enforce checks on the server.
+## Access control & logic
+- Anonymous user access:
+  - `/`, `/valj-restaurang`, `/login`, `/register`
+  - Info pages (ToS, support) — future
+  - Popup shown if trying to order: "🔒 Du måste logga in..."
+- Logged-in customer:
+  - Access to `/profil`, `/kundvagn`, `/checkout`, `/tack`
+  - “Logga ut” button always visible
+  - “Logga in” / “Bli medlem” hidden
+  - Checkout redirects directly to thank-you page
+- Restaurant view:
+  - Sees incoming orders, can mark as "klar"
+- Courier view:
+  - Sees new orders, restaurant name, customer info
+  - Can mark orders as "levererad"
+  - Will show offline/integrated maps in future
 
-## Security notes
-- Tokens are currently stored in `localStorage`; plan to move to HTTP-only cookies.
-- Use `readOnly` for user input that should not be editable.
-- XSS and CSRF protections are planned for the beta version.
-- Input fields in profile, register and checkout must have clear labels and `aria-label` attributes.
+## Backend rules
+- Express routes must use correct HTTP methods (GET, POST, PUT, DELETE).
+- JWT-based auth (bearer token) for all profile and order endpoints.
+- Use `.env` for secrets. No hardcoded credentials.
+- Validate and sanitize all input (email, password, free text).
+- Log internal errors clearly, but don't expose them to users.
+- DB should support future migration to relational DB like MariaDB.
+- Only logged-in users may place orders — must verify server-side.
 
-## Infrastructure
-- Backend may later be containerized with Docker and served through Nginx.
-- Static hosting should be optimized for performance.
-- Continuous integration (e.g. GitHub Actions) is intended for automation.
+## Security (frontend + backend)
+- Auth token is stored in `localStorage` for now, planned to move to HTTP-only cookie.
+- Read-only inputs unless editing is allowed.
+- XSS/CSRF protection required in beta.
+- Rate limiting & brute force protection needed for production login.
+- All input fields must have clear `label` + `aria-label`.
 
-## Pre-commit checklist
-1. Run `npm run lint` inside `frontend/` and ensure there are no warnings or errors.
-2. Run `npm test` inside `backend/` and verify all tests pass.
-3. Ensure code matches the guidelines above before committing.
+## Infrastructure & scaling
+- Backend will be dockerized if needed.
+- Reverse proxy via Nginx for production.
+- Frontend Vite build optimized for performance.
+- Hosting via AWS (S3, EC2, RDS) or Vercel/Render.
+- CI/CD (e.g. GitHub Actions) to be added.
+
+---
+
+## 🔐 Content-Security-Policy (CSP) – regler och lösningar
+
+För att undvika att inline-skript eller externa resurser blockeras av webbläsarens CSP-regler (t.ex. `script-src-elem`, `connect-src`):
+
+### ✅ Rekommenderade åtgärder
+
+1. **Undvik inline-skript helt**
+   - Flytta all JS till `.js`-filer
+   - Undvik `onclick`, `onload` direkt i HTML — använd `addEventListener`
+
+2. **Sätt CSP headers i backend**
+   Lägg till detta i `backend/server.js` före dina routes:
+
+   ```js
+   app.use((req, res, next) => {
+     res.setHeader("Content-Security-Policy",
+       "default-src 'self'; " +
+       "script-src 'self' https://apis.google.com https://js.stripe.com; " +
+       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+       "font-src 'self' https://fonts.gstatic.com; " +
+       "img-src 'self' data: blob:; " +
+       "connect-src 'self' https://your-api.com https://*.stripe.com; " +
+       "frame-src https://js.stripe.com;"
+     );
+     next();
+   });
