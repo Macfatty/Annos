@@ -52,6 +52,30 @@ describe('API endpoints', () => {
     expect(inserted.namn).toBe(newOrder.kund.namn);
   });
 
+  test('POST /api/order works with cookie token', async () => {
+    const newOrder = {
+      kund: {
+        namn: 'Cookie Testsson',
+        telefon: '111222333',
+        adress: 'Cookiegatan 3',
+        ovrigt: 'Inga',
+        email: `cookie_${Date.now()}@example.com`
+      },
+      order: [
+        { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
+      ]
+    };
+
+    const token = jwt.sign({ userId: 1, role: 'admin' }, SECRET);
+    const res = await request(app)
+      .post('/api/order')
+      .set('Cookie', [`accessToken=${token}`])
+      .send(newOrder);
+
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('orderId');
+  });
+
   test('PATCH /api/admin/orders/:id/klart marks order as done', async () => {
     const token = jwt.sign({ userId: 1, role: 'admin' }, SECRET);
 
