@@ -286,8 +286,18 @@ app.get("/api/my-orders", verifyToken, (req, res) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Servern körs på http://localhost:${PORT}`);
+  db.get("SELECT id FROM users WHERE role = 'admin' LIMIT 1", (err, row) => {
+    if (err) {
+      console.error('Fel vid kontroll av admin-anv\xE4ndare:', err.message);
+    } else if (!row) {
+      console.warn(
+        '⚠️ Inget admin-konto hittades. Kör "node backend/skapaAdmin.js" innan du loggar in på /admin.'
+      );
+    }
+
+    app.listen(PORT, () => {
+      console.log(`Servern körs på http://localhost:${PORT}`);
+    });
   });
 }
 
