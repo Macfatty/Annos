@@ -69,7 +69,7 @@ Gå till mappen `backend` och kör skriptet för att skapa ett första administr
 cd backend
 node skapaAdmin.js
 ```
-När både backend och frontend körs kan du navigera till `/admin` för att logga in med dessa uppgifter.
+**Detta måste köras innan du kan logga in på `/admin`.** När både backend och frontend körs kan du sedan navigera till `/admin` för att logga in med dessa uppgifter.
 
 ### 6. Starta backend-servern
 ```bash
