@@ -9,6 +9,7 @@
 
 - Frontend: React (via Vite)
 - Backend: Node.js + Express
+- Node.js ≥18 (kontrollera med `node -v`)
 - Databas: SQLite (via SQLite3)
 - Betalning: Swish (via API, i framtiden)
 - Språk: Svenska
@@ -23,13 +24,18 @@ annos/
 
 ## ✅ Checklista för att köra projektet lokalt
 
-### 1. Klona projektet
+### 1. Kontrollera Node.js-version
+```bash
+node -v
+# Måste vara version 18 eller senare
+```
+### 2. Klona projektet
 ```bash
 git clone https://github.com/Macfatty/Annos.git
 cd Annos
 ```
 
-### 2. Installera backend-beroenden
+### 3. Installera backend-beroenden
 ```bash
 cd backend
 npm install
@@ -42,7 +48,7 @@ npm list cors
 # kod.
 ```
 
-### 3. Skapa `.env`-fil
+### 4. Skapa `.env`-fil
 Lägg till följande i `backend/.env`:
 ```
 JWT_SECRET=your-secret
@@ -57,7 +63,7 @@ FRONTEND_ORIGIN=http://localhost:5173
 PORT=3001
 ```
 
-### 4. Skapa admin-konto
+### 5. Skapa admin-konto
 Gå till mappen `backend` och kör skriptet för att skapa ett första administratörskonto. Standarduppgifterna är `admin@example.com` och `admin123`.
 ```bash
 cd backend
@@ -65,7 +71,7 @@ node skapaAdmin.js
 ```
 När både backend och frontend körs kan du navigera till `/admin` för att logga in med dessa uppgifter.
 
-### 5. Starta backend-servern
+### 6. Starta backend-servern
 ```bash
 node server.js
 ```
@@ -73,7 +79,7 @@ node server.js
 
 ---
 
-### 6. Installera frontend-beroenden
+### 7. Installera frontend-beroenden
 ```bash
 cd ../frontend
 npm install
@@ -82,14 +88,14 @@ npm install
 # paket finns tillgängliga.
 ```
 
-### 7. Skapa `.env` i frontend
+### 8. Skapa `.env` i frontend
 Lägg till följande i `frontend/.env`:
 ```
 VITE_API_BASE_URL=http://localhost:3001
 ```
 Ange adressen till din backend om du har ändrat port eller värd. Variabeln behövs
 för att inloggning, profilsidor och orderhistorik ska fungera.
-### 8. Starta frontend (Vite)
+### 9. Starta frontend (Vite)
 ```bash
 npm run dev
 ```
@@ -97,10 +103,10 @@ npm run dev
 
 ---
 
-### 9. Testa att frontend <--> backend fungerar:
+### 10. Testa att frontend <--> backend fungerar:
 - Öppna http://localhost:3001 i webbläsaren eller kör `curl http://localhost:3001` i terminalen.
 - Du bör se: `backend funkar!`
-### 10. Kör kodkvalitetskontroller
+### 11. Kör kodkvalitetskontroller
 ```bash
 cd frontend
 npm run lint
