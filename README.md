@@ -58,9 +58,10 @@ PORT=3001
 ```
 
 ### 4. Skapa admin-konto
-Kör skriptet nedan för att skapa ett första administratörskonto. Standarduppgifterna är `admin@example.com` och `admin123`.
+Gå till mappen `backend` och kör skriptet för att skapa ett första administratörskonto. Standarduppgifterna är `admin@example.com` och `admin123`.
 ```bash
-node backend/skapaAdmin.js
+cd backend
+node skapaAdmin.js
 ```
 När både backend och frontend körs kan du navigera till `/admin` för att logga in med dessa uppgifter.
 
