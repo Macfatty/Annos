@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchProfile } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -11,18 +12,17 @@ function Restaurang() {
 
   const hamtaOrdrar = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
+     const profile = await fetchProfile();
+      if (!profile) {
         navigate("/login");
         return;
       }
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      if (payload.role !== "admin") {
+      if (profile.role !== "admin") {
         navigate("/");
         return;
       }
       const res = await fetch(`${BASE_URL}/api/admin/orders/today`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (res.status === 401) {
         navigate("/login");
@@ -52,19 +52,18 @@ function Restaurang() {
 
   const markeraSomKlar = async (orderId) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
+      const profile = await fetchProfile();
+      if (!profile) {
         navigate("/login");
         return;
       }
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      if (payload.role !== "admin") {
+     if (profile.role !== "admin") {
         navigate("/");
         return;
       }
       const res = await fetch(`${BASE_URL}/api/admin/orders/${orderId}/klart`, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (res.status === 401) {
         navigate("/login");

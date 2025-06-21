@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./App.css";
 import Undermeny from "./Undermeny";
 import Kundvagn from "./Kundvagn";
@@ -14,6 +14,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Tack from "./Tack";
 import AdminPanel from "./AdminPanel";
 import KurirVy from "./KurirVy";
+import { fetchProfile } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -32,19 +33,8 @@ function App() {
     return sparad ? JSON.parse(sparad) : [];
   });
   const [tillbehor, setTillbehor] = useState([]);
-  const [inloggad, setInloggad] = useState(!!localStorage.getItem("token"));
-  const [role, setRole] = useState(() => {
-    const t = localStorage.getItem("token");
-    if (!t) {
-      return "";
-    }
-    try {
-      const payload = JSON.parse(atob(t.split(".")[1]));
-      return payload.role || "";
-    } catch {
-      return "";
-    }
-  });
+  const [inloggad, setInloggad] = useState(false);
+  const [role, setRole] = useState("");
   const isAdmin = role === "admin";
   const isCourier = role === "courier";
   const [tema, setTema] = useState(
@@ -104,26 +94,30 @@ function App() {
     fetchTillbehor();
   }, []);
 
+  const loadProfile = useCallback(async () => {
+    const data = await fetchProfile();
+    if (data) {
+      setInloggad(true);
+      setRole(data.role || "");
+    } else {
+      setInloggad(false);
+      setRole("");
+    }
+  }, []);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
+
   useEffect(() => {
     const observer = () => {
-      const tok = localStorage.getItem("token");
-      setInloggad(!!tok);
-      if (!tok) {
-        setRole("");
-        return;
-      }
-      try {
-        const payload = JSON.parse(atob(tok.split(".")[1]));
-        setRole(payload.role || "");
-      } catch {
-        setRole("");
-      }
+      loadProfile();
     };
     window.addEventListener("storage", observer);
     return () => {
       window.removeEventListener("storage", observer);
     };
-  }, []);
+  }, [loadProfile]);
 
   const växlaTema = () => {
     setTema((prev) => (prev === "light" ? "dark" : "light"));
@@ -166,10 +160,16 @@ function App() {
                   </button>
                 )}
                 {isCourier && (
-                  <button onClick={() => navigate("/kurir")}>🚚 Kurirpanel</button>
+                  <button onClick={() => navigate("/kurir")}>
+                    🚚 Kurirpanel
+                  </button>
                 )}
                 <button
-                  onClick={() => {
+                  onClick={async () => {
+                    await fetch(`${BASE_URL}/api/auth/logout`, {
+                      method: "POST",
+                      credentials: "include",
+                    });
                     localStorage.clear();
                     window.dispatchEvent(new Event("storage"));
                     alert("Du är nu utloggad.");
@@ -279,6 +279,7 @@ function App() {
                 <Undermeny
                   ratt={valdRatt}
                   tillbehor={tillbehor}
+                  isLoggedIn={inloggad}
                   onClose={() => setValdRatt(null)}
                   onAddToCart={(val) => {
                     if (redigeringsIndex !== null) {
@@ -308,8 +309,9 @@ function App() {
             🛒 Kundvagn ({varukorg.length})
           </button>
         )}
-        {isCourier && <button onClick={() => navigate("/kurir")}>🚚 Kurirpanel</button>}
-
+      {isCourier && (
+        <button onClick={() => navigate("/kurir")}>🚚 Kurirpanel</button>
+      )}
     </>
   );
 }

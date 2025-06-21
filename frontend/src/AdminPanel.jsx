@@ -1,6 +1,7 @@
 // src/AdminPanel.jsx
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchProfile } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -10,32 +11,28 @@ function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [fel, setFel] = useState(null);
 
-  const token = localStorage.getItem("token");
-
   // Kontrollera adminroll
   useEffect(() => {
-    if (!token) {
-      navigate("/");
-      return;
-    }
-
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      if (payload.role !== "admin") {
+    const kontrollera = async () => {
+      try {
+        const profil = await fetchProfile();
+        if (!profil || profil.role !== "admin") {
+          navigate("/");
+        }
+      } catch (err) {
+        console.error("Fel vid hämtning av profil:", err);
         navigate("/");
       }
-    } catch (err) {
-      console.error("Ogiltig token:", err);
-      navigate("/");
-    }
-  }, [navigate, token]);
+    };
+    kontrollera();
+  }, [navigate]);
 
   // Hämta ordrar
   const hamtaOrdrar = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`${BASE_URL}/api/admin/orders/today`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (!res.ok) {
         throw new Error("Kunde inte hämta ordrar");
@@ -49,7 +46,7 @@ function AdminPanel() {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     hamtaOrdrar();
@@ -60,7 +57,7 @@ function AdminPanel() {
     try {
       const res = await fetch(`${BASE_URL}/api/admin/orders/${id}/klart`, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (!res.ok) {
         throw new Error("Kunde inte markera som klar");

@@ -1,6 +1,7 @@
 // src/KurirVy.jsx
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchProfile } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,28 +10,24 @@ function KurirVy() {
   const [ordrar, setOrdrar] = useState([]);
   const [fel, setFel] = useState(null);
 
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      if (payload.role !== "courier") {
+    const check = async () => {
+      const profile = await fetchProfile();
+      if (!profile) {
+        navigate("/login");
+        return;
+      }
+      if (profile.role !== "courier") {
         navigate("/");
       }
-    } catch {
-      navigate("/");
-    }
-  }, [navigate, token]);
+    };
+    check();
+  }, [navigate]);
 
   const hämtaOrdrar = useCallback(async () => {
     try {
       const res = await fetch(`${BASE_URL}/api/admin/orders/today`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (!res.ok) {
         throw new Error("Kunde inte hämta ordrar");
@@ -41,7 +38,7 @@ function KurirVy() {
       console.error(err);
       setFel("Fel vid hämtning av leveranser.");
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     hämtaOrdrar();
@@ -51,7 +48,7 @@ function KurirVy() {
     try {
       const res = await fetch(`${BASE_URL}/api/admin/orders/${id}/klart`, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
       });
       if (!res.ok) {
         throw new Error("Kunde inte markera som klar");
@@ -78,11 +75,22 @@ function KurirVy() {
             backgroundColor: "#f0f8ff",
           }}
         >
-          <p><strong>Tid:</strong> {new Date(order.created_at).toLocaleTimeString("sv-SE")}</p>
-          <p><strong>Kund:</strong> {order.namn} – {order.telefon}</p>
-          <p><strong>Adress:</strong> {order.adress}</p>
-          <p><strong>Info:</strong> {order.extraInfo || "–"}</p>
-          <p><strong>Totalt:</strong> {order.total} kr</p>
+          <p>
+            <strong>Tid:</strong>{" "}
+            {new Date(order.created_at).toLocaleTimeString("sv-SE")}
+          </p>
+          <p>
+            <strong>Kund:</strong> {order.namn} – {order.telefon}
+          </p>
+          <p>
+            <strong>Adress:</strong> {order.adress}
+          </p>
+          <p>
+            <strong>Info:</strong> {order.extraInfo || "–"}
+          </p>
+          <p>
+            <strong>Totalt:</strong> {order.total} kr
+          </p>
           <button onClick={() => markeraSomLevererad(order.id)}>
             ✅ Markera som levererad
           </button>

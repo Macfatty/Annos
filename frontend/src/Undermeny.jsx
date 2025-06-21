@@ -1,10 +1,9 @@
 import { useState, useRef } from "react";
 import "./App.css";
 
-function Undermeny({ ratt, tillbehor, onClose, onAddToCart }) {
+function Undermeny({ ratt, tillbehor, onClose, onAddToCart, isLoggedIn }) {
   const [oppenKategori, setOppenKategori] = useState(null);
-  const kategoriRefs = useRef({});
-  const token = localStorage.getItem("token");
+ const kategoriRefs = useRef({});
 
   const [valda, setValda] = useState({});
   const [valfriSasText, setValfriSasText] = useState("");
@@ -194,7 +193,7 @@ function Undermeny({ ratt, tillbehor, onClose, onAddToCart }) {
         {/* Sticky Footer */}
         <div style={{ position: "sticky", bottom: 0, padding: "1rem", background: "inherit", borderTop: "1px solid #ccc", zIndex: 15 }}>
           <p><strong>Totalpris: {total} kr</strong></p>
-          {token ? (
+           {isLoggedIn ? (
             <button onClick={läggTill}>Lägg till i varukorg</button>
           ) : (
             <p style={{ color: "red", fontWeight: "bold" }}>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import { fetchProfile } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,18 +10,20 @@ function MinaBeställningar({ onBeställIgen }) {
   const [laddar, setLaddar] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setFel("Du är inte inloggad.");
-      return;
-    }
-
-    fetch(`${BASE_URL}/api/my-orders`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    fetchProfile()
+      .then((profile) => {
+        if (!profile) {
+          setFel("Du är inte inloggad.");
+          return null;
+        }
+        return fetch(`${BASE_URL}/api/my-orders`, {
+          credentials: "include",
+        });
+      })
       .then((res) => {
+        if (!res) {
+          return null;
+        }
         if (!res.ok) {
           throw new Error("Kunde inte ladda beställningar.");
         }
@@ -62,9 +65,16 @@ function MinaBeställningar({ onBeställIgen }) {
       <h2>Tidigare beställningar</h2>
       {bestallningar.map((order) => (
         <div key={order.id} className="bestallningskort">
-          <p><strong>Datum:</strong> {new Date(order.created_at).toLocaleString("sv-SE")}</p>
-          <p><strong>Restaurang:</strong> {order.restaurangSlug || "Okänd"}</p>
-          <p><strong>Status:</strong> {order.status}</p>
+          <p>
+            <strong>Datum:</strong>{" "}
+            {new Date(order.created_at).toLocaleString("sv-SE")}
+          </p>
+          <p>
+            <strong>Restaurang:</strong> {order.restaurangSlug || "Okänd"}
+          </p>
+          <p>
+            <strong>Status:</strong> {order.status}
+          </p>
           <ul>
             {order.rader.map((rad, index) => (
               <li key={index}>
@@ -79,7 +89,9 @@ function MinaBeställningar({ onBeställIgen }) {
               </li>
             ))}
           </ul>
-          <p><strong>Total:</strong> {order.total} kr</p>
+          <p>
+            <strong>Total:</strong> {order.total} kr
+          </p>
           {onBeställIgen && (
             <button
               onClick={() => onBeställIgen(order.rader)}

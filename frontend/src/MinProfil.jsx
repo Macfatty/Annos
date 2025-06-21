@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MinaBeställningar from "./MinaBeställningar";
+import { fetchProfile } from "./api";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function MinProfil() {
   const navigate = useNavigate();
@@ -10,30 +10,22 @@ function MinProfil() {
   const [profil, setProfil] = useState(null);
   const darkMode = document.body.classList.contains("dark");
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    fetch(`${BASE_URL}/api/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
+   useEffect(() => {
+    const load = async () => {
+      const data = await fetchProfile();
+      if (data) {
         setProfil(data);
         localStorage.setItem("kundinfo", JSON.stringify(data));
-      })
-      .catch((err) => {
-        console.error(err);
+      } else {
         const fallback = localStorage.getItem("kundinfo");
         if (fallback) {
           setProfil(JSON.parse(fallback));
         } else {
           navigate("/login");
         }
-      });
+      }
+    };
+    load();
   }, [navigate]);
 
   const sektioner = [

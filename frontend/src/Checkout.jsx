@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
+import { fetchProfile } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -40,9 +41,9 @@ function Checkout({ varukorg, setVarukorg, restaurang }) {
     return summa + item.pris + tillvalPris;
   }, 0);
 
-  const skickaBestallning = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+   const skickaBestallning = async () => {
+    const profile = await fetchProfile();
+    if (!profile) {
       alert("🔒 Du måste logga in för att kunna lägga en beställning.");
       navigate("/login");
       return;
@@ -63,8 +64,8 @@ function Checkout({ varukorg, setVarukorg, restaurang }) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
+      credentials: "include", // Skicka med cookies för autentisering
       body: JSON.stringify(payload),
     })
       .then((res) => {
