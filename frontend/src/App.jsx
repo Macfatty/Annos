@@ -61,6 +61,13 @@ function App() {
 
   useEffect(() => {
     const fetchMeny = async () => {
+      if (!BASE_URL) {
+        setError(
+          "Fel: VITE_API_BASE_URL saknas i .env. Ange adressen till backend."
+        );
+        setLoading(false);
+        return;
+      }
       try {
         const res = await fetch(`${BASE_URL}/api/meny`);
         if (!res.ok) {
@@ -70,7 +77,13 @@ function App() {
         setMeny(data);
       } catch (err) {
         console.error("Fel:", err);
-        setError("Kunde inte ladda menydata från servern.");
+        if (err.message === "Failed to fetch") {
+          setError(
+            "Kunde inte ansluta till servern. Kontrollera VITE_API_BASE_URL."
+          );
+        } else {
+          setError("Kunde inte ladda menydata från servern.");
+        }
       } finally {
         setLoading(false);
       }
@@ -80,6 +93,12 @@ function App() {
 
   useEffect(() => {
     const fetchTillbehor = async () => {
+      if (!BASE_URL) {
+        setError(
+          "Fel: VITE_API_BASE_URL saknas i .env. Ange adressen till backend."
+        );
+        return;
+      }
       try {
         const res = await fetch(`${BASE_URL}/api/tillbehor`);
         if (!res.ok) {
@@ -89,6 +108,11 @@ function App() {
         setTillbehor(data);
       } catch (err) {
         console.error("Fel vid tillbehör:", err);
+        if (err.message === "Failed to fetch") {
+          setError(
+            "Kunde inte ansluta till servern. Kontrollera VITE_API_BASE_URL."
+          );
+        }
       }
     };
     fetchTillbehor();

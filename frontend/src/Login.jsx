@@ -21,12 +21,15 @@ function Login() {
 
       if (res.ok) {
         // 🔐 Spara användarinfo för profil & checkout
-        localStorage.setItem("kundinfo", JSON.stringify({
-          namn: data.namn,
-          email: data.email,
-          telefon: data.telefon,
-          adress: data.adress || ""
-        }));
+        localStorage.setItem(
+          "kundinfo",
+          JSON.stringify({
+            namn: data.namn,
+            email: data.email,
+            telefon: data.telefon,
+            adress: data.adress || "",
+          })
+        );
 
         window.dispatchEvent(new Event("storage"));
         navigate("/valj-restaurang");
@@ -86,7 +89,14 @@ function Login() {
   };
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto", textAlign: "center" }}>
+    <div
+      style={{
+        padding: "2rem",
+        maxWidth: "600px",
+        margin: "auto",
+        textAlign: "center",
+      }}
+    >
       <h1>🔐 Logga in</h1>
       <label htmlFor="email">E-postadress</label>
       <input
@@ -114,20 +124,44 @@ function Login() {
         Logga in
       </button>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem" }}>
-        <button onClick={loggaInMedGoogle} aria-label="Logga in med Google">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+          marginBottom: "1rem",
+        }}
+      >
+        <button
+          onClick={loggaInMedGoogle}
+          aria-label="Logga in med Google"
+          style={{ width: "100%" }}
+        >
           Logga in med Google
         </button>
-        <button onClick={loggaInMedApple} aria-label="Logga in med Apple">
+        <button
+          onClick={loggaInMedApple}
+          aria-label="Logga in med Apple"
+          style={{ width: "100%" }}
+        >
           Logga in med Apple
         </button>
       </div>
 
       <div style={{ marginTop: "1rem" }}>
         <button onClick={() => navigate("/register")}>🧾 Registrera dig</button>
-        <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "1rem",
+            flexWrap: "wrap",
+          }}
+        >
           <button onClick={() => navigate("/")}>⬅ Startsida</button>
-          <button onClick={() => navigate("/valj-restaurang")}>⬅ Välj restaurang</button>
+          <button onClick={() => navigate("/valj-restaurang")}>
+            ⬅ Välj restaurang
+          </button>
         </div>
       </div>
     </div>

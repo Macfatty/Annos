@@ -22,7 +22,15 @@ function Register() {
         alert("Registrering lyckades!");
         navigate("/login");
       } else {
-        alert("Registrering misslyckades.");
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (err) {
+          console.error("Kunde inte tolka svar som JSON", err);
+        }
+        const message =
+          data.error || (Array.isArray(data.errors) ? data.errors[0] : "");
+        alert(`Registrering misslyckades: ${message}`);
       }
     } catch (err) {
       console.error(err);
@@ -31,7 +39,14 @@ function Register() {
   };
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto", textAlign: "center" }}>
+    <div
+      style={{
+        padding: "2rem",
+        maxWidth: "600px",
+        margin: "auto",
+        textAlign: "center",
+      }}
+    >
       <h1>📝 Registrera dig</h1>
       <label htmlFor="regNamn">Namn</label>
       <input
@@ -41,7 +56,13 @@ function Register() {
         value={namn}
         aria-label="Skriv ditt namn"
         onChange={(e) => setNamn(e.target.value)}
-        style={{ display: "block", width: "100%", marginBottom: "1rem", fontSize: "1.1rem", padding: "0.75rem" }}
+        style={{
+          display: "block",
+          width: "100%",
+          marginBottom: "1rem",
+          fontSize: "1.1rem",
+          padding: "0.75rem",
+        }}
       />
       <label htmlFor="regEmail">E-postadress</label>
       <input
@@ -51,7 +72,13 @@ function Register() {
         value={email}
         aria-label="Skriv din e-postadress"
         onChange={(e) => setEmail(e.target.value)}
-        style={{ display: "block", width: "100%", marginBottom: "1rem", fontSize: "1.1rem", padding: "0.75rem" }}
+        style={{
+          display: "block",
+          width: "100%",
+          marginBottom: "1rem",
+          fontSize: "1.1rem",
+          padding: "0.75rem",
+        }}
       />
       <label htmlFor="regTelefon">Telefonnummer</label>
       <input
@@ -61,7 +88,13 @@ function Register() {
         value={telefon}
         aria-label="Skriv ditt telefonnummer"
         onChange={(e) => setTelefon(e.target.value)}
-        style={{ display: "block", width: "100%", marginBottom: "1rem", fontSize: "1.1rem", padding: "0.75rem" }}
+        style={{
+          display: "block",
+          width: "100%",
+          marginBottom: "1rem",
+          fontSize: "1.1rem",
+          padding: "0.75rem",
+        }}
       />
       <label htmlFor="regLosen">Lösenord</label>
       <input
@@ -71,13 +104,30 @@ function Register() {
         value={losenord}
         aria-label="Skriv ett lösenord"
         onChange={(e) => setLosenord(e.target.value)}
-        style={{ display: "block", width: "100%", marginBottom: "1.5rem", fontSize: "1.1rem", padding: "0.75rem" }}
+        style={{
+          display: "block",
+          width: "100%",
+          marginBottom: "1.5rem",
+          fontSize: "1.1rem",
+          padding: "0.75rem",
+        }}
       />
-      <button onClick={registrera} style={{ marginBottom: "1.5rem" }}>Skapa konto</button>
+      <button onClick={registrera} style={{ marginBottom: "1.5rem" }}>
+        Skapa konto
+      </button>
 
-      <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "1rem",
+          flexWrap: "wrap",
+        }}
+      >
         <button onClick={() => navigate("/login")}>⬅ Till inloggning</button>
-        <button onClick={() => navigate("/valj-restaurang")}>🍴 Restauranger</button>
+        <button onClick={() => navigate("/valj-restaurang")}>
+          🍴 Restauranger
+        </button>
         <button onClick={() => navigate("/")}>🏠 Startsida</button>
       </div>
     </div>
