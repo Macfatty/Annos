@@ -98,9 +98,8 @@ npm run dev
 ---
 
 ### 9. Testa att frontend <--> backend fungerar:
-- Gå till frontend i webbläsaren
-- Klicka på "Testa backend-anslutning"
-- Du bör se: `Backend funkar!`
+- Öppna http://localhost:3001 i webbläsaren eller kör `curl http://localhost:3001` i terminalen.
+- Du bör se: `backend funkar!`
 ### 10. Kör kodkvalitetskontroller
 ```bash
 cd frontend
