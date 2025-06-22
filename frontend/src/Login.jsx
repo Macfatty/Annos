@@ -120,9 +120,9 @@ function Login() {
         style={{ display: "block", width: "100%", marginBottom: "1.5rem" }}
       />
 
-      <button onClick={loggaIn} style={{ marginBottom: "1rem" }}>
-        Logga in
-      </button>
+      <div style={{ marginBottom: "1.5rem" }}>
+        <button onClick={loggaIn}>Logga in</button>
+      </div>
 
       <div
         style={{
@@ -135,14 +135,12 @@ function Login() {
         <button
           onClick={loggaInMedGoogle}
           aria-label="Logga in med Google"
-          style={{ width: "100%" }}
         >
           Logga in med Google
         </button>
         <button
           onClick={loggaInMedApple}
           aria-label="Logga in med Apple"
-          style={{ width: "100%" }}
         >
           Logga in med Apple
         </button>
