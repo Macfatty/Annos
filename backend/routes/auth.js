@@ -12,16 +12,24 @@ dotenv.config();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 function generateTokens(user) {
+  if (!process.env.JWT_SECRET || !process.env.REFRESH_SECRET) {
+    throw new Error(
+      " Miljövariabler saknas: Se till att JWT_SECRET och REFRESH_SECRET är definierade i .env"
+    );
+  }
+
   const accessToken = jwt.sign(
     { userId: user.id, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: "15m" }
   );
+
   const refreshToken = jwt.sign(
     { userId: user.id },
     process.env.REFRESH_SECRET,
     { expiresIn: "7d" }
   );
+
   return { accessToken, refreshToken };
 }
 

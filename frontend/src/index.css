@@ -74,3 +74,8 @@ button:focus-visible {
     color: #000;
   }
 }
+/* === FIX: Global a11y-fokusring + sticky-top kompatibilitet === */
+:focus-visible {
+  outline: 3px solid #ffa500;
+  outline-offset: 2px;
+}

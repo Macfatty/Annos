@@ -418,3 +418,23 @@ body.dark .profil-container textarea::placeholder {
     box-sizing: border-box;
   }
 }
+/* === FIX: Sticky och överskådlighet === */
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: white;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ccc;
+}
+body.dark .sticky-top {
+  background-color: #1e1e1e;
+  border-color: #333;
+}
+
+/* === FIX: Förhindra layoutbuggar i kort och meny på mobil === */
+.menu-container,
+.restaurang-kort {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
