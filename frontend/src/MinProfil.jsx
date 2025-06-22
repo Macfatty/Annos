@@ -8,7 +8,23 @@ function MinProfil() {
   const navigate = useNavigate();
   const [aktiv, setAktiv] = useState("info");
   const [profil, setProfil] = useState(null);
-  const darkMode = document.body.classList.contains("dark");
+  const [tema, setTema] = useState(() => localStorage.getItem("tema") || "light");
+  const darkMode = tema === "dark";
+
+  useEffect(() => {
+    document.body.className = tema;
+  }, [tema]);
+
+  useEffect(() => {
+    const handleStorage = () => {
+      const lagrat = localStorage.getItem("tema") || "light";
+      setTema(lagrat);
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
 
    useEffect(() => {
     const load = async () => {
