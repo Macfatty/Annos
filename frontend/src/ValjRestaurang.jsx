@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 function ValjRestaurang() {
   const navigate = useNavigate();
-  const darkMode = document.body.classList.contains("dark");
+  // const darkMode = document.body.classList.contains("dark");
 
   const restauranger = [
     {
@@ -13,45 +13,31 @@ function ValjRestaurang() {
     // framtida: { namn: "SushiBar", bild: "...", länk: "/sushibar" }
   ];
 
-  return (
-    <div style={{ padding: "2rem", textAlign: "center", fontFamily: "sans-serif" }}>
-      <h1 style={{ fontSize: "2.5rem", marginBottom: "2rem" }}>Välj Restaurang</h1>
+ return (
+  <div className="valj-restaurang-sida">
+    <h1 className="valj-rubrik">Välj Restaurang</h1>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexWrap: "wrap",
-          gap: "2rem",
-        }}
-      >
-        {restauranger.map((r, index) => (
-          <div
-            key={index}
-            onClick={() => navigate(r.länk)}
-            style={{
-              cursor: "pointer",
-              padding: "1rem",
-              borderRadius: "12px",
-              backgroundColor: darkMode ? "#333" : "#f5f5f5",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              color: darkMode ? "white" : "black",
-              maxWidth: "200px",
-              width: "100%",
+    <div className="restaurang-lista">
+      {restauranger.map((r, index) => (
+        <div
+          key={index}
+          onClick={() => navigate(r.länk)}
+          className="restaurang-kort"
+        >
+          <img
+            src={r.bild}
+            alt={r.namn}
+            onError={(e) => {
+              e.target.src = "/bilder/default.jpg";
             }}
-          >
-            <img
-              src={r.bild}
-              alt={r.namn}
-              style={{ width: "100%", borderRadius: "8px", marginBottom: "0.5rem" }}
-              onError={(e) => (e.target.src = "/bilder/default.jpg")}
-            />
-            <h3>{r.namn}</h3>
-          </div>
-        ))}
-      </div>
+          />
+          <h3>{r.namn}</h3>
+        </div>
+      ))}
     </div>
-  );
+  </div>
+);
+
 }
 
 export default ValjRestaurang;

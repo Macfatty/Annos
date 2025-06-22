@@ -163,15 +163,38 @@ button:focus-visible {
     max-width: 600px;
     box-sizing: border-box;
   }
+
+  .menu-container {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-card {
+    padding: 1rem;
+  }
+}
+/* === RESTAURANGKORT STYLING === */
+.restaurang-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
 }
 
-/* Mörkt läge */
+.restaurang-kort {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* === MÖRKT LÄGE === */
 body.dark {
   background-color: #121212;
   color: white;
 }
 
-body.dark .menu-card {
+body.dark .menu-card,
+body.dark .restaurang-kort {
   background-color: #1e1e1e;
   color: white;
 }
@@ -181,7 +204,6 @@ body.dark .modal-content {
   color: white;
   border: 1px solid #444;
 }
-
 body.dark input,
 body.dark textarea {
   background-color: #2a2a2a;
@@ -226,114 +248,6 @@ body.dark button:disabled {
   color: #bbb;
 }
 
-.restaurang-kort,
-.restaurang-kort * {
-  color: inherit !important;
-  -webkit-text-fill-color: inherit !important;
-  background-clip: initial !important;
-  -webkit-background-clip: initial !important;
-  background-color: inherit !important;
-  mix-blend-mode: normal !important;
-  opacity: 1 !important;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body.light .restaurang-kort {
-  color: black !important;
-}
-body.dark .restaurang-kort {
-  color: white !important;
-}
-
-/* 🧩 Fixa knapparnas textfärg för både ljus & mörkt läge */
-body.light button {
-  color: black !important;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-}
-
-body.dark button {
-  color: white !important;
-  background-color: #333;
-  border: 1px solid #555;
-}
-
-/* ✅ Förbättrad mobilanpassning */
-@media (max-width: 768px) {
-  body {
-    padding: 0.5rem;
-  }
-
-  h1,
-  h2 {
-    font-size: 1.3rem;
-  }
-
-  .menu-container {
-    grid-template-columns: 1fr;
-    padding: 0.5rem;
-  }
-
-  .menu-card {
-    padding: 1rem;
-  }
-
-  .menu-image {
-    height: 120px;
-  }
-
-  .modal-content {
-    padding: 1rem;
-    max-width: 95%;
-  }
-
-  button {
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-  }
-
-  .kundvagn-flyt {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-    bottom: 10px;
-    right: 10px;
-  }
-
-  input,
-  textarea {
-    font-size: 1rem;
-    padding: 0.6rem;
-    border-radius: 6px;
-  }
-}
-@media (max-width: 768px) {
-  .profil-container {
-    flex-direction: column;
-  }
-
-  .profil-container aside {
-    width: 100% !important;
-    border-bottom: 1px solid #ccc;
-  }
-
-  .profil-container main {
-    width: 100%;
-  }
-
-  .profil-container input,
-  .profil-container textarea {
-    width: 100%;
-    max-width: 100%;
-    font-size: 1rem;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    box-sizing: border-box;
-  }
-}
-/* === PROFILVY === */
-
 .profil-container {
   display: flex;
   flex-wrap: wrap;
@@ -356,7 +270,6 @@ body.dark .profil-container aside {
   padding: 2rem;
 }
 
-/* Snygga och tydliga inputs */
 .profil-container input,
 .profil-container textarea {
   display: block;
@@ -391,7 +304,6 @@ body.dark .profil-container textarea::placeholder {
   font-size: 1rem;
   color: inherit;
 }
-
 /* === RESPONSIV PROFIL === */
 @media (max-width: 768px) {
   .profil-container {
@@ -418,6 +330,7 @@ body.dark .profil-container textarea::placeholder {
     box-sizing: border-box;
   }
 }
+
 /* === FIX: Sticky och överskådlighet === */
 .sticky-top {
   position: sticky;
@@ -432,9 +345,74 @@ body.dark .sticky-top {
   border-color: #333;
 }
 
-/* === FIX: Förhindra layoutbuggar i kort och meny på mobil === */
+/* === Förhindra layoutbuggar i kort och meny på mobil === */
 .menu-container,
 .restaurang-kort {
   word-break: break-word;
   overflow-wrap: anywhere;
+}
+
+/* === Profilnavigering & logout-knapp === */
+.profil-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.profil-logout {
+  background-color: #dc3545;
+  color: white;
+  margin-top: 2rem;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: none;
+}
+
+body.dark .profil-logout {
+  background-color: #aa1e1e;
+}
+
+/* === Restaurang-sida layout === */
+.valj-restaurang-sida {
+  padding: 2rem;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.valj-rubrik {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.restaurang-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.restaurang-kort img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+/* === Mörkt läge (tillägg) === */
+body.dark {
+  background-color: #121212;
+  color: white;
+}
+
+body.dark .menu-card,
+body.dark .restaurang-kort {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+body.dark .modal-content {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
 }
