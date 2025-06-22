@@ -21,7 +21,7 @@ db.serialize(() => {
       email TEXT UNIQUE,
       telefon TEXT,
       adress TEXT,
-      losenord TEXT,
+      password TEXT,
       role TEXT DEFAULT 'customer'
     )`,
     (err) => {
