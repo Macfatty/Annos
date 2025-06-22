@@ -4,6 +4,7 @@ import "./App.css";
 function Undermeny({ ratt, tillbehor, onClose, onAddToCart, isLoggedIn }) {
   const [oppenKategori, setOppenKategori] = useState(null);
  const kategoriRefs = useRef({});
+  const darkMode = document.body.classList.contains("dark");
 
   const [valda, setValda] = useState({});
   const [valfriSasText, setValfriSasText] = useState("");
@@ -131,7 +132,10 @@ function Undermeny({ ratt, tillbehor, onClose, onAddToCart, isLoggedIn }) {
       <div className="modal-content" style={{ display: "flex", flexDirection: "column", height: "90vh", padding: 0 }}>
         {/* Sticky Header */}
         <div style={{ position: "sticky", top: 0, zIndex: 20, background: "inherit", padding: "1rem" }}>
-          <button onClick={onClose} style={{ backgroundColor: "#dc3545", color: "white", width: "100%" }}>
+          <button
+            onClick={onClose}
+            style={{ backgroundColor: darkMode ? "#802b2b" : "#dc3545", color: "white", width: "100%" }}
+          >
             ❌ Stäng undermeny
           </button>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center", marginTop: "0.5rem" }}>

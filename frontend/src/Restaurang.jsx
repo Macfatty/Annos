@@ -86,7 +86,7 @@ function Restaurang() {
     });
   };
 
-  const ärMörktLäge = localStorage.getItem("tema") === "dark";
+  const darkMode = document.body.classList.contains("dark");
 
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
@@ -138,7 +138,7 @@ function Restaurang() {
           if (order.status === "klar") {färg = "lightgreen";}
           else if (diffMin < 1) {färg = "lightcoral";}
 
-          if (ärMörktLäge) {
+          if (darkMode) {
             if (order.status === "klar") {färg = "#2e7031";}
             else if (diffMin < 1) {färg = "#803333";}
             else {färg = "#2a2a2a";}
@@ -154,7 +154,7 @@ function Restaurang() {
                 marginBottom: "1.5rem",
                 borderRadius: "10px",
                 backgroundColor: färg,
-                color: ärMörktLäge ? "white" : "black", // 🔧 säkrar färg
+                color: darkMode ? "white" : "black", // 🔧 säkrar färg
               }}
             >
               <p>

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 function ValjRestaurang() {
   const navigate = useNavigate();
+  const darkMode = document.body.classList.contains("dark");
 
   const restauranger = [
     {
@@ -32,8 +33,9 @@ function ValjRestaurang() {
               cursor: "pointer",
               padding: "1rem",
               borderRadius: "12px",
-              backgroundColor: "#f5f5f5",
+              backgroundColor: darkMode ? "#333" : "#f5f5f5",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              color: darkMode ? "white" : "black",
               maxWidth: "200px",
               width: "100%",
             }}

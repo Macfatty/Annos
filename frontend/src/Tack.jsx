@@ -5,6 +5,7 @@ import "./App.css";
 function Tack() {
   const navigate = useNavigate();
   const initial = useRef({ done: false });
+  const darkMode = document.body.classList.contains("dark");
 
   useEffect(() => {
     if (initial.current.done) {
@@ -45,14 +46,14 @@ function Tack() {
         <button
           type="button"
           onClick={() => navigate("/valj-restaurang")}
-          style={{ backgroundColor: "#4caf50", color: "white" }}
+          style={{ backgroundColor: darkMode ? "#2e7031" : "#4caf50", color: "white" }}
         >
           🍽️ Till restauranger
         </button>
         <button
           type="button"
           onClick={() => navigate("/profil")}
-          style={{ backgroundColor: "#1976d2", color: "white" }}
+          style={{ backgroundColor: darkMode ? "#125290" : "#1976d2", color: "white" }}
         >
           👤 Min profil
         </button>
@@ -64,7 +65,7 @@ function Tack() {
             alert("Du är nu utloggad.");
             navigate("/");
           }}
-          style={{ backgroundColor: "#f44336", color: "white" }}
+          style={{ backgroundColor: darkMode ? "#802b2b" : "#f44336", color: "white" }}
         >
           🚪 Logga ut
         </button>
