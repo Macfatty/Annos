@@ -8,6 +8,11 @@ const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
 const authRouter = require("./routes/auth");
 
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true,
+};
+
 dotenv.config();
 
 const app = express();
@@ -21,12 +26,7 @@ const {
   db,
 } = require("./orderDB");
 
-app.use(
-  cors({
-    origin: process.env.FRONTEND_ORIGIN,
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -302,3 +302,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
+module.exports.corsOptions = corsOptions;
