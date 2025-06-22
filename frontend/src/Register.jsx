@@ -112,8 +112,16 @@ function Register() {
           padding: "0.75rem",
         }}
       />
-      <button onClick={registrera} style={{ marginBottom: "1.5rem" }}>
-        Skapa konto
+      <button
+        onClick={registrera}
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          margin: "auto",
+          marginBottom: "1.5rem",
+        }}
+      >
+        ✅ Skapa konto
       </button>
 
       <div
