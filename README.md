@@ -39,7 +39,7 @@ cd Annos
 ```bash
 cd backend
 npm install
-# Detta laddar ner bland annat Jest som dev-dependency
+npm list jest  # Kontrollera att Jest installerades som dev-dependency
 # Kontrollera att du har express & cors
 npm list express
 npm list cors
