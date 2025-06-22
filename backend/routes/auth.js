@@ -6,41 +6,69 @@ const { OAuth2Client } = require("google-auth-library");
 const appleSignin = require("apple-signin-auth");
 const { body, validationResult } = require("express-validator");
 const { db } = require("../orderDB");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 function generateTokens(user) {
-  const accessToken = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "15m" });
-  const refreshToken = jwt.sign({ userId: user.id }, process.env.REFRESH_SECRET, { expiresIn: "7d" });
+  const accessToken = jwt.sign(
+    { userId: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "15m" }
+  );
+  const refreshToken = jwt.sign(
+    { userId: user.id },
+    process.env.REFRESH_SECRET,
+    { expiresIn: "7d" }
+  );
   return { accessToken, refreshToken };
 }
 
 // 📧 E-postinloggning
-router.post("/login", [
-  body("email").isEmail().normalizeEmail(),
-  body("losenord").notEmpty(),
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+router.post(
+  "/login",
+  [body("email").isEmail().normalizeEmail(), body("losenord").notEmpty()],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
-  const { email, losenord } = req.body;
+    const { email, losenord } = req.body;
 
-  db.get("SELECT * FROM users WHERE email = ?", [email], async (err, user) => {
-    if (err || !user) return res.status(401).json({ error: "Fel inloggningsuppgifter" });
-    const match = await bcrypt.compare(losenord, user.password);
-    if (!match) return res.status(401).json({ error: "Fel inloggningsuppgifter" });
+    db.get(
+      "SELECT * FROM users WHERE email = ?",
+      [email],
+      async (err, user) => {
+        if (err || !user)
+          return res.status(401).json({ error: "Fel inloggningsuppgifter" });
+        const match = await bcrypt.compare(losenord, user.password);
+        if (!match)
+          return res.status(401).json({ error: "Fel inloggningsuppgifter" });
 
-    const { accessToken, refreshToken } = generateTokens(user);
-    res.cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 604800000 });
-    res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "lax", maxAge: 15 * 60 * 1000 });
-    res.json({});
-  });
-});
+        const { accessToken, refreshToken } = generateTokens(user);
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          maxAge: 604800000,
+        });
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          sameSite: "lax",
+          maxAge: 15 * 60 * 1000,
+        });
+        res.json({});
+      }
+    );
+  }
+);
 
 // 🟢 Google OAuth
 router.post("/google", async (req, res) => {
   const { token } = req.body;
-  const ticket = await client.verifyIdToken({ idToken: token, audience: process.env.GOOGLE_CLIENT_ID });
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
   const payload = ticket.getPayload();
   const email = payload.email;
   const namn = payload.name;
@@ -49,17 +77,34 @@ router.post("/google", async (req, res) => {
     if (err) return res.status(500).json({ error: "DB-fel" });
 
     const handleUser = (id) => {
-      const { accessToken, refreshToken } = generateTokens({ id, role: "customer" });
-      res.cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 604800000 });
-      res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "lax", maxAge: 15 * 60 * 1000 });
+      const { accessToken, refreshToken } = generateTokens({
+        id,
+        role: "customer",
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 604800000,
+      });
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        sameSite: "lax",
+        maxAge: 15 * 60 * 1000,
+      });
       res.json({});
     };
 
     if (!user) {
-      db.run("INSERT INTO users (email, namn, role) VALUES (?, ?, ?)", [email, namn, "customer"], function (err2) {
-        if (err2) return res.status(500).json({ error: "Misslyckades skapa användare" });
-        handleUser(this.lastID);
-      });
+      db.run(
+        "INSERT INTO users (email, namn, role) VALUES (?, ?, ?)",
+        [email, namn, "customer"],
+        function (err2) {
+          if (err2)
+            return res
+              .status(500)
+              .json({ error: "Misslyckades skapa användare" });
+          handleUser(this.lastID);
+        }
+      );
     } else {
       handleUser(user.id);
     }
@@ -72,7 +117,7 @@ router.post("/apple", async (req, res) => {
   try {
     const payload = await appleSignin.verifyIdToken(identityToken, {
       audience: process.env.APPLE_CLIENT_ID,
-      ignoreExpiration: true
+      ignoreExpiration: true,
     });
 
     const email = payload.email || `${payload.sub}@appleid.apple.com`; // ibland maskerad e-post
@@ -80,17 +125,34 @@ router.post("/apple", async (req, res) => {
       if (err) return res.status(500).json({ error: "DB-fel" });
 
       const handleUser = (id) => {
-        const { accessToken, refreshToken } = generateTokens({ id, role: "customer" });
-        res.cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 604800000 });
-        res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "lax", maxAge: 15 * 60 * 1000 });
+        const { accessToken, refreshToken } = generateTokens({
+          id,
+          role: "customer",
+        });
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          maxAge: 604800000,
+        });
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          sameSite: "lax",
+          maxAge: 15 * 60 * 1000,
+        });
         res.json({});
       };
 
       if (!user) {
-        db.run("INSERT INTO users (email, namn, role) VALUES (?, ?, ?)", [email, "AppleUser", "customer"], function (err2) {
-          if (err2) return res.status(500).json({ error: "Misslyckades skapa användare" });
-          handleUser(this.lastID);
-        });
+        db.run(
+          "INSERT INTO users (email, namn, role) VALUES (?, ?, ?)",
+          [email, "AppleUser", "customer"],
+          function (err2) {
+            if (err2)
+              return res
+                .status(500)
+                .json({ error: "Misslyckades skapa användare" });
+            handleUser(this.lastID);
+          }
+        );
       } else {
         handleUser(user.id);
       }
@@ -107,12 +169,25 @@ router.post("/refresh", (req, res) => {
 
   try {
     const payload = jwt.verify(token, process.env.REFRESH_SECRET);
-    db.get("SELECT id, role FROM users WHERE id = ?", [payload.userId], (err, user) => {
-      if (err || !user) return res.status(401).json({ error: "Ogiltig användare" });
-      const accessToken = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "15m" });
-      res.cookie("accessToken", accessToken, { httpOnly: true, sameSite: "lax", maxAge: 15 * 60 * 1000 });
-      res.json({});
-    });
+    db.get(
+      "SELECT id, role FROM users WHERE id = ?",
+      [payload.userId],
+      (err, user) => {
+        if (err || !user)
+          return res.status(401).json({ error: "Ogiltig användare" });
+        const accessToken = jwt.sign(
+          { userId: user.id, role: user.role },
+          process.env.JWT_SECRET,
+          { expiresIn: "15m" }
+        );
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          sameSite: "lax",
+          maxAge: 15 * 60 * 1000,
+        });
+        res.json({});
+      }
+    );
   } catch {
     res.status(403).json({ error: "Ogiltig refresh token" });
   }
