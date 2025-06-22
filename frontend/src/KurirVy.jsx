@@ -9,6 +9,7 @@ function KurirVy() {
   const navigate = useNavigate();
   const [ordrar, setOrdrar] = useState([]);
   const [fel, setFel] = useState(null);
+  const darkMode = document.body.classList.contains("dark");
 
   useEffect(() => {
     const check = async () => {
@@ -72,7 +73,8 @@ function KurirVy() {
             marginBottom: "1.5rem",
             padding: "1rem",
             borderRadius: "10px",
-            backgroundColor: "#f0f8ff",
+            backgroundColor: darkMode ? "#2a2a2a" : "#f0f8ff",
+            color: darkMode ? "white" : "black",
           }}
         >
           <p>

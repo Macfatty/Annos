@@ -7,6 +7,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Checkout({ varukorg, setVarukorg, restaurang }) {
   const navigate = useNavigate();
+  const darkMode = document.body.classList.contains("dark");
 
   const [kundinfo, setKundinfo] = useState({
     namn: "",
@@ -145,13 +146,16 @@ function Checkout({ varukorg, setVarukorg, restaurang }) {
             flexWrap: "wrap",
           }}
         >
-          <button type="submit" style={{ backgroundColor: "green", color: "white" }}>
+          <button
+            type="submit"
+            style={{ backgroundColor: darkMode ? "#2e7031" : "green", color: "white" }}
+          >
             ✅ Bekräfta ({totalPris} kr)
           </button>
           <button
             type="button"
             onClick={() => navigate("/kundvagn")}
-            style={{ backgroundColor: "#444", color: "white" }}
+            style={{ backgroundColor: darkMode ? "#333" : "#444", color: "white" }}
           >
             🛒 Tillbaka till kundvagn
           </button>

@@ -69,7 +69,7 @@ function AdminPanel() {
     }
   };
 
-  const tema = localStorage.getItem("tema") === "dark";
+  const darkMode = document.body.classList.contains("dark");
 
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
@@ -96,8 +96,8 @@ function AdminPanel() {
             <div
               key={order.id}
               style={{
-                backgroundColor: tema ? "#2a2a2a" : "#f5f5f5",
-                color: tema ? "white" : "black",
+                backgroundColor: darkMode ? "#2a2a2a" : "#f5f5f5",
+                color: darkMode ? "white" : "black",
                 border: "1px solid #ccc",
                 padding: "1rem",
                 marginBottom: "1.5rem",

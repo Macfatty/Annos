@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Start() {
   const navigate = useNavigate();
   const [visaInfo, setVisaInfo] = useState(null); // "om", "support", "villkor"
+  const darkMode = document.body.classList.contains("dark");
 
   const öppnaInfo = (typ) => {
     setVisaInfo(typ);
@@ -67,13 +68,13 @@ function Start() {
           zIndex: 9999
         }}>
           <div style={{
-            background: "white",
+            background: darkMode ? "#333" : "white",
             padding: "2rem",
             borderRadius: "10px",
             maxWidth: "500px",
             width: "90%",
             textAlign: "center",
-            color: "black"
+            color: darkMode ? "white" : "black"
           }}>
             <h2>{texter[visaInfo].titel}</h2>
             <p style={{ whiteSpace: "pre-wrap" }}>{texter[visaInfo].innehåll}</p>
@@ -83,7 +84,7 @@ function Start() {
       )}
 
       {/* Footer med länkar */}
-      <footer style={{ marginTop: "4rem", fontSize: "0.9rem", color: "gray" }}>
+      <footer style={{ marginTop: "4rem", fontSize: "0.9rem", color: darkMode ? "#ccc" : "gray" }}>
         <p>
           Vi lagrar dina uppgifter enligt GDPR och använder dem endast för att hantera din beställning.
         </p>
