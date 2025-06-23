@@ -64,7 +64,14 @@ router.post(
           sameSite: "lax",
           maxAge: 15 * 60 * 1000,
         });
-        res.json({});
+        res.json({
+          namn: user.namn,
+          email: user.email,
+          telefon: user.telefon,
+          adress: user.adress || "",
+          role: user.role,
+          restaurangSlug: user.restaurangSlug || "",
+        });
       }
     );
   }

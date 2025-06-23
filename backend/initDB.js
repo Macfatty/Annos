@@ -22,7 +22,8 @@ db.serialize(() => {
       telefon TEXT,
       adress TEXT,
       password TEXT,
-      role TEXT DEFAULT 'customer'
+      role TEXT DEFAULT 'customer',
+      restaurangSlug TEXT
     )`,
     (err) => {
       if (err) {

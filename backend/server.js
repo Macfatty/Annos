@@ -225,6 +225,7 @@ app.post(
         telefon: user.telefon,
         adress: user.adress || "",
         role: user.role,
+        restaurangSlug: user.restaurangSlug || "",
       });
     });
   }
@@ -235,7 +236,7 @@ app.get("/api/profile", verifyToken, (req, res) => {
   const userId = req.user.userId;
 
   db.get(
-    "SELECT id, email, namn, telefon, adress FROM users WHERE id = ?",
+    "SELECT id, email, namn, telefon, adress, restaurangSlug FROM users WHERE id = ?",
     [userId],
     (err, user) => {
       if (err || !user) {
@@ -256,6 +257,7 @@ app.get("/api/profile", verifyToken, (req, res) => {
           email: user.email,
           telefon: user.telefon,
           adress: user.adress,
+          restaurangSlug: user.restaurangSlug || "",
           bestallningar: orders || [],
         });
       });
