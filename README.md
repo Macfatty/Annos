@@ -114,6 +114,13 @@ cd ../backend
 npm test
 ```
 
+### 12. Uppdatera SunSushi-menyn
+Kräver internetåtkomst. Kör scriptet från projektroten:
+```bash
+node backend/scrapeSunSushi.js
+```
+Filen `backend/Data/menyer/sunsushi.json` skrivs över med aktuell meny.
+
 ## 📌 Funktioner (MVP)
 
 - Visa meny med rätter & tillbehör
