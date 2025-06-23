@@ -21,9 +21,12 @@ function Restaurang() {
         navigate("/");
         return;
       }
-      const res = await fetch(`${BASE_URL}/api/admin/orders/today`, {
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${BASE_URL}/api/admin/orders/today?slug=${profile.restaurangSlug}`,
+        {
+          credentials: "include",
+        }
+      );
       if (res.status === 401) {
         navigate("/login");
         return;
