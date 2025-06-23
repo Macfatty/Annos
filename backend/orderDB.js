@@ -30,13 +30,17 @@ db.serialize(() => {
       namn TEXT,
       telefon TEXT,
       adress TEXT,
-      role TEXT DEFAULT 'customer'
+      role TEXT DEFAULT 'customer',
+      restaurangSlug TEXT
     )
   `);
 
   db.all('PRAGMA table_info(users)', (err, cols) => {
     if (!err && !cols.some((c) => c.name === 'role')) {
       db.run("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'customer'");
+    }
+    if (!err && !cols.some((c) => c.name === 'restaurangSlug')) {
+      db.run("ALTER TABLE users ADD COLUMN restaurangSlug TEXT");
     }
   });
 });
