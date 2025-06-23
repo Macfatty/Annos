@@ -38,7 +38,12 @@ app.get("/", (req, res) => {
 
 // MENY OCH TILLBEHÖR
 app.get("/api/meny", (req, res) => {
-  res.json(meny);
+  const restaurang = req.query.restaurang || "campino";
+  const valdMeny = meny[restaurang];
+  if (!valdMeny) {
+    return res.status(404).json({ message: "Meny ej hittad" });
+  }
+  res.json(valdMeny);
 });
 
 app.get("/api/tillbehor", (req, res) => {

@@ -69,7 +69,9 @@ function App() {
         return;
       }
       try {
-        const res = await fetch(`${BASE_URL}/api/meny`);
+        const res = await fetch(
+          `${BASE_URL}/api/meny?restaurang=${restaurangSlug}`
+        );
         if (!res.ok) {
           throw new Error("Något gick fel vid hämtning");
         }
@@ -89,7 +91,7 @@ function App() {
       }
     };
     fetchMeny();
-  }, []);
+  }, [restaurangSlug]);
 
   useEffect(() => {
     const fetchTillbehor = async () => {

@@ -1,8 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 
-const menyPath = path.join(__dirname, "meny.json");
-// const menyPath = path.join(__dirname, "menuData.json");
-const menyData = JSON.parse(fs.readFileSync(menyPath, "utf8"));
-
-module.exports = menyData;
+module.exports = {
+  campino: JSON.parse(
+    fs.readFileSync(path.join(__dirname, "menyer/campino.json"))
+  ),
+  sunsushi: JSON.parse(
+    fs.readFileSync(path.join(__dirname, "menyer/sunsushi.json"))
+  ),
+};
