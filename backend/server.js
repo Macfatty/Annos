@@ -61,6 +61,7 @@ app.post(
     body("kund.ovrigt").optional().trim().escape(),
     body("kund.email").isEmail().normalizeEmail(),
     body("order").isArray({ min: 1 }),
+    body("restaurangSlug").trim().escape().notEmpty(),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -68,7 +69,7 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { kund, order } = req.body;
+    const { kund, order, restaurangSlug } = req.body;
     const { namn, telefon, adress, ovrigt, email } = kund;
 
     const order_json = JSON.stringify(order);
@@ -78,14 +79,14 @@ app.post(
     const status = "aktiv";
 
     const sql = `
-    INSERT INTO orders 
-    (namn, telefon, adress, extraInfo, order_json, status, total, email, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    INSERT INTO orders
+    (namn, telefon, adress, extraInfo, order_json, status, total, email, restaurangSlug, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
   `;
 
     db.run(
       sql,
-      [namn, telefon, adress, ovrigt, order_json, status, total, email],
+      [namn, telefon, adress, ovrigt, order_json, status, total, email, restaurangSlug],
       function (err) {
         if (err) {
           console.error("Kunde inte spara order:", err.message);

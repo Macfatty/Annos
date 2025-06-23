@@ -30,7 +30,8 @@ describe('API endpoints', () => {
       },
       order: [
         { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
-      ]
+      ],
+      restaurangSlug: 'campino'
     };
 
     const token = jwt.sign({ userId: 1, role: 'admin' }, SECRET);
@@ -50,6 +51,7 @@ describe('API endpoints', () => {
 
     expect(inserted).toBeDefined();
     expect(inserted.namn).toBe(newOrder.kund.namn);
+    expect(inserted.restaurangSlug).toBe(newOrder.restaurangSlug);
   });
 
   test('POST /api/order works with cookie token', async () => {
@@ -63,7 +65,8 @@ describe('API endpoints', () => {
       },
       order: [
         { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
-      ]
+      ],
+      restaurangSlug: 'campino'
     };
 
     const token = jwt.sign({ userId: 1, role: 'admin' }, SECRET);
@@ -89,7 +92,8 @@ describe('API endpoints', () => {
       },
       order: [
         { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
-      ]
+      ],
+      restaurangSlug: 'campino'
     };
 
     const createRes = await request(app)

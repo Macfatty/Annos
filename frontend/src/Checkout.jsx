@@ -59,6 +59,7 @@ function Checkout({ varukorg, setVarukorg, restaurang }) {
         ovrigt: kundinfo.ovrigt, // ✅ OBS: viktigt att denna matchar servern
       },
       order: varukorg, // ✅ Skickar bara maträtter
+      restaurangSlug: restaurang,
     };
 
     fetch(`${BASE_URL}/api/order`, {
