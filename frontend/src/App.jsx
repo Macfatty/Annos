@@ -321,6 +321,15 @@ function App() {
             </div>
           }
         />
+        <Route
+          path="/sunsushi"
+          element={
+            <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+              <h1>SunSushi Meny</h1>
+              <p>Meny kommer snart.</p>
+            </div>
+          }
+        />
       </Routes>
 
       {inloggad &&
