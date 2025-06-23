@@ -112,7 +112,11 @@ app.post(
 
 // ADMIN – HÄMTA ORDRAR
 app.get("/api/admin/orders/today", verifyRole("admin"), (req, res) => {
-  hamtaDagensOrdrar((err, ordrar) => {
+  const { slug } = req.query;
+  if (!slug) {
+    return res.status(400).json({ message: "Slug saknas" });
+  }
+  hamtaDagensOrdrar(slug, (err, ordrar) => {
     if (err) {
       console.error("Fel vid hämtning av dagens ordrar:", err);
       return res.status(500).json({ message: "Serverfel" });

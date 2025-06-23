@@ -27,9 +27,13 @@ function KurirVy() {
 
   const hämtaOrdrar = useCallback(async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/admin/orders/today`, {
-        credentials: "include",
-      });
+      const profil = await fetchProfile();
+      const res = await fetch(
+        `${BASE_URL}/api/admin/orders/today?slug=${profil.restaurangSlug}`,
+        {
+          credentials: "include",
+        }
+      );
       if (!res.ok) {
         throw new Error("Kunde inte hämta ordrar");
       }

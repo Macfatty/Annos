@@ -126,4 +126,50 @@ describe('API endpoints', () => {
       .send({});
     expect(res.statusCode).toBe(401);
   });
+
+  test('GET /api/admin/orders/today filters by slug', async () => {
+    const token = jwt.sign({ userId: 1, role: 'admin' }, SECRET);
+
+    const order1 = {
+      kund: {
+        namn: 'Slug Test1',
+        telefon: '000',
+        adress: 'A',
+        ovrigt: 'Inga',
+        email: `slug1_${Date.now()}@example.com`
+      },
+      order: [{ id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }],
+      restaurangSlug: 'campino'
+    };
+
+    const order2 = {
+      kund: {
+        namn: 'Slug Test2',
+        telefon: '111',
+        adress: 'B',
+        ovrigt: 'Inga',
+        email: `slug2_${Date.now()}@example.com`
+      },
+      order: [{ id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }],
+      restaurangSlug: 'bistro'
+    };
+
+    await request(app)
+      .post('/api/order')
+      .set('Authorization', `Bearer ${token}`)
+      .send(order1);
+
+    await request(app)
+      .post('/api/order')
+      .set('Authorization', `Bearer ${token}`)
+      .send(order2);
+
+    const res = await request(app)
+      .get('/api/admin/orders/today?slug=campino')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.every(o => o.restaurangSlug === 'campino')).toBe(true);
+  });
 });
