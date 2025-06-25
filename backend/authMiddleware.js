@@ -29,5 +29,18 @@ function verifyRole(requiredRole) {
     });
   };
 }
-module.exports = { verifyToken, verifyRole };
+
+function verifyAdminForSlug(req, res, next) {
+  verifyToken(req, res, () => {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ error: "Otillräcklig behörighet" });
+    }
+    const slug = req.query?.slug || req.body?.slug || req.params?.slug;
+    if (slug && req.user.restaurangSlug !== slug) {
+      return res.status(403).json({ error: "Fel restaurang" });
+    }
+    next();
+  });
+}
+module.exports = { verifyToken, verifyRole, verifyAdminForSlug };
 

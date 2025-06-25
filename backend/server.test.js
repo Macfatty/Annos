@@ -34,7 +34,7 @@ describe('API endpoints', () => {
       restaurangSlug: 'campino'
     };
 
-    const token = jwt.sign({ userId: 1, role: 'admin' }, SECRET);
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
     const res = await request(app)
       .post('/api/order')
       .set('Authorization', `Bearer ${token}`)
@@ -69,7 +69,7 @@ describe('API endpoints', () => {
       restaurangSlug: 'campino'
     };
 
-    const token = jwt.sign({ userId: 1, role: 'admin' }, SECRET);
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
     const res = await request(app)
       .post('/api/order')
       .set('Cookie', [`accessToken=${token}`])
@@ -80,7 +80,7 @@ describe('API endpoints', () => {
   });
 
   test('PATCH /api/admin/orders/:id/klart marks order as done', async () => {
-    const token = jwt.sign({ userId: 1, role: 'admin' }, SECRET);
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
 
     const newOrder = {
       kund: {
@@ -128,7 +128,7 @@ describe('API endpoints', () => {
   });
 
   test('GET /api/admin/orders/today filters by slug', async () => {
-    const token = jwt.sign({ userId: 1, role: 'admin' }, SECRET);
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
 
     const order1 = {
       kund: {
@@ -171,5 +171,13 @@ describe('API endpoints', () => {
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.every(o => o.restaurangSlug === 'campino')).toBe(true);
+  });
+
+  test('GET /api/admin/orders/today returns 403 for wrong slug', async () => {
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
+    const res = await request(app)
+      .get('/api/admin/orders/today?slug=bistro')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBe(403);
   });
 });
