@@ -101,6 +101,9 @@ npm run dev
 ```
 Öppna: http://localhost:5173
 
+Navigera sedan till `/valj-restaurang` och välj **Campino** eller **SunSushi**
+för att visa deras menyer.
+
 ---
 
 ### 10. Testa att frontend <--> backend fungerar:
@@ -123,6 +126,7 @@ Filen `backend/Data/menyer/sunsushi.json` skrivs över med aktuell meny.
 
 ## 📌 Funktioner (MVP)
 
+- Välj restaurang (Campino eller SunSushi) och se respektive meny
 - Visa meny med rätter & tillbehör
 - Lägg till mat i varukorg
 - Beställning & betalning via Swish
