@@ -51,6 +51,13 @@ function App() {
   }, [location.search]);
 
   useEffect(() => {
+    const slugPath = location.pathname.slice(1).toLowerCase();
+    if (["campino", "sunsushi"].includes(slugPath)) {
+      setRestaurangSlug(slugPath);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     document.body.className = tema;
     localStorage.setItem("tema", tema);
   }, [tema]);
@@ -328,7 +335,63 @@ function App() {
           element={
             <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
               <h1>SunSushi Meny</h1>
-              <p>Meny kommer snart.</p>
+              {loading && <p>Laddar meny...</p>}
+              {error && <p style={{ color: "red" }}>{error}</p>}
+              <div className="menu-container">
+                {!loading &&
+                  !error &&
+                  meny.map((ratt) => (
+                    <div
+                      key={ratt.id}
+                      className="menu-card"
+                      onClick={() => {
+                        if (!inloggad) {
+                          alert(
+                            "🔒 Du måste logga in för att kunna göra en beställning."
+                          );
+                          navigate("/login");
+                          return;
+                        }
+                        setValdRatt(ratt);
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <img
+                        src={`/bilder/${ratt.bild}`}
+                        alt={ratt.namn}
+                        className="menu-image"
+                        onError={(e) => {
+                          e.target.src = "/bilder/default.jpg";
+                        }}
+                      />
+                      <h2>{ratt.namn}</h2>
+                      <p>{ratt.beskrivning}</p>
+                      <p>
+                        <strong>{ratt.pris} kr</strong>
+                      </p>
+                    </div>
+                  ))}
+              </div>
+
+              {valdRatt && (
+                <Undermeny
+                  ratt={valdRatt}
+                  tillbehor={tillbehor}
+                  isLoggedIn={inloggad}
+                  onClose={() => setValdRatt(null)}
+                  onAddToCart={(val) => {
+                    if (redigeringsIndex !== null) {
+                      const ny = [...varukorg];
+                      ny[redigeringsIndex] = val;
+                      setVarukorg(ny);
+                      setRedigeringsIndex(null);
+                    } else {
+                      setVarukorg([...varukorg, val]);
+                    }
+                    setValdRatt(null);
+                  }}
+                />
+              )}
             </div>
           }
         />
