@@ -3,7 +3,7 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const { verifyToken, verifyRole } = require("./authMiddleware");
+const { verifyToken, verifyRole, verifyAdminForSlug } = require("./authMiddleware");
 const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
 const authRouter = require("./routes/auth");
@@ -116,7 +116,7 @@ app.post(
 );
 
 // ADMIN – HÄMTA ORDRAR
-app.get("/api/admin/orders/today", verifyRole("admin"), (req, res) => {
+app.get("/api/admin/orders/today", verifyAdminForSlug, (req, res) => {
   const { slug } = req.query;
   if (!slug) {
     return res.status(400).json({ message: "Slug saknas" });
@@ -130,7 +130,7 @@ app.get("/api/admin/orders/today", verifyRole("admin"), (req, res) => {
   });
 });
 
-app.get("/api/admin/orders/latest", verifyRole("admin"), (req, res) => {
+app.get("/api/admin/orders/latest", verifyAdminForSlug, (req, res) => {
   hamtaSenasteOrder((err, order) => {
     if (err) {
       console.error("Fel vid hämtning av senaste order:", err);
@@ -140,7 +140,7 @@ app.get("/api/admin/orders/latest", verifyRole("admin"), (req, res) => {
   });
 });
 
-app.patch("/api/admin/orders/:id/klart", verifyRole("admin"), (req, res) => {
+app.patch("/api/admin/orders/:id/klart", verifyAdminForSlug, (req, res) => {
   const orderId = req.params.id;
   markeraOrderSomKlar(orderId, (err) => {
     if (err) {
