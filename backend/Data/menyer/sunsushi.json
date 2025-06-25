@@ -1,3 +1,921 @@
 [
-  { "id": 1, "namn": "Exempel Nigiri", "pris": 0, "kategori": "placeholder" }
+  {
+    "id": 1,
+    "namn": "10 bitar Combo (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 115,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi1.jpg"
+  },
+  {
+    "id": 2,
+    "namn": "12 bitar Combo (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 125,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi2.jpg"
+  },
+  {
+    "id": 3,
+    "namn": "15 bitar Combo (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 155,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi3.jpg"
+  },
+  {
+    "id": 4,
+    "namn": "Special Nigiri (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 135,
+    "familjepris": null,
+    "beskrivning": "4 bitar Nigiri, 4 bitar Maki",
+    "ingredienser": "4 bitar Nigiri, 4 bitar Maki",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi4.jpg"
+  },
+  {
+    "id": 5,
+    "namn": "Dragon Roll 8 bitar (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 125,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi5.jpg"
+  },
+  {
+    "id": 6,
+    "namn": "Dragon Mix 12 bitar (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 155,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi6.jpg"
+  },
+  {
+    "id": 7,
+    "namn": "Chicken Teriyaki (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 95,
+    "familjepris": null,
+    "beskrivning": "Teriyakikyckling med ris",
+    "ingredienser": "Teriyakikyckling med ris",
+    "tillbehor": [],
+    "bild": "sunsushi7.jpg"
+  },
+  {
+    "id": 8,
+    "namn": "Yakiniku (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 95,
+    "familjepris": null,
+    "beskrivning": "Biff med ris",
+    "ingredienser": "Biff med ris",
+    "tillbehor": [],
+    "bild": "sunsushi8.jpg"
+  },
+  {
+    "id": 9,
+    "namn": "Salmon Teriyaki (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 105,
+    "familjepris": null,
+    "beskrivning": "Lax med teriyakisås och ris",
+    "ingredienser": "Lax med teriyakisås och ris",
+    "tillbehor": [],
+    "bild": "sunsushi9.jpg"
+  },
+  {
+    "id": 10,
+    "namn": "Bento (Lunch)",
+    "kategori": "Lunchmeny",
+    "pris": 130,
+    "familjepris": null,
+    "beskrivning": "8 bitar sushi, 4 bitar California roll, 4 bitar Crunchy, 3 dumplings, edamameb\u00f6nor",
+    "ingredienser": "8 bitar sushi, 4 bitar California roll, 4 bitar Crunchy, 3 dumplings, edamameb\u00f6nor",
+    "tillbehor": [],
+    "bild": "sunsushi10.jpg"
+  },
+  {
+    "id": 11,
+    "namn": "Sun Signature",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Lax, avokado, r\u00e4ka, gurka, chilitopping",
+    "ingredienser": "8 bitar. Lax, avokado, r\u00e4ka, gurka, chilitopping",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi11.jpg"
+  },
+  {
+    "id": 12,
+    "namn": "Special Salmon",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Flamberad lax, r\u00e4ka, Philadelphiaost, gr\u00e4sl\u00f6k, rom",
+    "ingredienser": "8 bitar. Flamberad lax, r\u00e4ka, Philadelphiaost, gr\u00e4sl\u00f6k, rom",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi12.jpg"
+  },
+  {
+    "id": 13,
+    "namn": "Flamberad Salmon",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Flamberad lax, r\u00e4ka, Philadelphiaost, avokado, chilimayo, teriyakis\u00e5s",
+    "ingredienser": "8 bitar. Flamberad lax, r\u00e4ka, Philadelphiaost, avokado, chilimayo, teriyakis\u00e5s",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi13.jpg"
+  },
+  {
+    "id": 14,
+    "namn": "Rainbow Roll",
+    "kategori": "Special Rolls",
+    "pris": 149,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Krabba, gurka, lax, avokado, r\u00e4ka, tonfisk, rom",
+    "ingredienser": "8 bitar. Krabba, gurka, lax, avokado, r\u00e4ka, tonfisk, rom",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi14.jpg"
+  },
+  {
+    "id": 15,
+    "namn": "Fried Salmon",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Friterad lax, gurka, chilimayo, teriyakis\u00e5s",
+    "ingredienser": "8 bitar. Friterad lax, gurka, chilimayo, teriyakis\u00e5s",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi15.jpg"
+  },
+  {
+    "id": 16,
+    "namn": "Crispy Tempura",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. R\u00e4ka, gurka, Philadelphiaost, chilimayo, teriyakis\u00e5s",
+    "ingredienser": "8 bitar. R\u00e4ka, gurka, Philadelphiaost, chilimayo, teriyakis\u00e5s",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi16.jpg"
+  },
+  {
+    "id": 17,
+    "namn": "Cheese Tempura",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Lax, gurka, Philadelphiaost, avokado, chilimayo, teriyakis\u00e5s",
+    "ingredienser": "8 bitar. Lax, gurka, Philadelphiaost, avokado, chilimayo, teriyakis\u00e5s",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi17.jpg"
+  },
+  {
+    "id": 18,
+    "namn": "Spicy Tuna",
+    "kategori": "Special Rolls",
+    "pris": 149,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Tonfisk, gurka, chilimayo",
+    "ingredienser": "8 bitar. Tonfisk, gurka, chilimayo",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi18.jpg"
+  },
+  {
+    "id": 19,
+    "namn": "Spicy Tempura",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Friterad l\u00f6k, r\u00e4ka, gurka, chilimayo, teriyakis\u00e5s",
+    "ingredienser": "8 bitar. Friterad l\u00f6k, r\u00e4ka, gurka, chilimayo, teriyakis\u00e5s",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi19.jpg"
+  },
+  {
+    "id": 20,
+    "namn": "Veggie Lover",
+    "kategori": "Special Rolls",
+    "pris": 129,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Avokado, gurka, jalape\u00f1o, mango, s\u00f6t sojas\u00e5s",
+    "ingredienser": "8 bitar. Avokado, gurka, jalape\u00f1o, mango, s\u00f6t sojas\u00e5s",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi20.jpg"
+  },
+  {
+    "id": 21,
+    "namn": "Crispy Chicken",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Kyckling, gurka, chilimayo, teriyakis\u00e5s",
+    "ingredienser": "8 bitar. Kyckling, gurka, chilimayo, teriyakis\u00e5s",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi21.jpg"
+  },
+  {
+    "id": 22,
+    "namn": "Spicy Chicken",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Kyckling, gurka, chilimayo, teriyakis\u00e5s",
+    "ingredienser": "8 bitar. Kyckling, gurka, chilimayo, teriyakis\u00e5s",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi22.jpg"
+  },
+  {
+    "id": 23,
+    "namn": "Fried Maki",
+    "kategori": "Special Rolls",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "8 bitar. Friterad makirulle med laxfyllning",
+    "ingredienser": "8 bitar. Friterad makirulle med laxfyllning",
+    "tillbehor": [
+      "såser",
+      "grönt",
+      "övrigt"
+    ],
+    "bild": "sunsushi23.jpg"
+  },
+  {
+    "id": 24,
+    "namn": "Sun Original Kombo 8 bitar",
+    "kategori": "Sushi Combo",
+    "pris": 105,
+    "familjepris": null,
+    "beskrivning": "8 bitar. 2 lax, 2 r\u00e4ka, 2 avokado, 2 rullar",
+    "ingredienser": "8 bitar. 2 lax, 2 r\u00e4ka, 2 avokado, 2 rullar",
+    "tillbehor": [
+      "drycker"
+    ],
+    "bild": "sunsushi24.jpg"
+  },
+  {
+    "id": 25,
+    "namn": "Sun Original Kombo 10 bitar",
+    "kategori": "Sushi Combo",
+    "pris": 125,
+    "familjepris": null,
+    "beskrivning": "10 bitar. 3 lax, 2 r\u00e4ka, 2 avokado, 3 rullar",
+    "ingredienser": "10 bitar. 3 lax, 2 r\u00e4ka, 2 avokado, 3 rullar",
+    "tillbehor": [
+      "drycker"
+    ],
+    "bild": "sunsushi25.jpg"
+  },
+  {
+    "id": 26,
+    "namn": "Sun Original Kombo 12 bitar",
+    "kategori": "Sushi Combo",
+    "pris": 145,
+    "familjepris": null,
+    "beskrivning": "12 bitar. 4 lax, 2 r\u00e4ka, 2 avokado, 4 rullar",
+    "ingredienser": "12 bitar. 4 lax, 2 r\u00e4ka, 2 avokado, 4 rullar",
+    "tillbehor": [
+      "drycker"
+    ],
+    "bild": "sunsushi26.jpg"
+  },
+  {
+    "id": 27,
+    "namn": "Sun Original Kombo 15 bitar",
+    "kategori": "Sushi Combo",
+    "pris": 175,
+    "familjepris": null,
+    "beskrivning": "15 bitar. 5 lax, 3 r\u00e4ka, 3 avokado, 4 rullar",
+    "ingredienser": "15 bitar. 5 lax, 3 r\u00e4ka, 3 avokado, 4 rullar",
+    "tillbehor": [
+      "drycker"
+    ],
+    "bild": "sunsushi27.jpg"
+  },
+  {
+    "id": 28,
+    "namn": "40 bitar Familj Combo",
+    "kategori": "Familj Combo",
+    "pris": 380,
+    "familjepris": null,
+    "beskrivning": "40 bitar. 10 lax, 5 r\u00e4ka, 5 avokado, 5 tofu, 15 rullar",
+    "ingredienser": "40 bitar. 10 lax, 5 r\u00e4ka, 5 avokado, 5 tofu, 15 rullar",
+    "tillbehor": [
+      "drycker"
+    ],
+    "bild": "sunsushi28.jpg"
+  },
+  {
+    "id": 29,
+    "namn": "50 bitar Familj Combo",
+    "kategori": "Familj Combo",
+    "pris": 470,
+    "familjepris": null,
+    "beskrivning": "50 bitar. 12 lax, 8 r\u00e4ka, 5 avokado, 5 tofu, 20 rullar",
+    "ingredienser": "50 bitar. 12 lax, 8 r\u00e4ka, 5 avokado, 5 tofu, 20 rullar",
+    "tillbehor": [
+      "drycker"
+    ],
+    "bild": "sunsushi29.jpg"
+  },
+  {
+    "id": 30,
+    "namn": "Mango Bowl",
+    "kategori": "Poké Bowls",
+    "pris": 129,
+    "familjepris": null,
+    "beskrivning": "Salladsbas med mango, avokado, lax",
+    "ingredienser": "Salladsbas med mango, avokado, lax",
+    "tillbehor": [
+      "grönt",
+      "såser"
+    ],
+    "bild": "sunsushi30.jpg"
+  },
+  {
+    "id": 31,
+    "namn": "Salmon Bowl",
+    "kategori": "Poké Bowls",
+    "pris": 129,
+    "familjepris": null,
+    "beskrivning": "Salladsbas med lax, avokado, mango",
+    "ingredienser": "Salladsbas med lax, avokado, mango",
+    "tillbehor": [
+      "grönt",
+      "såser"
+    ],
+    "bild": "sunsushi31.jpg"
+  },
+  {
+    "id": 32,
+    "namn": "Shrimp Bowl",
+    "kategori": "Poké Bowls",
+    "pris": 129,
+    "familjepris": null,
+    "beskrivning": "Salladsbas med r\u00e4kor, avokado, mango",
+    "ingredienser": "Salladsbas med r\u00e4kor, avokado, mango",
+    "tillbehor": [
+      "grönt",
+      "såser"
+    ],
+    "bild": "sunsushi32.jpg"
+  },
+  {
+    "id": 33,
+    "namn": "Chicken Bowl",
+    "kategori": "Poké Bowls",
+    "pris": 129,
+    "familjepris": null,
+    "beskrivning": "Salladsbas med kyckling, avokado, mango",
+    "ingredienser": "Salladsbas med kyckling, avokado, mango",
+    "tillbehor": [
+      "grönt",
+      "såser"
+    ],
+    "bild": "sunsushi33.jpg"
+  },
+  {
+    "id": 34,
+    "namn": "Bim Bim Bap",
+    "kategori": "Varmrätter",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "Entr\u00f4cote med ris och stekt \u00e4gg",
+    "ingredienser": "Entr\u00f4cote med ris och stekt \u00e4gg",
+    "tillbehor": [],
+    "bild": "sunsushi34.jpg"
+  },
+  {
+    "id": 35,
+    "namn": "Kyckling Dumplings",
+    "kategori": "Varmrätter",
+    "pris": 119,
+    "familjepris": null,
+    "beskrivning": "10 st \u00e5ngade dumplings med kycklingfyllning",
+    "ingredienser": "10 st \u00e5ngade dumplings med kycklingfyllning",
+    "tillbehor": [],
+    "bild": "sunsushi35.jpg"
+  },
+  {
+    "id": 36,
+    "namn": "Yakitori",
+    "kategori": "Varmrätter",
+    "pris": 119,
+    "familjepris": null,
+    "beskrivning": "3 kycklingspett med ris",
+    "ingredienser": "3 kycklingspett med ris",
+    "tillbehor": [],
+    "bild": "sunsushi36.jpg"
+  },
+  {
+    "id": 37,
+    "namn": "Bento 1",
+    "kategori": "Varmrätter",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "Kyckling teriyaki, 4 bitar sushi, sallad",
+    "ingredienser": "Kyckling teriyaki, 4 bitar sushi, sallad",
+    "tillbehor": [],
+    "bild": "sunsushi37.jpg"
+  },
+  {
+    "id": 38,
+    "namn": "Bento 2",
+    "kategori": "Varmrätter",
+    "pris": 139,
+    "familjepris": null,
+    "beskrivning": "Yakiniku, 4 bitar sushi, sallad",
+    "ingredienser": "Yakiniku, 4 bitar sushi, sallad",
+    "tillbehor": [],
+    "bild": "sunsushi38.jpg"
+  },
+  {
+    "id": 39,
+    "namn": "Chicken Teriyaki",
+    "kategori": "Varmrätter",
+    "pris": 149,
+    "familjepris": null,
+    "beskrivning": "Kyckling i teriyakis\u00e5s med ris",
+    "ingredienser": "Kyckling i teriyakis\u00e5s med ris",
+    "tillbehor": [],
+    "bild": "sunsushi39.jpg"
+  },
+  {
+    "id": 40,
+    "namn": "Yakiniku",
+    "kategori": "Varmrätter",
+    "pris": 149,
+    "familjepris": null,
+    "beskrivning": "Strimlad biff i teriyakis\u00e5s med ris",
+    "ingredienser": "Strimlad biff i teriyakis\u00e5s med ris",
+    "tillbehor": [],
+    "bild": "sunsushi40.jpg"
+  },
+  {
+    "id": 41,
+    "namn": "Salmon Teriyaki",
+    "kategori": "Varmrätter",
+    "pris": 159,
+    "familjepris": null,
+    "beskrivning": "Lax i teriyakis\u00e5s med ris",
+    "ingredienser": "Lax i teriyakis\u00e5s med ris",
+    "tillbehor": [],
+    "bild": "sunsushi41.jpg"
+  },
+  {
+    "id": 42,
+    "namn": "Chicken Bao",
+    "kategori": "Bao Buns",
+    "pris": 129,
+    "familjepris": null,
+    "beskrivning": "2 st bao buns med kyckling",
+    "ingredienser": "2 st bao buns med kyckling",
+    "tillbehor": [],
+    "bild": "sunsushi42.jpg"
+  },
+  {
+    "id": 43,
+    "namn": "Hot Chicken Bao",
+    "kategori": "Bao Buns",
+    "pris": 129,
+    "familjepris": null,
+    "beskrivning": "2 st bao buns med stark kyckling",
+    "ingredienser": "2 st bao buns med stark kyckling",
+    "tillbehor": [],
+    "bild": "sunsushi43.jpg"
+  },
+  {
+    "id": 44,
+    "namn": "Chicken Aioli Bao",
+    "kategori": "Bao Buns",
+    "pris": 129,
+    "familjepris": null,
+    "beskrivning": "2 st bao buns med kyckling och aioli",
+    "ingredienser": "2 st bao buns med kyckling och aioli",
+    "tillbehor": [],
+    "bild": "sunsushi44.jpg"
+  },
+  {
+    "id": 45,
+    "namn": "Bl\u00e4ckfisk",
+    "kategori": "Extra Bitar",
+    "pris": 15,
+    "familjepris": null,
+    "beskrivning": "1 bit bl\u00e4ckfisk nigiri",
+    "ingredienser": "1 bit bl\u00e4ckfisk nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi45.jpg"
+  },
+  {
+    "id": 46,
+    "namn": "\u00c5l",
+    "kategori": "Extra Bitar",
+    "pris": 25,
+    "familjepris": null,
+    "beskrivning": "1 bit \u00e5l nigiri",
+    "ingredienser": "1 bit \u00e5l nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi46.jpg"
+  },
+  {
+    "id": 47,
+    "namn": "Tofu",
+    "kategori": "Extra Bitar",
+    "pris": 15,
+    "familjepris": null,
+    "beskrivning": "1 bit tofu nigiri",
+    "ingredienser": "1 bit tofu nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi47.jpg"
+  },
+  {
+    "id": 48,
+    "namn": "Gurka",
+    "kategori": "Extra Bitar",
+    "pris": 10,
+    "familjepris": null,
+    "beskrivning": "1 bit gurka nigiri",
+    "ingredienser": "1 bit gurka nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi48.jpg"
+  },
+  {
+    "id": 49,
+    "namn": "Omelett",
+    "kategori": "Extra Bitar",
+    "pris": 10,
+    "familjepris": null,
+    "beskrivning": "1 bit omelett nigiri",
+    "ingredienser": "1 bit omelett nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi49.jpg"
+  },
+  {
+    "id": 50,
+    "namn": "Sj\u00f6gr\u00e4s",
+    "kategori": "Extra Bitar",
+    "pris": 10,
+    "familjepris": null,
+    "beskrivning": "1 bit sj\u00f6gr\u00e4s nigiri",
+    "ingredienser": "1 bit sj\u00f6gr\u00e4s nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi50.jpg"
+  },
+  {
+    "id": 51,
+    "namn": "Lax",
+    "kategori": "Extra Bitar",
+    "pris": 15,
+    "familjepris": null,
+    "beskrivning": "1 bit lax nigiri",
+    "ingredienser": "1 bit lax nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi51.jpg"
+  },
+  {
+    "id": 52,
+    "namn": "Avokado",
+    "kategori": "Extra Bitar",
+    "pris": 10,
+    "familjepris": null,
+    "beskrivning": "1 bit avokado nigiri",
+    "ingredienser": "1 bit avokado nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi52.jpg"
+  },
+  {
+    "id": 53,
+    "namn": "Sm\u00f6rfisk",
+    "kategori": "Extra Bitar",
+    "pris": 15,
+    "familjepris": null,
+    "beskrivning": "1 bit sm\u00f6rfisk nigiri",
+    "ingredienser": "1 bit sm\u00f6rfisk nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi53.jpg"
+  },
+  {
+    "id": 54,
+    "namn": "R\u00e4ka",
+    "kategori": "Extra Bitar",
+    "pris": 15,
+    "familjepris": null,
+    "beskrivning": "1 bit r\u00e4ka nigiri",
+    "ingredienser": "1 bit r\u00e4ka nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi54.jpg"
+  },
+  {
+    "id": 55,
+    "namn": "Tonfisk",
+    "kategori": "Extra Bitar",
+    "pris": 15,
+    "familjepris": null,
+    "beskrivning": "1 bit tonfisk nigiri",
+    "ingredienser": "1 bit tonfisk nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi55.jpg"
+  },
+  {
+    "id": 56,
+    "namn": "Crabsticks",
+    "kategori": "Extra Bitar",
+    "pris": 10,
+    "familjepris": null,
+    "beskrivning": "1 bit crabstick nigiri",
+    "ingredienser": "1 bit crabstick nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi56.jpg"
+  },
+  {
+    "id": 57,
+    "namn": "Alaska",
+    "kategori": "Extra Bitar",
+    "pris": 15,
+    "familjepris": null,
+    "beskrivning": "4 bitar Alaska roll",
+    "ingredienser": "4 bitar Alaska roll",
+    "tillbehor": [],
+    "bild": "sunsushi57.jpg"
+  },
+  {
+    "id": 58,
+    "namn": "California",
+    "kategori": "Extra Bitar",
+    "pris": 15,
+    "familjepris": null,
+    "beskrivning": "4 bitar California roll",
+    "ingredienser": "4 bitar California roll",
+    "tillbehor": [],
+    "bild": "sunsushi58.jpg"
+  },
+  {
+    "id": 59,
+    "namn": "R\u00f6ra",
+    "kategori": "Extra Bitar",
+    "pris": 15,
+    "familjepris": null,
+    "beskrivning": "4 bitar R\u00f6ra roll",
+    "ingredienser": "4 bitar R\u00f6ra roll",
+    "tillbehor": [],
+    "bild": "sunsushi59.jpg"
+  },
+  {
+    "id": 60,
+    "namn": "Flamberad Lax Nigiri",
+    "kategori": "Extra Bitar",
+    "pris": 20,
+    "familjepris": null,
+    "beskrivning": "1 bit flamberad lax nigiri",
+    "ingredienser": "1 bit flamberad lax nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi60.jpg"
+  },
+  {
+    "id": 61,
+    "namn": "Flamberad \u00c5l Nigiri",
+    "kategori": "Extra Bitar",
+    "pris": 25,
+    "familjepris": null,
+    "beskrivning": "1 bit flamberad \u00e5l nigiri",
+    "ingredienser": "1 bit flamberad \u00e5l nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi61.jpg"
+  },
+  {
+    "id": 62,
+    "namn": "Ebi Fry Nigiri",
+    "kategori": "Extra Bitar",
+    "pris": 25,
+    "familjepris": null,
+    "beskrivning": "1 bit friterad r\u00e4ka nigiri",
+    "ingredienser": "1 bit friterad r\u00e4ka nigiri",
+    "tillbehor": [],
+    "bild": "sunsushi62.jpg"
+  },
+  {
+    "id": 63,
+    "namn": "Friterad Kyckling (liten)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 69,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser"
+    ],
+    "bild": "sunsushi63.jpg"
+  },
+  {
+    "id": 64,
+    "namn": "Friterad Kyckling (stor)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 89,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser"
+    ],
+    "bild": "sunsushi64.jpg"
+  },
+  {
+    "id": 65,
+    "namn": "Friterade R\u00e4kor (6 st)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 69,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser"
+    ],
+    "bild": "sunsushi65.jpg"
+  },
+  {
+    "id": 66,
+    "namn": "Friterade R\u00e4kor (8 st)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 89,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser"
+    ],
+    "bild": "sunsushi66.jpg"
+  },
+  {
+    "id": 67,
+    "namn": "Vegetariska V\u00e5rrullar (6 st)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 30,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser"
+    ],
+    "bild": "sunsushi67.jpg"
+  },
+  {
+    "id": 68,
+    "namn": "Vegetariska V\u00e5rrullar (12 st)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 55,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser"
+    ],
+    "bild": "sunsushi68.jpg"
+  },
+  {
+    "id": 69,
+    "namn": "Friterade Dumplings (5 st)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 69,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser"
+    ],
+    "bild": "sunsushi69.jpg"
+  },
+  {
+    "id": 70,
+    "namn": "Friterade Dumplings (8 st)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 89,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [
+      "såser"
+    ],
+    "bild": "sunsushi70.jpg"
+  },
+  {
+    "id": 71,
+    "namn": "Sj\u00f6gr\u00e4ssallad (liten)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 10,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [],
+    "bild": "sunsushi71.jpg"
+  },
+  {
+    "id": 72,
+    "namn": "Sj\u00f6gr\u00e4ssallad (stor)",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 40,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [],
+    "bild": "sunsushi72.jpg"
+  },
+  {
+    "id": 73,
+    "namn": "Kimchisallad",
+    "kategori": "Tillbeh\u00f6r",
+    "pris": 45,
+    "familjepris": null,
+    "beskrivning": "",
+    "ingredienser": "",
+    "tillbehor": [],
+    "bild": "sunsushi73.jpg"
+  }
 ]
