@@ -9,11 +9,13 @@ function ValjRestaurang() {
       namn: "Campino",
       bild: "/bilder/campino.png", // byt till en riktig logotyp om du har
       länk: "/campino",
+      slug: "campino",
     },
     {
       namn: "SunSushi",
       bild: "/bilder/sunsushi.png", // placeholderbild
       länk: "/sunsushi",
+      slug: "sunsushi",
     },
     // framtida: { namn: "SushiBar", bild: "...", länk: "/sushibar" }
   ];
@@ -27,7 +29,7 @@ function ValjRestaurang() {
           <button
             key={index}
             type="button"
-            onClick={() => navigate(r.länk)}
+            onClick={() => navigate(`${r.länk}?restaurang=${r.slug}`)}
             className="restaurang-kort"
           >
             <img
