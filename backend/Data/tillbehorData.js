@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const base = path.join(__dirname, 'Tillbehör');
+const base = path.join(__dirname, 'Tillbehör', 'campinotillbehör');
 
 const tillbehorData = [
   ...JSON.parse(fs.readFileSync(path.join(base, 'Kött.json'), 'utf8')),

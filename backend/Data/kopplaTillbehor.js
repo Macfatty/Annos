@@ -6,7 +6,8 @@ const menyPath = path.join(__dirname, 'meny.json');
 const meny = JSON.parse(fs.readFileSync(menyPath, 'utf8'));
 
 // Läs alla tillbehör från undermappen Tillbehör/
-const tillbehorPath = (filnamn) => path.join(__dirname, 'Tillbehör', filnamn);
+const tillbehorPath = (filnamn) =>
+  path.join(__dirname, 'Tillbehör', 'campinotillbehör', filnamn);
 
 const allaTillbehor = [
   ...JSON.parse(fs.readFileSync(tillbehorPath('kött.json'))),
