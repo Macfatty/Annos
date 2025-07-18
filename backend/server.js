@@ -28,6 +28,20 @@ const {
 
 app.use(cors(corsOptions));
 
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; " +
+      "script-src 'self' https://apis.google.com https://js.stripe.com; " +
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+      "font-src 'self' https://fonts.gstatic.com; " +
+      "img-src 'self' data: blob:; " +
+      "connect-src 'self' https://your-api.com https://*.stripe.com; " +
+      "frame-src https://js.stripe.com;"
+  );
+  next();
+});
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRouter);
