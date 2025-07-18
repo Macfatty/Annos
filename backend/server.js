@@ -9,7 +9,7 @@ const dotenv = require("dotenv");
 const authRouter = require("./routes/auth");
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
   credentials: true,
 };
 
