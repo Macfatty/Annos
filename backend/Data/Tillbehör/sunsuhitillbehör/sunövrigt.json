@@ -1,0 +1,264 @@
+[
+    {
+        "id": 1200,
+        "namn": "Friterad Kyckling",
+        "typ": "övrigt",
+        "beskrivning": "Välj Storlek",
+        "storlekar":[
+          {
+            "id": 1201,
+            "namn": "Liten",
+            "pris": 69
+          },
+          {
+            "id": 1202,
+            "namn": "Stor",
+            "pris": 89
+          }
+        ],
+        "allergener": ["kyckling"],
+        "bild": "",
+        "vegansk": false,
+        "glutenfri": false,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1203,
+        "namn": "Friterad Dumplings",
+        "typ": "övrigt",
+        "beskrivning": "Välj antal",
+        "storlekar":[
+          {
+            "id": 1204,
+            "namn": "5 stycken",
+            "pris": 69
+          },
+          {
+            "id": 1205,
+            "namn": "8 stycken",
+            "pris": 89
+          }
+        ],
+        "allergener": ["vete"],
+        "bild": "",
+        "vegansk": false,
+        "glutenfri": false,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1206,
+        "namn": "Friterad Räkor",
+        "typ": "övrigt",
+        "beskrivning": "Välj antal",
+        "storlekar":[
+          {
+            "id": 1207,
+            "namn": "6 stycken",
+            "pris": 69
+          },
+          {
+            "id": 1208,
+            "namn": "8 stycken",
+            "pris": 89
+          }
+        ],
+        "allergener": ["skaldjur"],
+        "bild": "",
+        "vegansk": false,
+        "glutenfri": false,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1209,
+        "namn": "Sjögrässallad",
+        "typ": "övrigt",
+        "beskrivning": "Välj storlek",
+        "storlekar":[
+          {
+            "id": 1210,
+            "namn": "Liten",
+            "pris": 10
+          },
+          {
+            "id": 1211,
+            "namn": "Stor",
+            "pris": 40
+          }
+        ],
+        "allergener": [],
+        "bild": "",
+        "vegansk": true,
+        "glutenfri": true,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1212,
+        "namn": "Vegetariskt Vårullar",
+        "typ": "övrigt",
+        "beskrivning": "Välj antal",
+        "storlekar":[
+          {
+            "id": 1213,
+            "namn": "6 stycken",
+            "pris": 30
+          },
+          {
+            "id": 1214,
+            "namn": "12 stycken",
+            "pris": 55
+          }
+        ],
+        "allergener": ["vete"],
+        "bild": "",
+        "vegansk": true,
+        "glutenfri": false,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1215,
+        "namn": "Räkchips",
+        "typ": "övrigt",
+        "beskrivning": "Chips",
+        "allergener": ["skaldjur"],
+        "bild": "",
+        "vegansk": false,
+        "glutenfri": false,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1216,
+        "namn": "sushi ris",
+        "typ": "övrigt",
+        "pris": 8,
+        "beskrivning": "Sushi ris som bas",
+        "allergener": [],
+        "bild": "",
+        "vegansk": true,
+        "glutenfri": true,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1217,
+        "namn": "ris",
+        "typ": "övrigt",
+        "pris": 8,
+        "beskrivning": "Kokt ris",
+        "allergener": [],
+        "bild": "",
+        "vegansk": true,
+        "glutenfri": true,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1218,
+        "namn": "tempura mix",
+        "typ": "övrigt",
+        "pris": 10,
+        "beskrivning": "Tempura panering",
+        "allergener": ["vete"],
+        "bild": "",
+        "vegansk": true,
+        "glutenfri": false,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1219,
+        "namn": "tobikorom",
+        "typ": "övrigt",
+        "pris": 12,
+        "beskrivning": "Fiskrom",
+        "allergener": ["fisk"],
+        "bild": "",
+        "vegansk": false,
+        "glutenfri": true,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1220,
+        "namn": "majs vårullar",
+        "typ": "övrigt",
+        "pris": 15,
+        "beskrivning": "Vårullar med majs",
+        "allergener": ["vete"],
+        "bild": "",
+        "vegansk": true,
+        "glutenfri": false,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1221,
+        "namn": "vårullar",
+        "typ": "övrigt",
+        "pris": 15,
+        "beskrivning": "Vårullar",
+        "allergener": ["vete"],
+        "bild": "",
+        "vegansk": true,
+        "glutenfri": false,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1222,
+        "namn": "majonäs",
+        "typ": "övrigt",
+        "pris": 5,
+        "beskrivning": "Majonäs",
+        "allergener": ["ägg"],
+        "bild": "",
+        "vegansk": false,
+        "glutenfri": true,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1223,
+        "namn": "philadelphia ost",
+        "typ": "övrigt",
+        "pris": 8,
+        "beskrivning": "Philadelphia ost",
+        "allergener": ["mjölk"],
+        "bild": "",
+        "vegansk": false,
+        "glutenfri": true,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1224,
+        "namn": "ost",
+        "typ": "övrigt",
+        "pris": 8,
+        "beskrivning": "Ost",
+        "allergener": ["mjölk"],
+        "bild": "",
+        "vegansk": false,
+        "glutenfri": true,
+        "tillgänglig": true,
+        "antal": null
+      },
+      {
+        "id": 1225,
+        "namn": "valfri sås",
+        "typ": "övrigt",
+        "pris": 5,
+        "beskrivning": "Valfri sås",
+        "allergener": [],
+        "bild": "",
+        "vegansk": true,
+        "glutenfri": true,
+        "tillgänglig": true,
+        "antal": null
+      }
+]

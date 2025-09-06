@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1000,
+    "namn": "avokado",
+    "typ": "vegetarisk",
+    "pris": 8,
+    "beskrivning": "Färsk avokado för sushi",
+    "allergener": [],
+    "bild": "",
+    "vegansk": true,
+    "glutenfri": true,
+    "tillgänglig": true,
+    "antal": null
+  },
+  {
+    "id": 1001,
+    "namn": "krämig ost",
+    "typ": "vegetarisk",
+    "pris": 10,
+    "beskrivning": "Krämig ost för sushi",
+    "allergener": ["mjölk"],
+    "bild": "",
+    "vegansk": false,
+    "glutenfri": true,
+    "tillgänglig": true,
+    "antal": null
+  },
+  {
+    "id": 1002,
+    "namn": "ägg",
+    "typ": "vegetarisk",
+    "pris": 8,
+    "beskrivning": "Kokt ägg för sushi",
+    "allergener": ["ägg"],
+    "bild": "",
+    "vegansk": false,
+    "glutenfri": true,
+    "tillgänglig": true,
+    "antal": null
+  },
+  {
+    "id": 1003,
+    "namn": "tofu",
+    "typ": "vegetarisk",
+    "pris": 6,
+    "beskrivning": "Marinerad tofu för sushi",
+    "allergener": ["soja"],
+    "bild": "",
+    "vegansk": true,
+    "glutenfri": true,
+    "tillgänglig": true,
+    "antal": null
+  }
+]
