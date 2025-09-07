@@ -32,7 +32,6 @@ function App() {
     const sparad = localStorage.getItem("varukorg");
     return sparad ? JSON.parse(sparad) : [];
   });
-  const [tillbehor, setTillbehor] = useState([]);
   const [inloggad, setInloggad] = useState(false);
   const [role, setRole] = useState("");
   const isAdmin = role === "admin";
@@ -100,32 +99,6 @@ function App() {
     fetchMeny();
   }, [restaurangSlug]);
 
-  useEffect(() => {
-    const fetchTillbehor = async () => {
-      if (!BASE_URL) {
-        setError(
-          "Fel: VITE_API_BASE_URL saknas i .env. Ange adressen till backend."
-        );
-        return;
-      }
-      try {
-        const res = await fetch(`${BASE_URL}/api/tillbehor`);
-        if (!res.ok) {
-          throw new Error("Kunde inte ladda tillbehör");
-        }
-        const data = await res.json();
-        setTillbehor(data);
-      } catch (err) {
-        console.error("Fel vid tillbehör:", err);
-        if (err.message === "Failed to fetch") {
-          setError(
-            "Kunde inte ansluta till servern. Kontrollera VITE_API_BASE_URL."
-          );
-        }
-      }
-    };
-    fetchTillbehor();
-  }, []);
 
   const loadProfile = useCallback(async () => {
     const data = await fetchProfile();
@@ -287,7 +260,7 @@ function App() {
                           navigate("/login");
                           return;
                         }
-                        setValdRatt(ratt);
+                        setValdRatt({ ...ratt, restaurantSlug: "campino" });
                       }}
                       style={{ cursor: "pointer" }}
                     >
@@ -311,7 +284,6 @@ function App() {
               {valdRatt && (
                 <Undermeny
                   ratt={valdRatt}
-                  tillbehor={tillbehor}
                   isLoggedIn={inloggad}
                   onClose={() => setValdRatt(null)}
                   onAddToCart={(val) => {
@@ -352,7 +324,7 @@ function App() {
                           navigate("/login");
                           return;
                         }
-                        setValdRatt(ratt);
+                        setValdRatt({ ...ratt, restaurantSlug: "sunsushi" });
                       }}
                       style={{ cursor: "pointer" }}
                     >
@@ -376,7 +348,6 @@ function App() {
               {valdRatt && (
                 <Undermeny
                   ratt={valdRatt}
-                  tillbehor={tillbehor}
                   isLoggedIn={inloggad}
                   onClose={() => setValdRatt(null)}
                   onAddToCart={(val) => {

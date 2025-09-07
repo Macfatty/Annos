@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import "./App.css";
+import { getAccessories } from "./utils/getAccessoriesByRestaurant";
 
-function Undermeny({ ratt, tillbehor, onClose, onAddToCart, isLoggedIn }) {
+function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
   const [oppenKategori, setOppenKategori] = useState(null);
  const kategoriRefs = useRef({});
   const darkMode = document.body.classList.contains("dark");
@@ -9,7 +10,11 @@ function Undermeny({ ratt, tillbehor, onClose, onAddToCart, isLoggedIn }) {
   const [valda, setValda] = useState({});
   const [valfriSasText, setValfriSasText] = useState("");
 
-  const grupperade = tillbehor.reduce((acc, curr) => {
+  // Hämta rätt tillbehör baserat på restaurantSlug
+  const slug = ratt?.restaurantSlug;
+  const rattTillbehor = getAccessories(slug);
+
+  const grupperade = rattTillbehor.reduce((acc, curr) => {
     const typ = curr.typ ?? "okänd";
     if (!acc[typ]) {
       acc[typ] = [];
@@ -89,7 +94,7 @@ function Undermeny({ ratt, tillbehor, onClose, onAddToCart, isLoggedIn }) {
 
   const valdaTillval = [];
 
-  for (const t of tillbehor) {
+  for (const t of rattTillbehor) {
     if (t.storlekar) {
       for (const v of t.storlekar) {
         if (valda[v.id]) {
@@ -140,7 +145,7 @@ function Undermeny({ ratt, tillbehor, onClose, onAddToCart, isLoggedIn }) {
           </button>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center", marginTop: "0.5rem" }}>
             {Object.keys(grupperade).map((kategori) => (
-              <button key={kategori} onClick={() => { scrollTo(kategori); toggleKategori(kategori); }}>
+              <button key={`${slug}-${kategori}`} onClick={() => { scrollTo(kategori); toggleKategori(kategori); }}>
                 {kategori}
               </button>
             ))}
@@ -160,10 +165,10 @@ function Undermeny({ ratt, tillbehor, onClose, onAddToCart, isLoggedIn }) {
               <h5 style={{ fontSize: "1rem", color: "#007bff" }}>{oppenKategori}</h5>
               <div style={{ marginLeft: "1rem" }}>
                 {grupperade[oppenKategori].map((item) => (
-                  <div key={item.id} style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                    <label htmlFor={`chk-${item.id}`} style={{ flex: 1 }}>
+                  <div key={`${slug}-${item.id}`} style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <label htmlFor={`chk-${slug}-${item.id}`} style={{ flex: 1 }}>
                       <input
-                        id={`chk-${item.id}`}
+                        id={`chk-${slug}-${item.id}`}
                         type="checkbox"
                         checked={valda[item.id] > 0}
                         onChange={(e) => ändraVal(item.id, e.target.checked)}
