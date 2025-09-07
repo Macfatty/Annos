@@ -6,6 +6,9 @@ import globals from "globals";
 export default [
   js.configs.recommended,
   {
+    ignores: ["dist/**", "node_modules/**"],
+  },
+  {
     files: ["**/*.jsx", "**/*.js"],
     languageOptions: {
       ecmaVersion: "latest",
