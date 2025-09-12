@@ -37,7 +37,39 @@ export default [
       "semi": ["error", "always"],
       "quotes": ["error", "double"],
       "eqeqeq": "error",
-      "curly": "error"
+      "curly": "error",
+      "no-restricted-imports": [
+        "error",
+        {
+          "paths": [
+            {
+              "name": "./api",
+              "importNames": ["api"],
+              "message": "Import av 'api' från './api' är förbjuden. Använd 'fetch' direkt istället."
+            },
+            {
+              "name": "/src/api.js",
+              "importNames": ["api"],
+              "message": "Import av 'api' från '/src/api.js' är förbjuden. Använd 'fetch' direkt istället."
+            },
+            {
+              "name": "@/api",
+              "importNames": ["api"],
+              "message": "Import av 'api' från '@/api' är förbjuden. Använd 'fetch' direkt istället."
+            },
+            {
+              "name": "src/api.js",
+              "importNames": ["api"],
+              "message": "Import av 'api' från 'src/api.js' är förbjuden. Använd 'fetch' direkt istället."
+            },
+            {
+              "name": "./src/api",
+              "importNames": ["api"],
+              "message": "Import av 'api' från './src/api' är förbjuden. Använd 'fetch' direkt istället."
+            }
+          ]
+        }
+      ]
     },
   },
 ];

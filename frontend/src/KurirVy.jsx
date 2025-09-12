@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { api } from "./api";
 
 function KurirVy() {
   const [orders, setOrders] = useState([]);
