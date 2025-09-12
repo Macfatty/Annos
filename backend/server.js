@@ -3,7 +3,7 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const { verifyToken, verifyRole, verifyAdminForSlug, rateLimit, isValidStatusTransition } = require("./authMiddleware");
+const { verifyJWT, verifyToken, verifyRole, verifyAdminForSlug, rateLimit, isValidStatusTransition } = require("./authMiddleware");
 const { createPaymentProvider, validatePaymentRequest, logPaymentActivity } = require("./payments");
 const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
@@ -80,7 +80,8 @@ app.get("/api/tillbehor", (req, res) => {
 // SPARA ORDER + KUNDBESTÄLLNING
 app.post(
   "/api/order",
-  verifyToken,
+  verifyJWT,
+  verifyRole(['customer']),
   rateLimit(60000, 10), // 10 beställningar per minut per användare
   [
     body("kund.namn").trim().escape().notEmpty(),
@@ -701,8 +702,14 @@ app.post(
   }
 );
 
-// PROFIL – INKL. BESTÄLLNINGSHISTORIK
-app.get("/api/profile", verifyToken, (req, res) => {
+// PROFIL – SIMPEL ENDPOINT
+app.get("/api/profile", verifyJWT, (req, res) => {
+  const { id, role, name, email } = req.user;
+  res.json({ id, role, name, email });
+});
+
+// PROFIL MED BESTÄLLNINGSHISTORIK – SEPARAT ENDPOINT
+app.get("/api/profile-details", verifyToken, (req, res) => {
   const userId = req.user.userId;
 
   db.get(
@@ -713,7 +720,7 @@ app.get("/api/profile", verifyToken, (req, res) => {
         return res.status(404).json({ error: "Användare finns inte" });
       }
 
-      const sql = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
+      const sql = `SELECT * FROM orders WHERE customer_email = ? ORDER BY created_at DESC`;
       db.all(sql, [user.email], (err, orders) => {
         if (err) {
           console.error("Fel vid hämtning av beställningar:", err);
@@ -745,7 +752,7 @@ app.get("/api/my-orders", verifyToken, (req, res) => {
       return res.status(404).json({ error: "Användare saknas" });
     }
 
-    const orderSql = `SELECT * FROM orders WHERE email = ? ORDER BY created_at DESC`;
+    const orderSql = `SELECT * FROM orders WHERE customer_email = ? ORDER BY created_at DESC`;
     db.all(orderSql, [user.email], (err, rows) => {
       if (err) {
         return res

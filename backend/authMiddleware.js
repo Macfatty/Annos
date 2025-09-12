@@ -57,36 +57,44 @@ function validateStatusTransition(req, res, next) {
   next();
 }
 
-function verifyToken(req, res, next) {
-  let token;
-  if (req.headers.authorization) {
-    token = req.headers.authorization.split(" ")[1];
-  } else if (req.cookies.accessToken) {
-    token = req.cookies.accessToken;
+function verifyJWT(req, res, next) {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing bearer token' });
   }
+  
+  const token = authHeader.split(' ')[1];
+  
   if (!token) {
-    return res.status(401).json({ error: "Ingen token" });
+    return res.status(401).json({ error: 'Missing bearer token' });
   }
-
+  
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // payload (id, role, name, email)
     next();
-  } catch {
-    return res.status(401).json({ error: "Ogiltig token" });
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
   }
 }
 
-function verifyRole(requiredRoles) {
+// Behåll verifyToken för bakåtkompatibilitet
+function verifyToken(req, res, next) {
+  return verifyJWT(req, res, next);
+}
+
+function verifyRole(roles) {
   return (req, res, next) => {
-    verifyToken(req, res, () => {
-      const userRole = req.user.role;
-      const allowedRoles = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
-      
-      if (!allowedRoles.includes(userRole)) {
-        return res.status(403).json({ error: "Otillräcklig behörighet" });
-      }
-      next();
-    });
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    
+    next();
   };
 }
 
@@ -103,6 +111,7 @@ function verifyAdminForSlug(req, res, next) {
   });
 }
 module.exports = { 
+  verifyJWT,
   verifyToken, 
   verifyRole, 
   verifyAdminForSlug,
