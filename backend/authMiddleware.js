@@ -58,23 +58,28 @@ function validateStatusTransition(req, res, next) {
 }
 
 function verifyJWT(req, res, next) {
+  // 1. Försök hämta från Authorization-header
   const authHeader = req.headers.authorization;
-  
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Missing bearer token' });
+  let token;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
   }
-  
-  const token = authHeader.split(' ')[1];
-  
+
+  // 2. Om ingen header: hämta från cookie
+  if (!token && req.cookies && req.cookies.accessToken) {
+    token = req.cookies.accessToken;
+  }
+
+  // 3. Om fortfarande inget token: 401
   if (!token) {
     return res.status(401).json({ error: 'Missing bearer token' });
   }
-  
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // payload (id, role, name, email)
-    next();
-  } catch (error) {
+    req.user = decoded; // { userId, role, name, email, … }
+    return next();
+  } catch {
     return res.status(401).json({ error: 'Invalid token' });
   }
 }
