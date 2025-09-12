@@ -14,6 +14,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Tack from "./Tack";
 import AdminPanel from "./AdminPanel";
 import KurirVy from "./KurirVy";
+import RestaurangVy from "./RestaurangVy";
 import { fetchProfile } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -36,6 +37,7 @@ function App() {
   const [role, setRole] = useState("");
   const isAdmin = role === "admin";
   const isCourier = role === "courier";
+  const isRestaurant = role === "restaurant";
   const [tema, setTema] = useState(
     () => localStorage.getItem("tema") || "light"
   );
@@ -165,6 +167,11 @@ function App() {
                     🛠 Adminpanel
                   </button>
                 )}
+                {isRestaurant && (
+                  <button onClick={() => navigate(`/restaurang/${restaurangSlug}/incoming`)}>
+                    🍽 Restaurangvy
+                  </button>
+                )}
                 {isCourier && (
                   <button onClick={() => navigate("/kurir")}>
                     🚚 Kurirpanel
@@ -205,6 +212,7 @@ function App() {
         <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/kurir" element={<KurirVy />} />
+        <Route path="/restaurang/:slug/incoming" element={<RestaurangVy />} />
 
         <Route
           path="/kundvagn"

@@ -8,7 +8,7 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
   const darkMode = document.body.classList.contains("dark");
 
   const [valda, setValda] = useState({});
-  const [valfriSasText, setValfriSasText] = useState("");
+  const [valfriText, setValfriText] = useState({}); // För varje vald vara separat
 
   // Hämta rätt tillbehör baserat på restaurantSlug
   const slug = ratt?.restaurantSlug;
@@ -31,13 +31,13 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
         });
       });
     } else {
-      acc[typ].push({
-        id: curr.id,
-        namn: curr.namn,
-        pris: curr.pris,
-        parentId: curr.id,
-        ärValfri: curr.id === 211,
-      });
+        acc[typ].push({
+          id: curr.id,
+          namn: curr.namn,
+          pris: curr.pris,
+          parentId: curr.id,
+          ärValfri: curr.typ === "valfri" || curr.allowCustom === true,
+        });
     }
 
     return acc;
@@ -104,8 +104,7 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
             pris: v.pris,
             antal: valda[v.id],
             totalpris: valda[v.id] * v.pris,
-            extraKommentar:
-              t.id === 211 ? valfriSasText : undefined,
+            custom_note: valfriText[v.id] || undefined,
           });
         }
       }
@@ -116,6 +115,7 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
         pris: t.pris,
         antal: valda[t.id],
         totalpris: t.pris * valda[t.id],
+        custom_note: valfriText[t.id] || undefined,
       });
     }
   }
@@ -185,11 +185,15 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
                     {item.ärValfri && valda[item.id] > 0 && (
                       <input
                         type="text"
-                        value={valfriSasText}
-                        onChange={(e) => setValfriSasText(e.target.value)}
-                        placeholder="Önskad sås"
+                        value={valfriText[item.id] || ""}
+                        onChange={(e) => setValfriText(prev => ({
+                          ...prev,
+                          [item.id]: e.target.value
+                        }))}
+                        placeholder="Skriv vad du vill ha"
+                        maxLength={140}
                         style={{ flexBasis: "100%", marginLeft: "2rem", marginTop: "0.2rem" }}
-                        aria-label="Skriv önskad sås"
+                        aria-label="Valfri önskan"
                       />
                     )}
                   </div>

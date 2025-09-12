@@ -140,3 +140,6 @@ dist
 backend/orders.sqlite
 backend/orders.sqlite-shm
 backend/orders.sqlite-wal
+
+# Exports directory
+backend/exports/

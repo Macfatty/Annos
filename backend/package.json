@@ -17,7 +17,9 @@
     "supertest": "^6.3.4"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "payouts:run": "node backend/tasks/generatePayouts.js",
+    "prepush": "npm test"
   },
   "jest": {
     "testEnvironment": "node"

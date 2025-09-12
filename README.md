@@ -1,124 +1,238 @@
-# Annos
-=======
-
 # Annos – Hemkörningsapp
 
-**Annos** är en webbaserad hemkörningsapp där kunder kan beställa mat, betala med Swish och få maten levererad av förare. Appen bygger på moderna webbtjänster och följer ett agilt arbetssätt med Scrum.
+**Annos** är en fullständig webbaserad hemkörningsapp med rollbaserad åtkomst, statusmaskin för ordrar, betalningsintegration och månadsvisa utbetalningar till restauranger.
 
 ## 📦 Teknologi
 
-- Frontend: React (via Vite)
-- Backend: Node.js + Express
-- Node.js ≥18 (kontrollera med `node -v`)
-- Databas: SQLite (via SQLite3)
-- Betalning: Swish (via API, i framtiden)
-- Språk: Svenska
+- **Frontend**: React 19 + Vite med ESLint
+- **Backend**: Node.js + Express med JWT-autentisering
+- **Databas**: SQLite med monetära belopp i öre för precision
+- **Betalning**: Swish (mock i dev, produktionsklara providers)
+- **Språk**: Svenska
+- **Säkerhet**: CSP, CORS, Rate Limiting, Rollbaserad åtkomst
+
+## 🎯 Funktioner
+
+### Kunder
+- Visa menyer och lägg till mat i varukorg
+- Valfri-input för tillbehör med custom_note (max 140 tecken)
+- Beställning med Swish-betalning (mock i dev)
+- Realtidsorderstatus via polling
+- Beställningshistorik
+
+### Restauranger
+- Hantera inkommande ordrar via `/restaurang/:slug/incoming`
+- Statusmaskin: received → accepted → in_progress → out_for_delivery
+- Se begränsad kundinfo (telefon maskad för säkerhet)
+
+### Kurirer
+- Acceptera och leverera ordrar via `/kurir`
+- Se endast namn, adress och telefon (ingen e-post eller orderdetaljer)
+- Hantera egna pågående ordrar
+
+### Admin
+- Full åtkomst till alla funktioner
+- Månadsvisa payout-exporter med avgiftsberäkning (45 kr/order + 5% av bruttot)
 
 ## 🧱 Struktur
 
 ```
 annos/
-├── frontend/   → React-klient
-├── backend/    → Express API
+├── frontend/           → React-klient
+├── backend/            → Express API
+├── docs/              → Dokumentation
+│   ├── database.md    → Databasstruktur
+│   ├── functions.md   → Systemfunktioner
+│   ├── restaurant.md  → Restaurangvy
+│   ├── courier.md     → Kurirvy
+│   └── payments.md    → Betalningsarkitektur
+└── backend/exports/   → Månadsvisa payout-filer
 ```
 
-## ✅ Checklista för att köra projektet lokalt
+## ⚡ Snabbstart
 
-### 1. Kontrollera Node.js-version
-```bash
-node -v
-# Måste vara version 18 eller senare
-```
-### 2. Klona projektet
+### 1. Förutsättningar
+- Node.js ≥18
+- Git
+
+### 2. Klona och installera
 ```bash
 git clone https://github.com/Macfatty/Annos.git
 cd Annos
-```
 
-### 3. Installera backend-beroenden
-```bash
+# Backend
 cd backend
 npm install
-npm list jest  # Kontrollera att Jest installerades som dev-dependency
-# Kontrollera att du har express & cors
-npm list express
-npm list cors
-# Om nya autentiseringsmoduler lagts till (t.ex. `google-auth-library` och
-# `apple-signin-auth`), kör `npm install` igen efter att du hämtat uppdaterad
-# kod.
+cd ..
+
+# Frontend  
+cd frontend
+npm install
+cd ..
 ```
 
-### 4. Skapa `.env`-fil
-Lägg till följande i `backend/.env`:
-```
-JWT_SECRET=your-secret
-# Används för att signera refresh tokens
-REFRESH_SECRET=your-refresh-secret
-# OAuth-nycklar
-GOOGLE_CLIENT_ID=din-google-client-id
-APPLE_CLIENT_ID=din-apple-client-id
-# URL to your frontend; used for CORS
+### 3. Miljövariabler
+
+**Backend** (`backend/.env`):
+```bash
+JWT_SECRET=your-jwt-secret-256-bits
+REFRESH_SECRET=your-refresh-secret-256-bits
 FRONTEND_ORIGIN=http://localhost:5173
-# Valfritt: ange egen port
 PORT=3001
+NODE_ENV=development
+
+# Betalningar (utveckling)
+PAYMENT_PROVIDER_SWISH_MOCK=true
+PAYMENT_PROVIDER_SWISH_CALLBACK_URL=http://localhost:3001/api/payments/callback
 ```
 
-### 5. Skapa admin-konto
-Gå till mappen `backend` och kör skriptet för att skapa ett första administratörskonto. Standarduppgifterna är `admin@example.com` och `admin123`.
+**Frontend** (`frontend/.env`):
 ```bash
-cd backend
-node skapaAdmin.js
-```
-**Detta måste köras innan du kan logga in på `/admin`.** När både backend och frontend körs kan du sedan navigera till `/admin` för att logga in med dessa uppgifter.
-
-### 6. Starta backend-servern
-```bash
-node server.js
-```
-Öppna: http://localhost:3001
-
----
-
-### 7. Installera frontend-beroenden
-```bash
-cd ../frontend
-npm install
-# Detta installerar ESLint och @eslint/js samt andra dev-beroenden
-# Kör även `npm install` igen om du hämtar ny kod för att säkerställa att alla
-# paket finns tillgängliga.
-```
-
-### 8. Skapa `.env` i frontend
-Lägg till följande i `frontend/.env`:
-```
 VITE_API_BASE_URL=http://localhost:3001
 ```
-Ange adressen till din backend om du har ändrat port eller värd. Variabeln behövs
-för att inloggning, profilsidor och orderhistorik ska fungera.
-### 9. Starta frontend (Vite)
+
+### 4. Databas och admin
 ```bash
+cd backend
+node skapaAdmin.js  # Skapar admin@example.com / admin123
+```
+
+### 5. Starta systemet
+```bash
+# Terminal 1 - Backend
+cd backend
+npm start
+
+# Terminal 2 - Frontend  
+cd frontend
 npm run dev
 ```
-Öppna: http://localhost:5173
 
----
+### 6. Åtkomst
+- **Frontend**: http://localhost:5173
+- **Backend**: http://localhost:3001
+- **Admin**: http://localhost:5173/admin (admin@example.com / admin123)
 
-### 10. Testa att frontend <--> backend fungerar:
-- Öppna http://localhost:3001 i webbläsaren eller kör `curl http://localhost:3001` i terminalen.
-- Du bör se: `backend funkar!`
-### 11. Kör kodkvalitetskontroller
+## 🔐 Roller och Behörigheter
+
+### Roller
+- **customer**: Kan beställa mat, se egna ordrar
+- **restaurant**: Kan hantera ordrar för sin restaurang
+- **courier**: Kan acceptera och leverera ordrar
+- **admin**: Full åtkomst till alla funktioner
+
+### Åtkomstregler
+- **Anonyma användare**: Kan endast se menyer
+- **Kunder**: Måste logga in för att beställa
+- **Restauranger**: Ser endast sina egna ordrar
+- **Kurirer**: Ser endast namn, adress, telefon (ingen e-post)
+- **Admin**: Full åtkomst till alla funktioner
+
+## 🔒 Säkerhet
+
+### Autentisering
+- JWT-baserad autentisering med bearer tokens
+- Refresh tokens för säker förnyelse
+- Rollbaserad åtkomstkontroll (RBAC)
+
+### Dataskydd
+- Alla monetära belopp lagras i öre (INTEGER) för precision
+- Telefonnummer maskas i loggar (070***67)
+- E-post returneras endast till kund, inte till kurir-API
+- Custom_note valideras (max 140 tecken, tillåtna tecken)
+
+### Säkerhetsåtgärder
+- **CSP Headers**: Content Security Policy aktiverat
+- **CORS**: Endast från FRONTEND_ORIGIN
+- **Rate Limiting**: 5 login-försök/minut, 10 beställningar/minut
+- **Input-validering**: Alla inputs valideras och saneras
+- **SQL Injection**: Förhindras via parametriserade queries
+
+### Betalningssäkerhet
+- Mock-betalningar i utveckling
+- Swish-integration förberedd för produktion
+- Betalningsdata loggas inte i klartext
+- HTTPS krävs för produktion
+
+## 📊 Månadsvisa Utbetalningar
+
+### Export av Payouts
+```bash
+# Generera payouts för senaste 30 dagarna
+npm run payouts:run
+
+# Specifikt datumintervall
+node backend/tasks/generatePayouts.js --from=2024-01-01 --to=2024-01-31
+```
+
+### Avgiftsstruktur
+- **Per order**: 45 kr (4500 öre)
+- **Procentuell avgift**: 5% av bruttot
+- **Exempel**: 100 ordrar × 120 kr = 12,000 kr
+  - Avgifter: (100 × 45) + (12,000 × 5%) = 4,500 + 600 = 5,100 kr
+  - Netto: 12,000 - 5,100 = 6,900 kr
+
+### Exportformat
+- **CSV**: `backend/exports/{restaurant_slug}/{YYYY-MM}.csv`
+- **JSON**: `backend/exports/{restaurant_slug}/{YYYY-MM}.json`
+- **Filrättigheter**: 0600 (endast ägare kan läsa)
+
+## 🧪 Testning och Kvalitet
+
+### ESLint
 ```bash
 cd frontend
-npm run lint
-cd ../backend
+npm run lint  # Måste vara helt rent
+```
+
+### Backend-tester
+```bash
+cd backend
 npm test
 ```
 
-## 📌 Funktioner (MVP)
+### Bygg
+```bash
+cd frontend
+npm run build  # Måste lyckas
+```
 
-- Visa meny med rätter & tillbehör
-- Lägg till mat i varukorg
-- Beställning & betalning via Swish
+## 📚 Dokumentation
+
+### Detaljerad Dokumentation
+- **[Databasstruktur](docs/database.md)** - Tabeller, index, relationer och exportflöde
+- **[Systemfunktioner](docs/functions.md)** - API-endpoints, statusmaskin och säkerhet
+- **[Restaurangvy](docs/restaurant.md)** - Hantering av inkommande ordrar
+- **[Kurirvy](docs/courier.md)** - Leveranshantering med begränsad dataåtkomst
+- **[Betalningar](docs/payments.md)** - Swish-integration och provider-abstraktion
+
+### API-dokumentation
+Alla endpoints dokumenteras i `docs/functions.md` med:
+- Request/response-exempel
+- Rollkrav
+- Valideringsregler
+- Statuskoder
+
+## 🚀 Produktionsnoter
+
+### Säkerhet i Produktion
+- Använd starka JWT-secrets (256-bit)
+- Aktivera HTTPS för alla endpoints
+- Konfigurera Swish-certifikat för betalningar
+- Sätt upp monitoring och loggning
+- Använd Redis för rate limiting i stället för minnesbaserad
+
+### Skalning
+- SQLite → PostgreSQL/MariaDB för stora volymer
+- Redis för sessioner och caching
+- Docker-containers för deployment
+- Load balancer för flera backend-instanser
+
+### GDPR-efterlevnad
+- Anonymisering av kunddata vid export
+- Rätt till radering av personuppgifter
+- Data-minimering i kurir-API
+- Säker lagring av betalningsdata
 
 ## 📃 Licens
 
