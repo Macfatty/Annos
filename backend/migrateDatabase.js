@@ -169,6 +169,53 @@ function createNewTables() {
   });
 }
 
+// Idempotent migration för assigned_courier_id kolumn
+function ensureAssignedCourierId() {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.run("BEGIN TRANSACTION");
+
+      // Kontrollera om kolumnen finns
+      db.get("SELECT 1 FROM pragma_table_info('orders') WHERE name='assigned_courier_id' LIMIT 1", (err, row) => {
+        if (err) {
+          db.run("ROLLBACK");
+          reject(err);
+          return;
+        }
+
+        if (!row) {
+          // Kolumnen saknas, lägg till den
+          db.run("ALTER TABLE orders ADD COLUMN assigned_courier_id INTEGER", (err) => {
+            if (err) {
+              db.run("ROLLBACK");
+              reject(err);
+              return;
+            }
+            console.log('Lade till assigned_courier_id kolumn');
+          });
+        }
+
+        // Skapa index idempotent
+        db.run("CREATE INDEX IF NOT EXISTS idx_orders_assigned_status ON orders(assigned_courier_id, status)", (err) => {
+          if (err) {
+            db.run("ROLLBACK");
+            reject(err);
+            return;
+          }
+          
+          db.run("COMMIT", (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+      });
+    });
+  });
+}
+
 // Skapa index
 function createIndexes() {
   return new Promise((resolve, reject) => {
@@ -237,6 +284,9 @@ async function migrateDatabase() {
     // Ersätt gamla tabellen
     await replaceOldTable();
     
+    // Säkerställ assigned_courier_id kolumn (idempotent)
+    await ensureAssignedCourierId();
+    
     console.log('Migration slutförd framgångsrikt!');
     
   } catch (error) {
@@ -260,4 +310,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { migrateDatabase };
+module.exports = { migrateDatabase, ensureAssignedCourierId };

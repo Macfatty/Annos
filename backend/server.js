@@ -8,6 +8,7 @@ const { createPaymentProvider, validatePaymentRequest, logPaymentActivity } = re
 const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
 const authRouter = require("./routes/auth");
+const { ensureAssignedCourierId } = require("./migrateDatabase");
 
 const corsOptions = {
   origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
@@ -758,19 +759,29 @@ app.get("/api/my-orders", verifyToken, (req, res) => {
 });
 
 if (require.main === module) {
-  db.get("SELECT id FROM users WHERE role = 'admin' LIMIT 1", (err, row) => {
-    if (err) {
-      console.error('Fel vid kontroll av admin-anv\xE4ndare:', err.message);
-    } else if (!row) {
-      console.warn(
-        '⚠️ Inget admin-konto hittades. Kör "node backend/skapaAdmin.js" innan du loggar in på /admin.'
-      );
-    }
+  // Kör migration först
+  ensureAssignedCourierId()
+    .then(() => {
+      // Kontrollera admin-användare
+      db.get("SELECT id FROM users WHERE role = 'admin' LIMIT 1", (err, row) => {
+        if (err) {
+          console.error('Fel vid kontroll av admin-anv\xE4ndare:', err.message);
+        } else if (!row) {
+          console.warn(
+            '⚠️ Inget admin-konto hittades. Kör "node backend/skapaAdmin.js" innan du loggar in på /admin.'
+          );
+        }
 
-    app.listen(PORT, () => {
-      console.log(`Servern körs på http://localhost:${PORT}`);
+        // Starta server
+        app.listen(PORT, () => {
+          console.log(`Servern körs på http://localhost:${PORT}`);
+        });
+      });
+    })
+    .catch((error) => {
+      console.error('Migration misslyckades:', error);
+      process.exit(1);
     });
-  });
 }
 
 module.exports = app;
