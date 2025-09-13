@@ -95,6 +95,11 @@ function verifyRole(roles) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     
+    // Administratörer har full behörighet att passera alla rollkontroller
+    if (req.user.role === 'admin') {
+      return next();
+    }
+    
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
