@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
-import { fetchProfile } from "./api";
+import { fetchProfile, createOrder } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -42,51 +42,42 @@ function Checkout({ varukorg, setVarukorg, restaurang }) {
     return summa + item.pris + tillvalPris;
   }, 0);
 
-   const skickaBestallning = async () => {
-    const profile = await fetchProfile();
-    if (!profile) {
-      alert("🔒 Du måste logga in för att kunna lägga en beställning.");
-      navigate("/login");
-      return;
-    }
+  const skickaBestallning = async () => {
+    try {
+      const profile = await fetchProfile();
+      if (!profile) {
+        alert("🔒 Du måste logga in för att kunna lägga en beställning.");
+        navigate("/login");
+        return;
+      }
 
-    const payload = {
-      kund: {
-        namn: kundinfo.namn,
-        email: kundinfo.email,
-        telefon: kundinfo.telefon,
-        adress: kundinfo.adress,
-        ovrigt: kundinfo.ovrigt, // ✅ OBS: viktigt att denna matchar servern
-      },
-      order: varukorg, // ✅ Skickar bara maträtter
-      restaurangSlug: restaurang,
-    };
+      const payload = {
+        kund: {
+          namn: kundinfo.namn,
+          email: kundinfo.email,
+          telefon: kundinfo.telefon,
+          adress: kundinfo.adress,
+          ovrigt: kundinfo.ovrigt,
+        },
+        order: varukorg,
+        restaurangSlug: restaurang,
+      };
 
-    fetch(`${BASE_URL}/api/order`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // Skicka med cookies för autentisering
-      body: JSON.stringify(payload),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Misslyckades att skicka beställning");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Beställning skickad:", data);
-        localStorage.setItem("kundinfo", JSON.stringify(kundinfo));
-        sessionStorage.setItem("tack", "1");
-        setVarukorg([]);
-        navigate(`/tack?restaurang=${restaurang}`);
-      })
-      .catch((err) => {
+      await createOrder(payload);
+      localStorage.setItem("kundinfo", JSON.stringify(kundinfo));
+      sessionStorage.setItem("tack", "1");
+      setVarukorg([]);
+      navigate(`/tack?restaurang=${restaurang}`);
+    } catch (err) {
+      if (err?.status === 401) {
+        localStorage.clear();
+        alert("🔒 Din session har gått ut. Logga in igen.");
+        navigate("/login");
+      } else {
         console.error("Fel vid beställning:", err);
         alert("Kunde inte lägga beställningen. Försök igen.");
-      });
+      }
+    }
   };
 
   return (

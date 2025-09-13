@@ -103,15 +103,25 @@ function App() {
 
 
   const loadProfile = useCallback(async () => {
-    const data = await fetchProfile();
-    if (data) {
+    try {
+      const data = await fetchProfile();
       setInloggad(true);
       setRole(data.role || "");
-    } else {
-      setInloggad(false);
-      setRole("");
+    } catch (err) {
+      if (err?.status === 401) {
+        // Utloggning vid förfallen session
+        localStorage.removeItem("kundinfo");
+        localStorage.removeItem("varukorg");
+        setInloggad(false);
+        setRole("");
+        navigate("/login");
+      } else {
+        console.error("Fel vid profilhämtning:", err);
+        setInloggad(false);
+        setRole("");
+      }
     }
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     loadProfile();
