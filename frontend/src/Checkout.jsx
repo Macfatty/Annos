@@ -109,7 +109,7 @@ function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
       localStorage.setItem("kundinfo", JSON.stringify(kundinfo));
       sessionStorage.setItem("tack", "1");
       setVarukorg([]);
-      navigate(`/tack?restaurang=${restaurang}`);
+      navigate(`/tack?restaurang=${restaurant_slug}`);
     } catch (err) {
       if (err?.status === 401) {
         localStorage.clear();
