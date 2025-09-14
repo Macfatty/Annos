@@ -7,7 +7,7 @@ function Kundvagn({
   setValdRatt,
   setRedigeringsIndex,
   meny,
-  restaurangSlug,
+  restaurant_slug,
 }) {
   const navigate = useNavigate();
   const [laddar, setLaddar] = useState(false);
@@ -28,7 +28,7 @@ function Kundvagn({
 
     setValdRatt(match);
     setRedigeringsIndex(index);
-    navigate(`/${restaurangSlug || "valj-restaurang"}`);
+    navigate(`/${restaurant_slug || "valj-restaurang"}`);
   };
 
   const total = varukorg.reduce((sum, item) => sum + item.total, 0);
@@ -92,7 +92,7 @@ function Kundvagn({
 
       <button
         type="button"
-        onClick={() => navigate(`/${restaurangSlug || "valj-restaurang"}`)}
+        onClick={() => navigate(`/${restaurant_slug || "valj-restaurang"}`)}
         aria-label="Gå tillbaka till menyn"
       >
         🍕 Tillbaka till meny

@@ -33,7 +33,22 @@ function MinaBeställningar({ onBeställIgen }) {
         const bearbetade = (data || []).map((order) => {
           let rader = [];
           try {
-            rader = JSON.parse(order.order_json || "[]");
+            // Försök först med den nya strukturen (order_json)
+            if (order.order_json) {
+              rader = JSON.parse(order.order_json);
+            } else if (order.items) {
+              // Om det är den nya datastrukturen med items och options
+              rader = order.items.map(item => ({
+                namn: item.name,
+                total: item.line_total / 100, // Konvertera från öre till kronor
+                tillval: item.options ? item.options.map(option => ({
+                  namn: option.label,
+                  pris: option.price_delta / 100, // Konvertera från öre till kronor
+                  typ: option.typ,
+                  customNote: option.custom_note
+                })) : []
+              }));
+            }
           } catch {
             rader = [];
           }
@@ -70,7 +85,7 @@ function MinaBeställningar({ onBeställIgen }) {
             {new Date(order.created_at).toLocaleString("sv-SE")}
           </p>
           <p>
-            <strong>Restaurang:</strong> {order.restaurangSlug || "Okänd"}
+            <strong>Restaurang:</strong> {order.restaurant_slug || "Okänd"}
           </p>
           <p>
             <strong>Status:</strong> {order.status}
@@ -78,11 +93,19 @@ function MinaBeställningar({ onBeställIgen }) {
           <ul>
             {order.rader.map((rad, index) => (
               <li key={index}>
-                {rad.namn} – {rad.pris} kr
+                {rad.namn} – {rad.total || rad.pris} kr
                 {Array.isArray(rad.tillval) && rad.tillval.length > 0 && (
                   <ul>
                     {rad.tillval.map((t, i) => (
-                      <li key={i}>{t.namn}</li>
+                      <li key={i}>
+                        + {t.namn}
+                        {t.pris !== 0 && ` (${t.pris > 0 ? '+' : ''}${t.pris} kr)`}
+                        {t.customNote && (
+                          <span style={{ fontStyle: 'italic', color: '#666' }}>
+                            {' '}- "{t.customNote}"
+                          </span>
+                        )}
+                      </li>
                     ))}
                   </ul>
                 )}

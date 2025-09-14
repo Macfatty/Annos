@@ -41,20 +41,20 @@ function App() {
   const [tema, setTema] = useState(
     () => localStorage.getItem("tema") || "light"
   );
-  const [restaurangSlug, setRestaurangSlug] = useState("campino");
+  const [restaurant_slug, setRestaurant_slug] = useState("campino");
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const slug = query.get("restaurang");
     if (slug) {
-      setRestaurangSlug(slug);
+      setRestaurant_slug(slug);
     }
   }, [location.search]);
 
   useEffect(() => {
     const slugPath = location.pathname.slice(1).toLowerCase();
     if (["campino", "sunsushi"].includes(slugPath)) {
-      setRestaurangSlug(slugPath);
+        setRestaurant_slug(slugPath);
     }
   }, [location.pathname]);
 
@@ -78,7 +78,7 @@ function App() {
       }
       try {
         const res = await fetch(
-          `${BASE_URL}/api/meny?restaurang=${restaurangSlug}`
+          `${BASE_URL}/api/meny?restaurang=${restaurant_slug}`
         );
         if (!res.ok) {
           throw new Error("Något gick fel vid hämtning");
@@ -99,7 +99,7 @@ function App() {
       }
     };
     fetchMeny();
-  }, [restaurangSlug]);
+  }, [restaurant_slug]);
 
 
   const loadProfile = useCallback(async () => {
@@ -178,7 +178,7 @@ function App() {
                   </button>
                 )}
                 {isRestaurant && (
-                  <button onClick={() => navigate(`/restaurang/${restaurangSlug}/incoming`)}>
+                  <button onClick={() => navigate(`/restaurang/${restaurant_slug}/incoming`)}>
                     🍽 Restaurangvy
                   </button>
                 )}
@@ -240,7 +240,7 @@ function App() {
                 setRedigeringsIndex={setRedigeringsIndex}
                 meny={meny}
                 navigate={navigate}
-                restaurangSlug={restaurangSlug}
+                restaurant_slug={restaurant_slug}
               />
             ) : (
               <Start />
@@ -253,7 +253,7 @@ function App() {
             <Checkout
               varukorg={varukorg}
               setVarukorg={setVarukorg}
-              restaurang={restaurangSlug}
+              restaurant_slug={restaurant_slug}
             />
           }
         />
@@ -394,7 +394,7 @@ function App() {
       {inloggad &&
         (path === "/campino" || path === "/sunsushi" || path === "/kundvagn") && (
           <button
-            onClick={() => navigate(`/checkout?restaurang=${restaurangSlug}`)}
+            onClick={() => navigate(`/checkout?restaurang=${restaurant_slug}`)}
             className="kundvagn-flyt"
             aria-label="Gå till kundvagn"
           >

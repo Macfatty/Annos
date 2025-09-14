@@ -67,7 +67,7 @@ async function migrateOrdersTable() {
           updated_at = $14
         WHERE id = $15
       `, [
-        row.restaurangSlug || 'campino',
+        row.restaurant_slug || 'campino',
         row.namn || 'Okänd kund',
         row.telefon || '',
         row.adress || '',
@@ -103,7 +103,7 @@ async function createNewTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS order_items (
         id SERIAL PRIMARY KEY,
-        order_id INTEGER NOT NULL,
+        order_id BIGINT NOT NULL,
         name VARCHAR(255) NOT NULL,
         quantity INTEGER NOT NULL DEFAULT 1,
         unit_price DECIMAL(10,2) NOT NULL,
@@ -116,11 +116,11 @@ async function createNewTables() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS order_item_options (
         id SERIAL PRIMARY KEY,
-        order_item_id INTEGER NOT NULL,
+        order_item_id BIGINT NOT NULL,
         typ VARCHAR(50) NOT NULL CHECK (typ IN ('såser', 'kött', 'grönt', 'övrigt', 'drycker', 'valfri')),
         label VARCHAR(255) NOT NULL,
         price_delta DECIMAL(10,2) NOT NULL,
-        custom_note TEXT,
+        custom_note VARCHAR(500),
         FOREIGN KEY (order_item_id) REFERENCES order_items(id) ON DELETE CASCADE
       )
     `);
@@ -153,8 +153,8 @@ async function createNewTables() {
     if (!columnNames.includes('role')) {
       await pool.query("ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'customer'");
     }
-    if (!columnNames.includes('restaurangSlug')) {
-      await pool.query("ALTER TABLE users ADD COLUMN restaurangSlug VARCHAR(100)");
+    if (!columnNames.includes('restaurant_slug')) {
+      await pool.query("ALTER TABLE users ADD COLUMN restaurant_slug VARCHAR(100)");
     }
 
     console.log('Nya tabeller skapade');
@@ -179,7 +179,7 @@ async function ensureAssignedCourierId() {
 
     if (!columnExists.rows[0].exists) {
       // Kolumnen saknas, lägg till den
-      await pool.query("ALTER TABLE orders ADD COLUMN assigned_courier_id INTEGER");
+      await pool.query("ALTER TABLE orders ADD COLUMN assigned_courier_id BIGINT");
       console.log('Lade till assigned_courier_id kolumn');
     }
 

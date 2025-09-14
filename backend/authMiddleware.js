@@ -117,7 +117,7 @@ function verifyAdminForSlug(req, res, next) {
     
     // För icke-admin användare, kontrollera slug
     const slug = req.query?.slug || req.body?.slug || req.params?.slug;
-    if (slug && req.user.restaurangSlug !== slug) {
+    if (slug && req.user.restaurant_slug !== slug) {
       return res.status(403).json({ error: "Fel restaurang" });
     }
     next();

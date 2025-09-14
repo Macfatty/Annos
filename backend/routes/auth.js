@@ -74,7 +74,7 @@ router.post(
         telefon: user.telefon,
         adress: user.adress || "",
         role: user.role,
-        restaurangSlug: user.restaurangSlug || "",
+        restaurant_slug: user.restaurant_slug || "",
       });
     } catch (error) {
       console.error("Inloggningsfel:", error);

@@ -12,7 +12,7 @@ Restaurangrollen hanterar inkommande beställningar och uppdaterar orderstatus e
 ```
 
 **Rollkrav:** `restaurant` eller `admin`
-- Restaurant-rollen kan endast se ordrar för sin egen `restaurangSlug`
+- Restaurant-rollen kan endast se ordrar för sin egen `restaurant_slug`
 - Admin-rollen kan se ordrar för alla restauranger
 
 ### Åtkomstkontroll
@@ -20,8 +20,8 @@ Restaurangrollen hanterar inkommande beställningar och uppdaterar orderstatus e
 // Middleware verifiering
 verifyRole(['restaurant', 'admin'])
 
-// För restaurant-rollen, kontrollera att slug matchar användarens restaurangSlug
-if (user.role === 'restaurant' && user.restaurangSlug !== req.params.slug) {
+// För restaurant-rollen, kontrollera att slug matchar användarens restaurant_slug
+if (user.role === 'restaurant' && user.restaurant_slug !== req.params.slug) {
   return res.status(403).json({ error: "Otillräcklig behörighet" });
 }
 ```
@@ -54,7 +54,7 @@ GET /api/admin/orders?slug=sunsushi&status=received
     "customer_address": "Storgatan 1, Stockholm",
     "status": "received",
     "grand_total": 12500,
-    "created_at": 1703123456789,
+    "created_at": "2024-01-15T12:30:45.789Z",
     "items": [
       {
         "name": "California Roll",
@@ -243,7 +243,7 @@ app.get('/api/admin/orders', verifyRole(['restaurant', 'admin']), async (req, re
   const user = req.user;
 
   // Verifiera behörighet för restaurant-roll
-  if (user.role === 'restaurant' && user.restaurangSlug !== slug) {
+  if (user.role === 'restaurant' && user.restaurant_slug !== slug) {
     return res.status(403).json({ error: "Otillräcklig behörighet" });
   }
 
@@ -269,7 +269,7 @@ app.patch('/api/admin/orders/:id/status', verifyRole(['restaurant', 'admin']), a
     }
 
     // Verifiera behörighet
-    if (user.role === 'restaurant' && user.restaurangSlug !== order.restaurant_slug) {
+    if (user.role === 'restaurant' && user.restaurant_slug !== order.restaurant_slug) {
       return res.status(403).json({ error: "Otillräcklig behörighet" });
     }
 

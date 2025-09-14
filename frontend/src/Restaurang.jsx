@@ -23,7 +23,7 @@ function Restaurang() {
         return;
       }
       const res = await fetch(
-        `${BASE_URL}/api/admin/orders/today?slug=${profile.restaurangSlug}`,
+        `${BASE_URL}/api/admin/orders/today?slug=${profile.restaurant_slug}`,
         {
           credentials: "include",
         }
@@ -117,9 +117,24 @@ function Restaurang() {
         dagensOrdrar.map((order) => {
           let innehall = [];
           try {
-            innehall = JSON.parse(order.order_json);
+            // Försök först med den nya strukturen (order_json)
+            if (order.order_json) {
+              innehall = JSON.parse(order.order_json);
+            } else if (order.items) {
+              // Om det är den nya datastrukturen med items och options
+              innehall = order.items.map(item => ({
+                namn: item.name,
+                total: item.line_total / 100, // Konvertera från öre till kronor
+                tillval: item.options ? item.options.map(option => ({
+                  namn: option.label,
+                  pris: option.price_delta / 100, // Konvertera från öre till kronor
+                  typ: option.typ,
+                  customNote: option.custom_note
+                })) : []
+              }));
+            }
           } catch (err) {
-            console.error("Kunde inte parsa order_json", err);
+            console.error("Kunde inte parsa orderdata", err);
             return (
               <div
                 key={order.id}
@@ -184,7 +199,13 @@ function Restaurang() {
                       <ul>
                         {rätt.tillval.map((t, j) => (
                           <li key={j}>
-                            ➕ {t.namn} ({t.pris} kr)
+                            ➕ {t.namn} 
+                            {t.pris !== 0 && ` (${t.pris > 0 ? '+' : ''}${t.pris} kr)`}
+                            {t.customNote && (
+                              <span style={{ fontStyle: 'italic', color: '#666' }}>
+                                {' '}- "{t.customNote}"
+                              </span>
+                            )}
                           </li>
                         ))}
                       </ul>

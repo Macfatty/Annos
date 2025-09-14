@@ -3,7 +3,7 @@ const pool = require("./db");
 // PostgreSQL-specifika funktioner för orderhantering
 
 // Hämta dagens ordrar för en specifik restaurang
-function hamtaDagensOrdrar(restaurangSlug, callback) {
+function hamtaDagensOrdrar(restaurant_slug, callback) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayStart = today.getTime();
@@ -44,7 +44,7 @@ function hamtaDagensOrdrar(restaurangSlug, callback) {
     ORDER BY o.created_at DESC
   `;
   
-  pool.query(query, [restaurangSlug, todayStart], (err, result) => {
+  pool.query(query, [restaurant_slug, todayStart], (err, result) => {
     if (err) {
       console.error("Fel vid hämtning av dagens ordrar:", err);
       return callback(err, null);
@@ -141,7 +141,7 @@ function markeraOrderSomKlar(orderId, callback) {
 }
 
 // Hämta ordrar med status
-function hamtaOrdrarMedStatus(restaurangSlug, status, callback) {
+function hamtaOrdrarMedStatus(restaurant_slug, status, callback) {
   const query = `
     SELECT o.*, 
            COALESCE(
@@ -177,7 +177,7 @@ function hamtaOrdrarMedStatus(restaurangSlug, status, callback) {
     ORDER BY o.created_at DESC
   `;
   
-  pool.query(query, [restaurangSlug, status], (err, result) => {
+  pool.query(query, [restaurant_slug, status], (err, result) => {
     if (err) {
       console.error("Fel vid hämtning av ordrar med status:", err);
       return callback(err, null);

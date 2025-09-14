@@ -6,7 +6,7 @@
 
 - **Frontend**: React 19 + Vite med ESLint
 - **Backend**: Node.js + Express med JWT-autentisering
-- **Databas**: SQLite med monetära belopp i öre för precision
+- **Databas**: PostgreSQL, monetära belopp i öre för precision
 - **Betalning**: Swish (mock i dev, produktionsklara providers)
 - **Språk**: Svenska
 - **Säkerhet**: CSP, CORS, Rate Limiting, Rollbaserad åtkomst
@@ -81,6 +81,13 @@ FRONTEND_ORIGIN=http://localhost:5173
 PORT=3001
 NODE_ENV=development
 
+# Databas (PostgreSQL)
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=annos_dev
+DB_USER=postgres
+DB_PASSWORD=your-postgres-password
+
 # Betalningar (utveckling)
 PAYMENT_PROVIDER_SWISH_MOCK=true
 PAYMENT_PROVIDER_SWISH_CALLBACK_URL=http://localhost:3001/api/payments/callback
@@ -92,10 +99,23 @@ VITE_API_BASE_URL=http://localhost:3001
 ```
 
 ### 4. Databas och admin
+
+**PostgreSQL (rekommenderat):**
 ```bash
+# Installera PostgreSQL om inte redan installerat
+# Skapa databas
+createdb annos_dev
+
+# Skapa tabeller (automatiskt vid första körning)
 cd backend
-node skapaAdmin.js  # Skapar admin@example.com / admin123
+node createTables.js  # Skapar PostgreSQL-tabeller
+
+# Kör admin-skript
+node skapaAdmin.js [restaurant_slug]  # Skapar admin@example.com / admin123
 ```
+
+**Notera:**
+Systemet använder endast PostgreSQL. SQLite-stöd har tagits bort för att undvika förvirring.
 
 ### 5. Starta systemet
 ```bash
@@ -200,11 +220,12 @@ npm run build  # Måste lyckas
 ## 📚 Dokumentation
 
 ### Detaljerad Dokumentation
-- **[Databasstruktur](docs/database.md)** - Tabeller, index, relationer och exportflöde
+- **[Databasstruktur](docs/database.md)** - PostgreSQL tabeller, index, relationer och exportflöde
 - **[Systemfunktioner](docs/functions.md)** - API-endpoints, statusmaskin och säkerhet
 - **[Restaurangvy](docs/restaurant.md)** - Hantering av inkommande ordrar
 - **[Kurirvy](docs/courier.md)** - Leveranshantering med begränsad dataåtkomst
 - **[Betalningar](docs/payments.md)** - Swish-integration och provider-abstraktion
+- **[PostgreSQL Migration](backend/POSTGRESQL_MIGRATION_SUMMARY.md)** - Detaljerad migration från SQLite
 
 ### API-dokumentation
 Alla endpoints dokumenteras i `docs/functions.md` med:
@@ -223,10 +244,11 @@ Alla endpoints dokumenteras i `docs/functions.md` med:
 - Använd Redis för rate limiting i stället för minnesbaserad
 
 ### Skalning
-- SQLite → PostgreSQL/MariaDB för stora volymer
-- Redis för sessioner och caching
+- PostgreSQL implementerat för produktion
+- Redis för sessioner och caching (framtida förbättring)
 - Docker-containers för deployment
 - Load balancer för flera backend-instanser
+- Connection pooling implementerat
 
 ### GDPR-efterlevnad
 - Anonymisering av kunddata vid export

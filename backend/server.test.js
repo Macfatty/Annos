@@ -28,10 +28,10 @@ describe('API endpoints', () => {
       order: [
         { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
       ],
-      restaurangSlug: 'campino'
+      restaurant_slug: 'campino'
     };
 
-    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurant_slug: 'campino' }, SECRET);
     const res = await request(app)
       .post('/api/order')
       .set('Authorization', `Bearer ${token}`)
@@ -43,7 +43,7 @@ describe('API endpoints', () => {
 
     expect(inserted.rows.length).toBeGreaterThan(0);
     expect(inserted.rows[0].customer_name).toBe(newOrder.namn);
-    expect(inserted.rows[0].restaurant_slug).toBe(newOrder.restaurangSlug);
+    expect(inserted.rows[0].restaurant_slug).toBe(newOrder.restaurant_slug);
   });
 
   test('POST /api/order works with cookie token', async () => {
@@ -55,10 +55,10 @@ describe('API endpoints', () => {
       order: [
         { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
       ],
-      restaurangSlug: 'campino'
+      restaurant_slug: 'campino'
     };
 
-    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurant_slug: 'campino' }, SECRET);
     const res = await request(app)
       .post('/api/order')
       .set('Cookie', [`accessToken=${token}`])
@@ -69,7 +69,7 @@ describe('API endpoints', () => {
   });
 
   test('PUT /api/admin/orders/:id/klart marks order as done', async () => {
-    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurant_slug: 'campino' }, SECRET);
 
     const newOrder = {
       namn: 'Patch Test',
@@ -79,7 +79,7 @@ describe('API endpoints', () => {
       order: [
         { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
       ],
-      restaurangSlug: 'campino'
+      restaurant_slug: 'campino'
     };
 
     const createRes = await request(app)
@@ -109,7 +109,7 @@ describe('API endpoints', () => {
   });
 
   test('GET /api/admin/orders/today filters by slug', async () => {
-    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurant_slug: 'campino' }, SECRET);
 
     const order1 = {
       namn: 'Slug Test1',
@@ -117,7 +117,7 @@ describe('API endpoints', () => {
       adress: 'A',
       email: `slug1_${Date.now()}@example.com`,
       order: [{ id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }],
-      restaurangSlug: 'campino'
+      restaurant_slug: 'campino'
     };
 
     const order2 = {
@@ -126,7 +126,7 @@ describe('API endpoints', () => {
       adress: 'B',
       email: `slug2_${Date.now()}@example.com`,
       order: [{ id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }],
-      restaurangSlug: 'bistro'
+      restaurant_slug: 'bistro'
     };
 
     await request(app)
@@ -149,7 +149,7 @@ describe('API endpoints', () => {
   });
 
   test('GET /api/admin/orders/today returns 403 for wrong slug', async () => {
-    const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
+    const token = jwt.sign({ userId: 1, role: 'admin', restaurant_slug: 'campino' }, SECRET);
     const res = await request(app)
       .get('/api/admin/orders/today?slug=bistro')
       .set('Authorization', `Bearer ${token}`);

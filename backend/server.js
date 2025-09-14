@@ -105,13 +105,13 @@ app.post("/api/order", verifyRole(["customer", "admin"]), async (req, res) => {
   const client = await pool.connect();
   
   try {
-    const { order, restaurangSlug, namn, telefon, adress, email } = req.body;
+    const { order, restaurant_slug, namn, telefon, adress, email } = req.body;
 
     if (!order || !Array.isArray(order) || order.length === 0) {
       return res.status(400).json({ message: "Beställning saknas eller är tom" });
     }
 
-    if (!restaurangSlug || !namn || !telefon || !adress || !email) {
+    if (!restaurant_slug || !namn || !telefon || !adress || !email) {
       return res.status(400).json({ message: "Kunduppgifter saknas" });
     }
 
@@ -138,7 +138,7 @@ app.post("/api/order", verifyRole(["customer", "admin"]), async (req, res) => {
     const orderResult = await client.query(
       orderSql,
       [
-        restaurangSlug,
+        restaurant_slug,
         namn,
         telefon,
         adress,
@@ -267,7 +267,7 @@ app.get("/api/profile", verifyJWT, async (req, res) => {
     const userId = req.user.userId;
 
     const userResult = await pool.query(
-      "SELECT id, email, namn, telefon, adress, restaurangSlug FROM users WHERE id = $1",
+      "SELECT id, email, namn, telefon, adress, restaurant_slug FROM users WHERE id = $1",
       [userId]
     );
 

@@ -141,11 +141,16 @@ function AdminPanel() {
             if (order.order_json) {
               rader = JSON.parse(order.order_json);
             } else if (order.items) {
-              // Om det är den nya datastrukturen med items
+              // Om det är den nya datastrukturen med items och options
               rader = order.items.map(item => ({
                 namn: item.name,
                 total: item.line_total / 100, // Konvertera från öre till kronor
-                tillval: [] // TODO: Lägg till tillval-hantering för nya strukturen
+                tillval: item.options ? item.options.map(option => ({
+                  namn: option.label,
+                  pris: option.price_delta / 100, // Konvertera från öre till kronor
+                  typ: option.typ,
+                  customNote: option.custom_note
+                })) : []
               }));
             }
           } catch {
@@ -165,7 +170,7 @@ function AdminPanel() {
               }}
             >
               <p><strong>⏰ Tid:</strong> {new Date(order.created_at).toLocaleTimeString("sv-SE")}</p>
-              <p><strong>🏪 Restaurang:</strong> {order.restaurant_slug || order.restaurangSlug || 'Okänd'}</p>
+              <p><strong>🏪 Restaurang:</strong> {order.restaurant_slug || 'Okänd'}</p>
               <p><strong>👤 Kund:</strong> {order.customer_name || order.namn} | {order.customer_phone || order.telefon}</p>
               <p><strong>📍 Adress:</strong> {order.customer_address || order.adress}</p>
               {order.extraInfo && <p><strong>📦 Info:</strong> {order.extraInfo}</p>}
@@ -177,7 +182,15 @@ function AdminPanel() {
                     {rad.tillval?.length > 0 && (
                       <ul>
                         {rad.tillval.map((t, j) => (
-                          <li key={j}>+ {t.namn} ({t.pris} kr)</li>
+                          <li key={j}>
+                            + {t.namn} 
+                            {t.pris !== 0 && ` (${t.pris > 0 ? '+' : ''}${t.pris} kr)`}
+                            {t.customNote && (
+                              <span style={{ fontStyle: 'italic', color: '#666' }}>
+                                {' '}- "{t.customNote}"
+                              </span>
+                            )}
+                          </li>
                         ))}
                       </ul>
                     )}

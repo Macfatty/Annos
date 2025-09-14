@@ -6,7 +6,7 @@ const losenord = "admin123";
 const namn = "Admin Test";
 const telefon = "0700000000";
 const adress = "Testgatan 1";
-const restaurangSlug = process.argv[2] || "campino";
+const restaurant_slug = process.argv[2] || "campino";
 
 async function createAdmin() {
   try {
@@ -22,10 +22,10 @@ async function createAdmin() {
     const hash = await bcrypt.hash(losenord, 10);
 
     // Skapa admin-användare
-    const sql = `INSERT INTO users (email, password, namn, telefon, adress, role, restaurangSlug) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`;
-    const result = await pool.query(sql, [email, hash, namn, telefon, adress, 'admin', restaurangSlug]);
+    const sql = `INSERT INTO users (email, password, namn, telefon, adress, role, restaurant_slug) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`;
+    const result = await pool.query(sql, [email, hash, namn, telefon, adress, 'admin', restaurant_slug]);
     
-    console.log(`✅ Admin-användare skapad med ID ${result.rows[0].id} för slug ${restaurangSlug}`);
+    console.log(`✅ Admin-användare skapad med ID ${result.rows[0].id} för slug ${restaurant_slug}`);
     console.log(`📧 E-post: ${email}`);
     console.log(`🔑 Lösenord: ${losenord}`);
   } catch (error) {

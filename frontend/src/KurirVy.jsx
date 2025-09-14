@@ -163,6 +163,35 @@ function KurirVy() {
                 <p><strong>Restaurang:</strong> {order.restaurant_slug}</p>
                 <p><strong>Total:</strong> {formatPrice(order.grand_total)} kr</p>
                 <p><strong>Beställt:</strong> {formatTime(order.created_at)}</p>
+                {order.items && order.items.length > 0 && (
+                  <div className="order-items">
+                    <h5>Varor:</h5>
+                    <ul>
+                      {order.items.map((item, index) => (
+                        <li key={index}>
+                          {item.name} x{item.quantity} - {formatPrice(item.line_total)} kr
+                          {item.options && item.options.length > 0 && (
+                            <ul style={{ marginLeft: '1rem', fontSize: '0.9em' }}>
+                              {item.options.map((option, optIndex) => (
+                                <li key={optIndex}>
+                                  + {option.label}
+                                  {option.price_delta !== 0 && (
+                                    ` (${option.price_delta > 0 ? '+' : ''}${formatPrice(option.price_delta)} kr)`
+                                  )}
+                                  {option.custom_note && (
+                                    <span style={{ fontStyle: 'italic', color: '#666' }}>
+                                      {' '}- "{option.custom_note}"
+                                    </span>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div className="order-actions">

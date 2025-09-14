@@ -232,6 +232,23 @@ function RestaurangVy() {
                       {order.items.map((item, index) => (
                         <li key={index}>
                           {item.name} x{item.quantity} - {formatPrice(item.line_total)} kr
+                          {item.options && item.options.length > 0 && (
+                            <ul style={{ marginLeft: '1rem', fontSize: '0.9em' }}>
+                              {item.options.map((option, optIndex) => (
+                                <li key={optIndex}>
+                                  + {option.label}
+                                  {option.price_delta !== 0 && (
+                                    ` (${option.price_delta > 0 ? '+' : ''}${formatPrice(option.price_delta)} kr)`
+                                  )}
+                                  {option.custom_note && (
+                                    <span style={{ fontStyle: 'italic', color: '#666' }}>
+                                      {' '}- "{option.custom_note}"
+                                    </span>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </li>
                       ))}
                     </ul>

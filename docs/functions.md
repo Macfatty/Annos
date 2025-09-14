@@ -48,29 +48,27 @@ Skapa ny beställning med validering av custom_note.
   },
   "order": [
     {
-      "namn": "California Roll",
-      "pris": 85,
+      "name": "California Roll",
+      "unit_price": 8500, // öre
       "tillval": [
         {
           "id": 123,
-          "namn": "Wasabi",
-          "pris": 0,
-          "antal": 1,
-          "totalpris": 0
+          "label": "Wasabi",
+          "price_delta": 0, // öre
+          "typ": "såser"
         },
         {
           "id": 211,
-          "namn": "Valfri önskan",
-          "pris": 0,
-          "antal": 1,
-          "totalpris": 0,
+          "label": "Valfri önskan",
+          "price_delta": 0, // öre
+          "typ": "valfri",
           "custom_note": "Extra ingefära tack"
         }
       ],
-      "total": 85
+      "line_total": 8500 // öre
     }
   ],
-  "restaurangSlug": "sunsushi"
+  "restaurant_slug": "sunsushi"
 }
 ```
 
@@ -120,7 +118,7 @@ Lista inkommande ordrar för restaurang.
     "customer_address": "Storgatan 1, Stockholm",
     "status": "received",
     "grand_total": 12500, // öre
-    "created_at": 1703123456789,
+    "created_at": "2024-01-15T12:30:45.789Z",
     "items": [
       {
         "name": "California Roll",

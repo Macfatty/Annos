@@ -94,7 +94,7 @@ function Checkout({ varukorg, setVarukorg, restaurang }) {
           ovrigt: kundinfo.ovrigt,
         },
         order: varukorg,
-        restaurangSlug: restaurang,
+        restaurant_slug: restaurant_slug,
       };
 
       await createOrder(payload);

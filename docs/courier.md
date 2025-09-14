@@ -248,8 +248,8 @@ function CourierOrderCard({ order, onAccept, onDeliver }) {
 ### Uppdatering av orders-tabell
 ```sql
 -- Lägg till courier-fält
-ALTER TABLE orders ADD COLUMN assigned_courier_id INTEGER;
-ALTER TABLE orders ADD COLUMN delivered_at INTEGER; -- epoch ms
+ALTER TABLE orders ADD COLUMN assigned_courier_id BIGINT;
+ALTER TABLE orders ADD COLUMN delivered_at TIMESTAMP;
 
 -- Index för kurirprestanda
 CREATE INDEX idx_orders_courier_status ON orders(assigned_courier_id, status);
