@@ -1,7 +1,5 @@
-const sqlite3 = require("sqlite3").verbose();
+const pool = require("./db");
 const bcrypt = require("bcrypt");
-
-const db = new sqlite3.Database("./orders.sqlite");
 
 const email = "admin@example.com";
 const losenord = "admin123";
@@ -10,15 +8,31 @@ const telefon = "0700000000";
 const adress = "Testgatan 1";
 const restaurangSlug = process.argv[2] || "campino";
 
-bcrypt.hash(losenord, 10, (err, hash) => {
-  if (err) return console.error("❌ Fel vid hash:", err);
-
-  const sql = `INSERT INTO users (email, password, namn, telefon, adress, role, restaurangSlug) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-  db.run(sql, [email, hash, namn, telefon, adress, 'admin', restaurangSlug], function (err) {
-    if (err) {
-      return console.error("❌ Kunde inte skapa användare:", err.message);
+async function createAdmin() {
+  try {
+    // Kontrollera om admin redan finns
+    const existingAdmin = await pool.query("SELECT id FROM users WHERE email = $1", [email]);
+    
+    if (existingAdmin.rows.length > 0) {
+      console.log("❌ Admin-användare finns redan med denna e-post");
+      return;
     }
-    console.log(`✅ Användare skapad med ID ${this.lastID} för slug ${restaurangSlug}`);
-    db.close();
-  });
-});
+
+    // Hasha lösenordet
+    const hash = await bcrypt.hash(losenord, 10);
+
+    // Skapa admin-användare
+    const sql = `INSERT INTO users (email, password, namn, telefon, adress, role, restaurangSlug) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`;
+    const result = await pool.query(sql, [email, hash, namn, telefon, adress, 'admin', restaurangSlug]);
+    
+    console.log(`✅ Admin-användare skapad med ID ${result.rows[0].id} för slug ${restaurangSlug}`);
+    console.log(`📧 E-post: ${email}`);
+    console.log(`🔑 Lösenord: ${losenord}`);
+  } catch (error) {
+    console.error("❌ Fel vid skapande av admin-användare:", error);
+  } finally {
+    await pool.end();
+  }
+}
+
+createAdmin();

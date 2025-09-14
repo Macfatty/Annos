@@ -110,9 +110,12 @@ function verifyRole(roles) {
 
 function verifyAdminForSlug(req, res, next) {
   verifyToken(req, res, () => {
-    if (req.user.role !== "admin") {
-      return res.status(403).json({ error: "Otillräcklig behörighet" });
+    // Admin kan komma åt alla restauranger
+    if (req.user.role === "admin") {
+      return next();
     }
+    
+    // För icke-admin användare, kontrollera slug
     const slug = req.query?.slug || req.body?.slug || req.params?.slug;
     if (slug && req.user.restaurangSlug !== slug) {
       return res.status(403).json({ error: "Fel restaurang" });

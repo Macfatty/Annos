@@ -109,19 +109,19 @@ function App() {
       setRole(data.role || "");
     } catch (err) {
       if (err?.status === 401) {
-        // Utloggning vid förfallen session
+        // Utloggning vid förfallen session - men redirecta inte automatiskt
         localStorage.removeItem("kundinfo");
         localStorage.removeItem("varukorg");
         setInloggad(false);
         setRole("");
-        navigate("/login");
+        // Ta bort navigate("/login") - låt användaren stanna på startsidan
       } else {
         console.error("Fel vid profilhämtning:", err);
         setInloggad(false);
         setRole("");
       }
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     loadProfile();
@@ -222,7 +222,12 @@ function App() {
         <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/kurir" element={<KurirVy />} />
+        <Route path="/kurir-vy" element={<KurirVy />} />
         <Route path="/restaurang/:slug/incoming" element={<RestaurangVy />} />
+        <Route path="/restaurang-vy" element={<RestaurangVy />} />
+        
+        {/* Admin test routes */}
+        <Route path="/admin-test" element={<Start />} />
 
         <Route
           path="/kundvagn"
@@ -387,7 +392,7 @@ function App() {
       </Routes>
 
       {inloggad &&
-        !["/profil", "/restaurang", "/", "/checkout"].includes(path) && (
+        (path === "/campino" || path === "/sunsushi" || path === "/kundvagn") && (
           <button
             onClick={() => navigate(`/checkout?restaurang=${restaurangSlug}`)}
             className="kundvagn-flyt"

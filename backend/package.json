@@ -2,6 +2,7 @@
   "dependencies": {
     "apple-signin-auth": "^2.0.0",
     "bcrypt": "^6.0.0",
+    "cheerio": "^1.0.0-rc.12",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -9,8 +10,8 @@
     "express-validator": "^7.2.1",
     "google-auth-library": "^9.0.0",
     "jsonwebtoken": "^9.0.2",
-    "sqlite3": "^5.1.7",
-    "cheerio": "^1.0.0-rc.12"
+    "pg": "^8.16.3",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "jest": "^29.7.0",

@@ -1,273 +1,229 @@
-const sqlite3 = require("sqlite3").verbose();
+const pool = require("./db");
 const path = require("path");
 const fs = require("fs");
 
-const dbPath = path.join(__dirname, "orders.sqlite");
-const db = new sqlite3.Database(dbPath);
-
-// Skapa backup av befintlig databas
+// PostgreSQL behöver inte backup-funktion som SQLite
 function createBackup() {
-  const backupPath = `${dbPath}.backup.${Date.now()}`;
-  fs.copyFileSync(dbPath, backupPath);
-  console.log(`Backup skapad: ${backupPath}`);
-  return backupPath;
+  console.log("PostgreSQL använder automatisk backup via pg_dump");
+  return null;
 }
 
 // Migrera befintlig orders-tabell till ny struktur
-function migrateOrdersTable() {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      // Skapa ny orders-tabell med rätt struktur
-      db.run(`
-        CREATE TABLE orders_new (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          restaurant_slug TEXT NOT NULL,
-          customer_name TEXT NOT NULL,
-          customer_phone TEXT NOT NULL,
-          customer_address TEXT NOT NULL,
-          customer_email TEXT,
-          status TEXT DEFAULT 'received' CHECK (status IN ('received', 'accepted', 'in_progress', 'out_for_delivery', 'delivered')),
-          payment_method TEXT DEFAULT 'mock' CHECK (payment_method IN ('swish', 'klarna', 'card', 'mock')),
-          payment_status TEXT DEFAULT 'pending',
-          items_total INTEGER NOT NULL, -- öre
-          delivery_fee INTEGER DEFAULT 0, -- öre
-          discount_total INTEGER DEFAULT 0, -- öre
-          grand_total INTEGER NOT NULL, -- öre
-          created_at INTEGER NOT NULL, -- epoch ms
-          updated_at INTEGER NOT NULL, -- epoch ms
-          assigned_courier_id INTEGER,
-          delivered_at INTEGER -- epoch ms
-        )
-      `);
+async function migrateOrdersTable() {
+  try {
+    // Kontrollera om orders-tabellen finns
+    const tableExists = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'orders'
+      );
+    `);
 
-      // Migrera data från befintlig orders-tabell
-      db.all("SELECT * FROM orders", (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+    if (!tableExists.rows[0].exists) {
+      console.log('Orders-tabellen finns inte, skapar den...');
+      return;
+    }
 
-        console.log(`Migrerar ${rows.length} ordrar...`);
+    // Hämta befintliga ordrar
+    const result = await pool.query("SELECT * FROM orders");
+    const rows = result.rows;
 
-        const stmt = db.prepare(`
-          INSERT INTO orders_new (
-            id, restaurant_slug, customer_name, customer_phone, customer_address,
-            customer_email, status, payment_method, payment_status,
-            items_total, delivery_fee, discount_total, grand_total,
-            created_at, updated_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
+    console.log(`Migrerar ${rows.length} ordrar...`);
 
-        rows.forEach((row, index) => {
-          // Konvertera total från kr till öre
-          const totalInOre = Math.round((row.total || 0) * 100);
-          
-          // Konvertera timestamp till epoch ms
-          const createdAt = new Date(row.created_at).getTime();
-          
-          // Mappa status
-          let status = 'received';
-          if (row.status === 'klar') {
-            status = 'delivered';
-          } else if (row.status === 'aktiv') {
-            status = 'received';
-          }
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      
+      // Konvertera total från kr till öre
+      const totalInOre = Math.round((row.total || 0) * 100);
+      
+      // Konvertera timestamp till epoch ms
+      const createdAt = new Date(row.created_at).getTime();
+      
+      // Mappa status
+      let status = 'received';
+      if (row.status === 'klar') {
+        status = 'delivered';
+      } else if (row.status === 'aktiv') {
+        status = 'received';
+      }
 
-          stmt.run([
-            row.id,
-            row.restaurangSlug || 'campino', // fallback
-            row.namn || 'Okänd kund',
-            row.telefon || '',
-            row.adress || '',
-            row.email || '',
-            status,
-            'mock', // standard betalningsmetod
-            'pending',
-            totalInOre,
-            0, // delivery_fee
-            0, // discount_total
-            totalInOre, // grand_total
-            createdAt,
-            createdAt // updated_at
-          ]);
+      // Uppdatera befintlig rad
+      await pool.query(`
+        UPDATE orders SET
+          restaurant_slug = $1,
+          customer_name = $2,
+          customer_phone = $3,
+          customer_address = $4,
+          customer_email = $5,
+          status = $6,
+          payment_method = $7,
+          payment_status = $8,
+          items_total = $9,
+          delivery_fee = $10,
+          discount_total = $11,
+          grand_total = $12,
+          created_at = $13,
+          updated_at = $14
+        WHERE id = $15
+      `, [
+        row.restaurangSlug || 'campino',
+        row.namn || 'Okänd kund',
+        row.telefon || '',
+        row.adress || '',
+        row.email || '',
+        status,
+        'mock',
+        'pending',
+        totalInOre,
+        0,
+        0,
+        totalInOre,
+        createdAt,
+        createdAt,
+        row.id
+      ]);
 
-          if ((index + 1) % 10 === 0) {
-            console.log(`Migrerat ${index + 1}/${rows.length} ordrar`);
-          }
-        });
+      if ((i + 1) % 10 === 0) {
+        console.log(`Migrerat ${i + 1}/${rows.length} ordrar`);
+      }
+    }
 
-        stmt.finalize();
-        console.log('Orders-migration klar');
-        resolve();
-      });
-    });
-  });
+    console.log('Orders-migration klar');
+  } catch (error) {
+    console.error('Fel vid migration av orders-tabell:', error);
+    throw error;
+  }
 }
 
 // Skapa nya tabeller
-function createNewTables() {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      // order_items tabell
-      db.run(`
-        CREATE TABLE IF NOT EXISTS order_items (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          order_id INTEGER NOT NULL,
-          name TEXT NOT NULL,
-          quantity INTEGER NOT NULL DEFAULT 1,
-          unit_price INTEGER NOT NULL, -- öre
-          line_total INTEGER NOT NULL, -- öre
-          FOREIGN KEY (order_id) REFERENCES orders_new(id) ON DELETE CASCADE
-        )
-      `);
+async function createNewTables() {
+  try {
+    // order_items tabell
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS order_items (
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        quantity INTEGER NOT NULL DEFAULT 1,
+        unit_price DECIMAL(10,2) NOT NULL,
+        line_total DECIMAL(10,2) NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+      )
+    `);
 
-      // order_item_options tabell
-      db.run(`
-        CREATE TABLE IF NOT EXISTS order_item_options (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          order_item_id INTEGER NOT NULL,
-          typ TEXT NOT NULL CHECK (typ IN ('såser', 'kött', 'grönt', 'övrigt', 'drycker', 'valfri')),
-          label TEXT NOT NULL,
-          price_delta INTEGER NOT NULL, -- öre
-          custom_note TEXT, -- max 140 tecken
-          FOREIGN KEY (order_item_id) REFERENCES order_items(id) ON DELETE CASCADE
-        )
-      `);
+    // order_item_options tabell
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS order_item_options (
+        id SERIAL PRIMARY KEY,
+        order_item_id INTEGER NOT NULL,
+        typ VARCHAR(50) NOT NULL CHECK (typ IN ('såser', 'kött', 'grönt', 'övrigt', 'drycker', 'valfri')),
+        label VARCHAR(255) NOT NULL,
+        price_delta DECIMAL(10,2) NOT NULL,
+        custom_note TEXT,
+        FOREIGN KEY (order_item_id) REFERENCES order_items(id) ON DELETE CASCADE
+      )
+    `);
 
-      // payouts tabell
-      db.run(`
-        CREATE TABLE IF NOT EXISTS payouts (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          restaurant_slug TEXT NOT NULL,
-          period_start DATE NOT NULL,
-          period_end DATE NOT NULL,
-          orders_count INTEGER NOT NULL,
-          gross_revenue INTEGER NOT NULL, -- öre
-          per_order_fee INTEGER NOT NULL, -- öre (45 kr = 4500)
-          percent_fee INTEGER NOT NULL, -- öre (5% av gross_revenue)
-          net_amount INTEGER NOT NULL, -- öre
-          created_at INTEGER NOT NULL -- epoch ms
-        )
-      `);
+    // payouts tabell
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS payouts (
+        id SERIAL PRIMARY KEY,
+        restaurant_slug VARCHAR(100) NOT NULL,
+        period_start DATE NOT NULL,
+        period_end DATE NOT NULL,
+        orders_count INTEGER NOT NULL,
+        gross_revenue DECIMAL(10,2) NOT NULL,
+        per_order_fee DECIMAL(10,2) NOT NULL,
+        percent_fee DECIMAL(10,2) NOT NULL,
+        net_amount DECIMAL(10,2) NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
 
-      // Uppdatera users tabell om nödvändigt
-      db.all('PRAGMA table_info(users)', (err, cols) => {
-        if (!err) {
-          const columnNames = cols.map(c => c.name);
-          
-          if (!columnNames.includes('role')) {
-            db.run("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'customer'");
-          }
-          if (!columnNames.includes('restaurangSlug')) {
-            db.run("ALTER TABLE users ADD COLUMN restaurangSlug TEXT");
-          }
-        }
-        
-        resolve();
-      });
-    });
-  });
+    // Uppdatera users tabell om nödvändigt
+    const userColumns = await pool.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'users' AND table_schema = 'public'
+    `);
+    
+    const columnNames = userColumns.rows.map(c => c.column_name);
+    
+    if (!columnNames.includes('role')) {
+      await pool.query("ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'customer'");
+    }
+    if (!columnNames.includes('restaurangSlug')) {
+      await pool.query("ALTER TABLE users ADD COLUMN restaurangSlug VARCHAR(100)");
+    }
+
+    console.log('Nya tabeller skapade');
+  } catch (error) {
+    console.error('Fel vid skapande av nya tabeller:', error);
+    throw error;
+  }
 }
 
 // Idempotent migration för assigned_courier_id kolumn
-function ensureAssignedCourierId() {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      db.run("BEGIN TRANSACTION");
+async function ensureAssignedCourierId() {
+  try {
+    // Kontrollera om kolumnen finns
+    const columnExists = await pool.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'orders' 
+        AND column_name = 'assigned_courier_id'
+        AND table_schema = 'public'
+      )
+    `);
 
-      // Kontrollera om kolumnen finns
-      db.get("SELECT 1 FROM pragma_table_info('orders') WHERE name='assigned_courier_id' LIMIT 1", (err, row) => {
-        if (err) {
-          db.run("ROLLBACK");
-          reject(err);
-          return;
-        }
+    if (!columnExists.rows[0].exists) {
+      // Kolumnen saknas, lägg till den
+      await pool.query("ALTER TABLE orders ADD COLUMN assigned_courier_id INTEGER");
+      console.log('Lade till assigned_courier_id kolumn');
+    }
 
-        if (!row) {
-          // Kolumnen saknas, lägg till den
-          db.run("ALTER TABLE orders ADD COLUMN assigned_courier_id INTEGER", (err) => {
-            if (err) {
-              db.run("ROLLBACK");
-              reject(err);
-              return;
-            }
-            console.log('Lade till assigned_courier_id kolumn');
-          });
-        }
-
-        // Skapa index idempotent
-        db.run("CREATE INDEX IF NOT EXISTS idx_orders_assigned_status ON orders(assigned_courier_id, status)", (err) => {
-          if (err) {
-            db.run("ROLLBACK");
-            reject(err);
-            return;
-          }
-          
-          db.run("COMMIT", (err) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        });
-      });
-    });
-  });
+    // Skapa index idempotent
+    await pool.query("CREATE INDEX IF NOT EXISTS idx_orders_assigned_status ON orders(assigned_courier_id, status)");
+    console.log('Index för assigned_courier_id skapat');
+  } catch (error) {
+    console.error('Fel vid säkerställande av assigned_courier_id kolumn:', error);
+    throw error;
+  }
 }
 
 // Skapa index
-function createIndexes() {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      // Orders index
-      db.run("CREATE INDEX IF NOT EXISTS idx_orders_restaurant_created ON orders_new(restaurant_slug, created_at)");
-      db.run("CREATE INDEX IF NOT EXISTS idx_orders_status_created ON orders_new(status, created_at)");
-      db.run("CREATE INDEX IF NOT EXISTS idx_orders_courier_status ON orders_new(assigned_courier_id, status)");
-      db.run("CREATE INDEX IF NOT EXISTS idx_orders_out_for_delivery ON orders_new(status) WHERE status = 'out_for_delivery'");
+async function createIndexes() {
+  try {
+    // Orders index
+    await pool.query("CREATE INDEX IF NOT EXISTS idx_orders_restaurant_created ON orders(restaurant_slug, created_at)");
+    await pool.query("CREATE INDEX IF NOT EXISTS idx_orders_status_created ON orders(status, created_at)");
+    await pool.query("CREATE INDEX IF NOT EXISTS idx_orders_courier_status ON orders(assigned_courier_id, status)");
+    await pool.query("CREATE INDEX IF NOT EXISTS idx_orders_out_for_delivery ON orders(status) WHERE status = 'out_for_delivery'");
 
-      // FK index
-      db.run("CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id)");
-      db.run("CREATE INDEX IF NOT EXISTS idx_order_item_options_item_id ON order_item_options(order_item_id)");
+    // FK index
+    await pool.query("CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id)");
+    await pool.query("CREATE INDEX IF NOT EXISTS idx_order_item_options_item_id ON order_item_options(order_item_id)");
 
-      // Payouts index
-      db.run("CREATE INDEX IF NOT EXISTS idx_payouts_restaurant_period ON payouts(restaurant_slug, period_start)");
+    // Payouts index
+    await pool.query("CREATE INDEX IF NOT EXISTS idx_payouts_restaurant_period ON payouts(restaurant_slug, period_start)");
 
-      resolve();
-    });
-  });
+    console.log('Index skapade');
+  } catch (error) {
+    console.error('Fel vid skapande av index:', error);
+    throw error;
+  }
 }
 
-// Ersätt gamla tabellen
-function replaceOldTable() {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      // Ta bort gamla tabellen
-      db.run("DROP TABLE IF EXISTS orders", (err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        // Byt namn på nya tabellen
-        db.run("ALTER TABLE orders_new RENAME TO orders", (err) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-
-          console.log('Databasstruktur uppdaterad');
-          resolve();
-        });
-      });
-    });
-  });
+// PostgreSQL behöver inte ersätta tabeller på samma sätt
+async function replaceOldTable() {
+  console.log('PostgreSQL använder befintliga tabeller, ingen ersättning behövs');
 }
 
 // Huvudmigrationsfunktion
 async function migrateDatabase() {
   try {
-    console.log('Startar databas-migration...');
+    console.log('Startar PostgreSQL databas-migration...');
     
     // Skapa backup
     createBackup();
@@ -287,13 +243,13 @@ async function migrateDatabase() {
     // Säkerställ assigned_courier_id kolumn (idempotent)
     await ensureAssignedCourierId();
     
-    console.log('Migration slutförd framgångsrikt!');
+    console.log('PostgreSQL migration slutförd framgångsrikt!');
     
   } catch (error) {
     console.error('Migration misslyckades:', error);
     throw error;
   } finally {
-    db.close();
+    await pool.end();
   }
 }
 

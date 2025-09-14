@@ -1,4 +1,4 @@
-const sqlite3 = require("sqlite3").verbose();
+const pool = require("../db");
 const path = require("path");
 const fs = require("fs");
 
@@ -8,8 +8,6 @@ const PERCENT_FEE = 0.05; // 5%
 
 class PayoutGenerator {
   constructor() {
-    this.dbPath = path.join(__dirname, "..", "orders.sqlite");
-    this.db = new sqlite3.Database(this.dbPath);
     this.exportsDir = path.join(__dirname, "..", "exports");
     
     // Skapa exports-katalog om den inte finns
@@ -46,22 +44,14 @@ class PayoutGenerator {
       console.error('Fel vid generering av payouts:', error);
       throw error;
     } finally {
-      this.db.close();
+      await pool.end();
     }
   }
 
   // Hämta alla unika restauranger
   async getRestaurants() {
-    return new Promise((resolve, reject) => {
-      const sql = 'SELECT DISTINCT restaurant_slug FROM orders WHERE restaurant_slug IS NOT NULL';
-      this.db.all(sql, [], (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(rows.map(row => row.restaurant_slug));
-      });
-    });
+    const result = await pool.query('SELECT DISTINCT restaurant_slug FROM orders WHERE restaurant_slug IS NOT NULL');
+    return result.rows.map(row => row.restaurant_slug);
   }
 
   // Bearbeta en specifik restaurang
@@ -121,27 +111,19 @@ class PayoutGenerator {
 
   // Hämta ordrar för en period
   async getOrdersForPeriod(restaurantSlug, fromDate, toDate) {
-    return new Promise((resolve, reject) => {
-      const fromTimestamp = new Date(fromDate).getTime();
-      const toTimestamp = new Date(toDate + 'T23:59:59.999Z').getTime();
-      
-      const sql = `
-        SELECT id, customer_name, grand_total, created_at, status
-        FROM orders 
-        WHERE restaurant_slug = ? 
-          AND created_at >= ? 
-          AND created_at <= ?
-        ORDER BY created_at ASC
-      `;
-      
-      this.db.all(sql, [restaurantSlug, fromTimestamp, toTimestamp], (err, rows) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(rows);
-      });
-    });
+    const fromTimestamp = new Date(fromDate).getTime();
+    const toTimestamp = new Date(toDate + 'T23:59:59.999Z').getTime();
+    
+    const result = await pool.query(`
+      SELECT id, customer_name, grand_total, created_at, status
+      FROM orders 
+      WHERE restaurant_slug = $1 
+        AND created_at >= $2 
+        AND created_at <= $3
+      ORDER BY created_at ASC
+    `, [restaurantSlug, fromTimestamp, toTimestamp]);
+    
+    return result.rows;
   }
 
   // Skapa CSV och JSON export-filer
@@ -234,34 +216,25 @@ class PayoutGenerator {
 
   // Spara payout i databasen
   async savePayout(restaurantSlug, fromDate, toDate, summary) {
-    return new Promise((resolve, reject) => {
-      const sql = `
-        INSERT INTO payouts (
-          restaurant_slug, period_start, period_end, orders_count,
-          gross_revenue, per_order_fee, percent_fee, net_amount, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-      
-      const now = Date.now();
-      this.db.run(sql, [
-        restaurantSlug,
-        fromDate,
-        toDate,
-        summary.ordersCount,
-        summary.grossRevenue,
-        summary.perOrderFee,
-        summary.percentFee,
-        summary.netAmount,
-        now
-      ], function(err) {
-        if (err) {
-          reject(err);
-          return;
-        }
-        console.log(`Payout sparad i databas med ID: ${this.lastID}`);
-        resolve(this.lastID);
-      });
-    });
+    const result = await pool.query(`
+      INSERT INTO payouts (
+        restaurant_slug, period_start, period_end, orders_count,
+        gross_revenue, per_order_fee, percent_fee, net_amount, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+      RETURNING id
+    `, [
+      restaurantSlug,
+      fromDate,
+      toDate,
+      summary.ordersCount,
+      summary.grossRevenue,
+      summary.perOrderFee,
+      summary.percentFee,
+      summary.netAmount
+    ]);
+    
+    console.log(`Payout sparad i databas med ID: ${result.rows[0].id}`);
+    return result.rows[0].id;
   }
 }
 

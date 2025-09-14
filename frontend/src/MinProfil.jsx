@@ -7,6 +7,7 @@ function MinProfil() {
   const navigate = useNavigate();
   const [aktiv, setAktiv] = useState("info");
   const [profil, setProfil] = useState(null);
+  const [redigerar, setRedigerar] = useState(false);
   const [tema, setTema] = useState(
     () => localStorage.getItem("tema") || "light"
   );
@@ -70,6 +71,26 @@ function MinProfil() {
     länk.click();
   };
 
+  const hanteraInputChange = (fält, värde) => {
+    setProfil(prev => ({
+      ...prev,
+      [fält]: värde
+    }));
+  };
+
+  const sparaProfil = async () => {
+    try {
+      // Här skulle vi normalt skicka till backend
+      // För nu sparar vi bara i localStorage
+      localStorage.setItem("kundinfo", JSON.stringify(profil));
+      setRedigerar(false);
+      alert("✅ Profil sparad!");
+    } catch (err) {
+      console.error("Fel vid sparande av profil:", err);
+      alert("❌ Kunde inte spara profil");
+    }
+  };
+
   const renderInnehall = () => {
     if (!profil) {
       return <p>Laddar...</p>;
@@ -78,64 +99,165 @@ function MinProfil() {
     switch (aktiv) {
       case "info": {
         return (
-          <div>
-            <h2>👤 Mina uppgifter</h2>
-            <label htmlFor="namn">Namn</label>
-            <input
-              id="namn"
-              value={profil.namn || ""}
-              readOnly
-              aria-label="Ditt namn"
-            />
+          <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+              <h2>👤 Mina uppgifter</h2>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                {!redigerar ? (
+                  <button
+                    onClick={() => setRedigerar(true)}
+                    style={{ 
+                      padding: "0.5rem 1rem", 
+                      backgroundColor: "#007bff", 
+                      color: "white", 
+                      border: "none", 
+                      borderRadius: "4px", 
+                      cursor: "pointer" 
+                    }}
+                  >
+                    ✏️ Redigera
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={sparaProfil}
+                      style={{ 
+                        padding: "0.5rem 1rem", 
+                        backgroundColor: "#28a745", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "4px", 
+                        cursor: "pointer" 
+                      }}
+                    >
+                      💾 Spara
+                    </button>
+                    <button
+                      onClick={() => setRedigerar(false)}
+                      style={{ 
+                        padding: "0.5rem 1rem", 
+                        backgroundColor: "#6c757d", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "4px", 
+                        cursor: "pointer" 
+                      }}
+                    >
+                      ❌ Avbryt
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
+              <div style={{ width: "100%", maxWidth: "400px" }}>
+                <label htmlFor="namn" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>Namn</label>
+                <input
+                  id="namn"
+                  value={profil.namn || ""}
+                  readOnly={!redigerar}
+                  onChange={(e) => hanteraInputChange("namn", e.target.value)}
+                  aria-label="Ditt namn"
+                  style={{ 
+                    width: "100%", 
+                    padding: "0.75rem", 
+                    borderRadius: "4px", 
+                    border: "1px solid #ccc",
+                    backgroundColor: redigerar ? "white" : "#f8f9fa"
+                  }}
+                />
+              </div>
 
-            <label htmlFor="email">E-postadress</label>
-            <input
-              id="email"
-              type="email"
-              value={profil.email || ""}
-              readOnly
-              aria-label="Din e-postadress"
-            />
+              <div style={{ width: "100%", maxWidth: "400px" }}>
+                <label htmlFor="email" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>E-postadress</label>
+                <input
+                  id="email"
+                  type="email"
+                  value={profil.email || ""}
+                  readOnly={!redigerar}
+                  onChange={(e) => hanteraInputChange("email", e.target.value)}
+                  aria-label="Din e-postadress"
+                  style={{ 
+                    width: "100%", 
+                    padding: "0.75rem", 
+                    borderRadius: "4px", 
+                    border: "1px solid #ccc",
+                    backgroundColor: redigerar ? "white" : "#f8f9fa"
+                  }}
+                />
+              </div>
 
-            <label htmlFor="telefon">Telefonnummer</label>
-            <input
-              id="telefon"
-              type="tel"
-              value={profil.telefon || ""}
-              readOnly
-              aria-label="Ditt telefonnummer"
-            />
+              <div style={{ width: "100%", maxWidth: "400px" }}>
+                <label htmlFor="telefon" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>Telefonnummer</label>
+                <input
+                  id="telefon"
+                  type="tel"
+                  value={profil.telefon || ""}
+                  readOnly={!redigerar}
+                  onChange={(e) => hanteraInputChange("telefon", e.target.value)}
+                  aria-label="Ditt telefonnummer"
+                  style={{ 
+                    width: "100%", 
+                    padding: "0.75rem", 
+                    borderRadius: "4px", 
+                    border: "1px solid #ccc",
+                    backgroundColor: redigerar ? "white" : "#f8f9fa"
+                  }}
+                />
+              </div>
 
-            <label htmlFor="adress">Adress</label>
-            <textarea
-              id="adress"
-              value={profil.adress || ""}
-              readOnly
-              aria-label="Din adress"
-            />
+              <div style={{ width: "100%", maxWidth: "400px" }}>
+                <label htmlFor="adress" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>Adress</label>
+                <textarea
+                  id="adress"
+                  value={profil.adress || ""}
+                  readOnly={!redigerar}
+                  onChange={(e) => hanteraInputChange("adress", e.target.value)}
+                  aria-label="Din adress"
+                  style={{ 
+                    width: "100%", 
+                    padding: "0.75rem", 
+                    borderRadius: "4px", 
+                    border: "1px solid #ccc", 
+                    minHeight: "80px", 
+                    resize: "vertical",
+                    backgroundColor: redigerar ? "white" : "#f8f9fa"
+                  }}
+                />
+              </div>
+            </div>
           </div>
         );
       }
 
       case "sakerhet": {
         return (
-          <div>
+          <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto" }}>
             <h2>🔒 Säkerhet</h2>
-            <label htmlFor="nytt-losen">Lösenord (ej aktivt ännu)</label>
-            <input
-              id="nytt-losen"
-              type="password"
-              placeholder="Nytt lösenord"
-              disabled
-            />
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
+              <div style={{ width: "100%", maxWidth: "400px" }}>
+                <label htmlFor="nytt-losen" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>Lösenord (ej aktivt ännu)</label>
+                <input
+                  id="nytt-losen"
+                  type="password"
+                  placeholder="Nytt lösenord"
+                  disabled
+                  style={{ width: "100%", padding: "0.75rem", borderRadius: "4px", border: "1px solid #ccc" }}
+                />
+              </div>
 
-            <label htmlFor="ny-email">Ny e-postadress (ej aktivt ännu)</label>
-            <input
-              id="ny-email"
-              type="email"
-              placeholder="Ny e-post"
-              disabled
-            />
+              <div style={{ width: "100%", maxWidth: "400px" }}>
+                <label htmlFor="ny-email" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>Ny e-postadress (ej aktivt ännu)</label>
+                <input
+                  id="ny-email"
+                  type="email"
+                  placeholder="Ny e-post"
+                  disabled
+                  style={{ width: "100%", padding: "0.75rem", borderRadius: "4px", border: "1px solid #ccc" }}
+                />
+              </div>
+            </div>
           </div>
         );
       }

@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const { OAuth2Client } = require("google-auth-library");
 const appleSignin = require("apple-signin-auth");
 const { body, validationResult } = require("express-validator");
-const { db } = require("../orderDB");
+const pool = require("../db");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -37,59 +37,65 @@ function generateTokens(user) {
 router.post(
   "/login",
   [body("email").isEmail().normalizeEmail(), body("losenord").notEmpty()],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty())
-      return res.status(400).json({ errors: errors.array() });
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty())
+        return res.status(400).json({ errors: errors.array() });
 
-    const { email, losenord } = req.body;
+      const { email, losenord } = req.body;
 
-    db.get(
-      "SELECT * FROM users WHERE email = ?",
-      [email],
-      async (err, user) => {
-        if (err || !user)
-          return res.status(401).json({ error: "Fel inloggningsuppgifter" });
-        const match = await bcrypt.compare(losenord, user.password);
-        if (!match)
-          return res.status(401).json({ error: "Fel inloggningsuppgifter" });
+      const userResult = await pool.query(
+        "SELECT * FROM users WHERE email = $1",
+        [email]
+      );
 
-        const { accessToken, refreshToken } = generateTokens(user);
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          maxAge: 604800000,
-        });
-        res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-          sameSite: "lax",
-          maxAge: 15 * 60 * 1000,
-        });
-        res.json({
-          namn: user.namn,
-          email: user.email,
-          telefon: user.telefon,
-          adress: user.adress || "",
-          role: user.role,
-          restaurangSlug: user.restaurangSlug || "",
-        });
-      }
-    );
+      if (userResult.rows.length === 0)
+        return res.status(401).json({ error: "Fel inloggningsuppgifter" });
+
+      const user = userResult.rows[0];
+      const match = await bcrypt.compare(losenord, user.password);
+      if (!match)
+        return res.status(401).json({ error: "Fel inloggningsuppgifter" });
+
+      const { accessToken, refreshToken } = generateTokens(user);
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 604800000,
+      });
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        sameSite: "lax",
+        maxAge: 15 * 60 * 1000,
+      });
+      res.json({
+        namn: user.namn,
+        email: user.email,
+        telefon: user.telefon,
+        adress: user.adress || "",
+        role: user.role,
+        restaurangSlug: user.restaurangSlug || "",
+      });
+    } catch (error) {
+      console.error("Inloggningsfel:", error);
+      res.status(500).json({ error: "Internt serverfel" });
+    }
   }
 );
 
 // 🟢 Google OAuth
 router.post("/google", async (req, res) => {
-  const { token } = req.body;
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
-  const payload = ticket.getPayload();
-  const email = payload.email;
-  const namn = payload.name;
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const email = payload.email;
+    const namn = payload.name;
 
-  db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
-    if (err) return res.status(500).json({ error: "DB-fel" });
+    const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
     const handleUser = (id) => {
       const { accessToken, refreshToken } = generateTokens({
@@ -108,102 +114,96 @@ router.post("/google", async (req, res) => {
       res.json({});
     };
 
-    if (!user) {
-      db.run(
-        "INSERT INTO users (email, namn, role) VALUES (?, ?, ?)",
-        [email, namn, "customer"],
-        function (err2) {
-          if (err2)
-            return res
-              .status(500)
-              .json({ error: "Misslyckades skapa användare" });
-          handleUser(this.lastID);
-        }
+    if (userResult.rows.length === 0) {
+      const insertResult = await pool.query(
+        "INSERT INTO users (email, namn, role) VALUES ($1, $2, $3) RETURNING id",
+        [email, namn, "customer"]
       );
+      handleUser(insertResult.rows[0].id);
     } else {
-      handleUser(user.id);
+      handleUser(userResult.rows[0].id);
     }
-  });
+  } catch (error) {
+    console.error("Google OAuth fel:", error);
+    res.status(500).json({ error: "DB-fel" });
+  }
 });
 
 // 🍎 Apple-inloggning
 router.post("/apple", async (req, res) => {
-  const { identityToken } = req.body;
   try {
+    const { identityToken } = req.body;
     const payload = await appleSignin.verifyIdToken(identityToken, {
       audience: process.env.APPLE_CLIENT_ID,
       ignoreExpiration: true,
     });
 
     const email = payload.email || `${payload.sub}@appleid.apple.com`; // ibland maskerad e-post
-    db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
-      if (err) return res.status(500).json({ error: "DB-fel" });
+    
+    const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
-      const handleUser = (id) => {
-        const { accessToken, refreshToken } = generateTokens({
-          id,
-          role: "customer",
-        });
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          maxAge: 604800000,
-        });
-        res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-          sameSite: "lax",
-          maxAge: 15 * 60 * 1000,
-        });
-        res.json({});
-      };
+    const handleUser = (id) => {
+      const { accessToken, refreshToken } = generateTokens({
+        id,
+        role: "customer",
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        maxAge: 604800000,
+      });
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        sameSite: "lax",
+        maxAge: 15 * 60 * 1000,
+      });
+      res.json({});
+    };
 
-      if (!user) {
-        db.run(
-          "INSERT INTO users (email, namn, role) VALUES (?, ?, ?)",
-          [email, "AppleUser", "customer"],
-          function (err2) {
-            if (err2)
-              return res
-                .status(500)
-                .json({ error: "Misslyckades skapa användare" });
-            handleUser(this.lastID);
-          }
-        );
-      } else {
-        handleUser(user.id);
-      }
-    });
+    if (userResult.rows.length === 0) {
+      const insertResult = await pool.query(
+        "INSERT INTO users (email, namn, role) VALUES ($1, $2, $3) RETURNING id",
+        [email, "AppleUser", "customer"]
+      );
+      handleUser(insertResult.rows[0].id);
+    } else {
+      handleUser(userResult.rows[0].id);
+    }
   } catch (err) {
+    console.error("Apple OAuth fel:", err);
     res.status(401).json({ error: "Ogiltig Apple-token" });
   }
 });
 
 // 🔄 Refresh endpoint
-router.post("/refresh", (req, res) => {
-  const token = req.cookies.refreshToken;
-  if (!token) return res.status(401).json({ error: "Ingen refresh token" });
-
+router.post("/refresh", async (req, res) => {
   try {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.status(401).json({ error: "Ingen refresh token" });
+
     const payload = jwt.verify(token, process.env.REFRESH_SECRET);
-    db.get(
-      "SELECT id, role FROM users WHERE id = ?",
-      [payload.userId],
-      (err, user) => {
-        if (err || !user)
-          return res.status(401).json({ error: "Ogiltig användare" });
-        const accessToken = jwt.sign(
-          { userId: user.id, role: user.role },
-          process.env.JWT_SECRET,
-          { expiresIn: "15m" }
-        );
-        res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-          sameSite: "lax",
-          maxAge: 15 * 60 * 1000,
-        });
-        res.json({});
-      }
+    
+    const userResult = await pool.query(
+      "SELECT id, role FROM users WHERE id = $1",
+      [payload.userId]
     );
-  } catch {
+    
+    if (userResult.rows.length === 0)
+      return res.status(401).json({ error: "Ogiltig användare" });
+    
+    const user = userResult.rows[0];
+    const accessToken = jwt.sign(
+      { userId: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 15 * 60 * 1000,
+    });
+    res.json({});
+  } catch (error) {
+    console.error("Refresh token fel:", error);
     res.status(403).json({ error: "Ogiltig refresh token" });
   }
 });

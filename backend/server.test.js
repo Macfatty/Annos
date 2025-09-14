@@ -5,11 +5,11 @@ const SECRET = process.env.JWT_SECRET || 'test-secret';
 process.env.JWT_SECRET = SECRET;
 
 const app = require('./server');
-const { db } = require('./orderDB');
+const pool = require('./db');
 
 describe('API endpoints', () => {
-  afterAll((done) => {
-    db.close(done);
+  afterAll(async () => {
+    await pool.end();
   });
 
   test('GET /api/meny returns a list of menu items', async () => {
@@ -21,13 +21,10 @@ describe('API endpoints', () => {
 
   test('POST /api/order stores an order successfully', async () => {
     const newOrder = {
-      kund: {
-        namn: 'Test Testsson',
-        telefon: '123456789',
-        adress: 'Testgatan 1',
-        ovrigt: 'Inga',
-        email: `test_${Date.now()}@example.com`
-      },
+      namn: 'Test Testsson',
+      telefon: '123456789',
+      adress: 'Testgatan 1',
+      email: `test_${Date.now()}@example.com`,
       order: [
         { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
       ],
@@ -39,30 +36,22 @@ describe('API endpoints', () => {
       .post('/api/order')
       .set('Authorization', `Bearer ${token}`)
       .send(newOrder);
-    expect(res.statusCode).toBe(201);
+    expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('orderId');
 
-    const inserted = await new Promise((resolve, reject) => {
-      db.get('SELECT * FROM orders WHERE id = ?', [res.body.orderId], (err, row) => {
-        if (err) return reject(err);
-        resolve(row);
-      });
-    });
+    const inserted = await pool.query('SELECT * FROM orders WHERE id = $1', [res.body.orderId]);
 
-    expect(inserted).toBeDefined();
-    expect(inserted.namn).toBe(newOrder.kund.namn);
-    expect(inserted.restaurangSlug).toBe(newOrder.restaurangSlug);
+    expect(inserted.rows.length).toBeGreaterThan(0);
+    expect(inserted.rows[0].customer_name).toBe(newOrder.namn);
+    expect(inserted.rows[0].restaurant_slug).toBe(newOrder.restaurangSlug);
   });
 
   test('POST /api/order works with cookie token', async () => {
     const newOrder = {
-      kund: {
-        namn: 'Cookie Testsson',
-        telefon: '111222333',
-        adress: 'Cookiegatan 3',
-        ovrigt: 'Inga',
-        email: `cookie_${Date.now()}@example.com`
-      },
+      namn: 'Cookie Testsson',
+      telefon: '111222333',
+      adress: 'Cookiegatan 3',
+      email: `cookie_${Date.now()}@example.com`,
       order: [
         { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
       ],
@@ -75,21 +64,18 @@ describe('API endpoints', () => {
       .set('Cookie', [`accessToken=${token}`])
       .send(newOrder);
 
-    expect(res.statusCode).toBe(201);
+    expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('orderId');
   });
 
-  test('PATCH /api/admin/orders/:id/klart marks order as done', async () => {
+  test('PUT /api/admin/orders/:id/klart marks order as done', async () => {
     const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
 
     const newOrder = {
-      kund: {
-        namn: 'Patch Test',
-        telefon: '987654321',
-        adress: 'Patchgatan 2',
-        ovrigt: 'Inga',
-        email: `patch_${Date.now()}@example.com`
-      },
+      namn: 'Patch Test',
+      telefon: '987654321',
+      adress: 'Patchgatan 2',
+      email: `patch_${Date.now()}@example.com`,
       order: [
         { id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }
       ],
@@ -104,20 +90,15 @@ describe('API endpoints', () => {
     const orderId = createRes.body.orderId;
 
     const patchRes = await request(app)
-      .patch(`/api/admin/orders/${orderId}/klart`)
+      .put(`/api/admin/orders/${orderId}/klart`)
       .set('Authorization', `Bearer ${token}`);
 
     expect(patchRes.statusCode).toBe(200);
     expect(patchRes.body).toHaveProperty('message', 'Order markerad som klar');
 
-    const updated = await new Promise((resolve, reject) => {
-      db.get('SELECT status FROM orders WHERE id = ?', [orderId], (err, row) => {
-        if (err) return reject(err);
-        resolve(row);
-      });
-    });
+    const updated = await pool.query('SELECT status FROM orders WHERE id = $1', [orderId]);
 
-    expect(updated.status).toBe('klar');
+    expect(updated.rows[0].status).toBe('delivered');
   });
 
   test('POST /api/order returns 401 without token', async () => {
@@ -131,25 +112,19 @@ describe('API endpoints', () => {
     const token = jwt.sign({ userId: 1, role: 'admin', restaurangSlug: 'campino' }, SECRET);
 
     const order1 = {
-      kund: {
-        namn: 'Slug Test1',
-        telefon: '000',
-        adress: 'A',
-        ovrigt: 'Inga',
-        email: `slug1_${Date.now()}@example.com`
-      },
+      namn: 'Slug Test1',
+      telefon: '000',
+      adress: 'A',
+      email: `slug1_${Date.now()}@example.com`,
       order: [{ id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }],
       restaurangSlug: 'campino'
     };
 
     const order2 = {
-      kund: {
-        namn: 'Slug Test2',
-        telefon: '111',
-        adress: 'B',
-        ovrigt: 'Inga',
-        email: `slug2_${Date.now()}@example.com`
-      },
+      namn: 'Slug Test2',
+      telefon: '111',
+      adress: 'B',
+      email: `slug2_${Date.now()}@example.com`,
       order: [{ id: 1, namn: 'MARGARITA', antal: 1, pris: 125, total: 125 }],
       restaurangSlug: 'bistro'
     };
@@ -170,7 +145,7 @@ describe('API endpoints', () => {
 
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.every(o => o.restaurangSlug === 'campino')).toBe(true);
+    expect(res.body.every(o => o.restaurant_slug === 'campino')).toBe(true);
   });
 
   test('GET /api/admin/orders/today returns 403 for wrong slug', async () => {

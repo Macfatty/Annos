@@ -1,31 +1,31 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function RestaurangVy() {
   const { slug } = useParams();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedRestaurant, setSelectedRestaurant] = useState(slug || "campino");
 
   useEffect(() => {
     fetchOrders();
-  }, [slug, statusFilter]);
+  }, [selectedRestaurant, statusFilter]);
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("accessToken");
       
-      const params = new URLSearchParams({ slug });
+      const params = new URLSearchParams({ slug: selectedRestaurant });
       if (statusFilter !== "all") {
         params.append("status", statusFilter);
       }
 
-      const response = await fetch(`/api/admin/orders?${params}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await fetch(`${BASE_URL}/api/admin/orders?${params}`, {
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -43,14 +43,12 @@ function RestaurangVy() {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const token = localStorage.getItem("accessToken");
-      
-      const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+      const response = await fetch(`${BASE_URL}/api/admin/orders/${orderId}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -145,7 +143,23 @@ function RestaurangVy() {
   return (
     <div className="restaurant-view">
       <div className="restaurant-header">
-        <h1>Restaurangvy - {slug}</h1>
+        <h1>Restaurangvy - {selectedRestaurant}</h1>
+        
+        {/* Restaurant selector for admin */}
+        {!slug && (
+          <div style={{ marginBottom: "1rem" }}>
+            <label htmlFor="restaurant-select">Välj restaurang:</label>
+            <select 
+              id="restaurant-select"
+              value={selectedRestaurant} 
+              onChange={(e) => setSelectedRestaurant(e.target.value)}
+              style={{ marginLeft: "0.5rem", padding: "0.5rem" }}
+            >
+              <option value="campino">Campino</option>
+              <option value="sunsushi">SunSushi</option>
+            </select>
+          </div>
+        )}
         
         <div className="filter-buttons">
           <button

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function KurirVy() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,12 +15,9 @@ function KurirVy() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("accessToken");
       
-      const response = await fetch(`/api/courier/orders?status=${filter}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await fetch(`${BASE_URL}/api/courier/orders?status=${filter}`, {
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -36,13 +35,9 @@ function KurirVy() {
 
   const acceptOrder = async (orderId) => {
     try {
-      const token = localStorage.getItem("accessToken");
-      
-      const response = await fetch(`/api/courier/orders/${orderId}/accept`, {
+      const response = await fetch(`${BASE_URL}/api/courier/orders/${orderId}/accept`, {
         method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -64,13 +59,9 @@ function KurirVy() {
 
   const deliverOrder = async (orderId) => {
     try {
-      const token = localStorage.getItem("accessToken");
-      
-      const response = await fetch(`/api/courier/orders/${orderId}/delivered`, {
+      const response = await fetch(`${BASE_URL}/api/courier/orders/${orderId}/delivered`, {
         method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include",
       });
 
       if (!response.ok) {

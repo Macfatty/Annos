@@ -1,24 +1,34 @@
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
+const pool = require("./db");
 
-const dbPath = path.join(__dirname, "orders.sqlite");
-const db = new sqlite3.Database(dbPath);
+async function migrateRestaurangSlug() {
+  try {
+    // Kontrollera om kolumnen restaurangSlug finns
+    const columnExists = await pool.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'users' 
+        AND column_name = 'restaurangSlug'
+        AND table_schema = 'public'
+      )
+    `);
 
-// Lägg till kolumnen restaurangSlug om den saknas
+    if (!columnExists.rows[0].exists) {
+      // Lägg till kolumnen restaurangSlug
+      await pool.query("ALTER TABLE users ADD COLUMN restaurangSlug VARCHAR(100)");
+      console.log("Lade till restaurangSlug-kolumn");
+    }
 
-db.all("PRAGMA table_info(users)", (err, cols) => {
-  if (err) {
-    console.error(err);
-    return db.close();
+    console.log("Migrering klar");
+  } catch (error) {
+    console.error("Fel vid migrering av restaurangSlug:", error);
+  } finally {
+    await pool.end();
   }
-  if (!cols.some((c) => c.name === "restaurangSlug")) {
-    db.run("ALTER TABLE users ADD COLUMN restaurangSlug TEXT", closeDb);
-  } else {
-    closeDb();
-  }
-});
-
-function closeDb() {
-  console.log("Migrering klar");
-  db.close();
 }
+
+// Kör migrering om scriptet körs direkt
+if (require.main === module) {
+  migrateRestaurangSlug();
+}
+
+module.exports = { migrateRestaurangSlug };

@@ -27,7 +27,7 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
           namn: `${curr.namn} – ${variant.namn}`,
           pris: variant.pris,
           parentId: curr.id,
-          ärValfri: curr.id === 211,
+          ärValfri: curr.namn.toLowerCase().includes("valfri"),
         });
       });
     } else {
@@ -36,7 +36,7 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
           namn: curr.namn,
           pris: curr.pris,
           parentId: curr.id,
-          ärValfri: curr.typ === "valfri" || curr.allowCustom === true,
+          ärValfri: curr.typ === "valfri" || curr.allowCustom === true || curr.namn.toLowerCase().includes("valfri"),
         });
     }
 
@@ -143,9 +143,28 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
           >
             ❌ Stäng undermeny
           </button>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center", marginTop: "0.5rem" }}>
+          <div style={{ 
+            display: "flex", 
+            flexWrap: "wrap", 
+            gap: "0.5rem", 
+            justifyContent: "center", 
+            marginTop: "0.5rem",
+            maxWidth: "600px",
+            margin: "0.5rem auto 0"
+          }}>
             {Object.keys(grupperade).map((kategori) => (
-              <button key={`${slug}-${kategori}`} onClick={() => { scrollTo(kategori); toggleKategori(kategori); }}>
+              <button 
+                key={`${slug}-${kategori}`} 
+                onClick={() => { scrollTo(kategori); toggleKategori(kategori); }}
+                style={{
+                  flex: "1 1 calc(50% - 0.25rem)",
+                  maxWidth: "calc(50% - 0.25rem)",
+                  minWidth: "120px",
+                  padding: "0.75rem 0.5rem",
+                  fontSize: "0.9rem",
+                  fontWeight: "bold"
+                }}
+              >
                 {kategori}
               </button>
             ))}
@@ -158,22 +177,37 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
           </div>
         </div>
 
-        {/* Scrollbar mitten */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "1rem" }}>
+        {/* Scrollbar mitten - Mer utrymme för tillbehör */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "1rem", minHeight: "400px" }}>
           {oppenKategori && grupperade[oppenKategori] && (
             <div ref={(el) => (kategoriRefs.current[oppenKategori] = el)}>
               <h5 style={{ fontSize: "1rem", color: "#007bff" }}>{oppenKategori}</h5>
-              <div style={{ marginLeft: "1rem" }}>
+              <div style={{ marginLeft: "1rem", padding: "1rem", backgroundColor: darkMode ? "#2a2a2a" : "#f8f9fa", borderRadius: "8px" }}>
                 {grupperade[oppenKategori].map((item) => (
-                  <div key={`${slug}-${item.id}`} style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                    <label htmlFor={`chk-${slug}-${item.id}`} style={{ flex: 1 }}>
+                  <div key={`${slug}-${item.id}`} style={{ 
+                    marginBottom: "1rem", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: "0.75rem", 
+                    flexWrap: "wrap",
+                    padding: "0.75rem",
+                    backgroundColor: darkMode ? "#3a3a3a" : "white",
+                    borderRadius: "6px",
+                    border: "1px solid #ddd"
+                  }}>
+                    <label htmlFor={`chk-${slug}-${item.id}`} style={{ flex: 1, fontSize: "1rem", fontWeight: "500" }}>
                       <input
                         id={`chk-${slug}-${item.id}`}
                         type="checkbox"
                         checked={valda[item.id] > 0}
                         onChange={(e) => ändraVal(item.id, e.target.checked)}
-                      />{" "}
-                      {item.namn} (+{item.pris} kr)
+                        style={{ 
+                          marginRight: "0.5rem", 
+                          transform: "scale(1.2)",
+                          accentColor: "#007bff"
+                        }}
+                      />
+                      {item.namn} <span style={{ color: "#007bff", fontWeight: "bold" }}>(+{item.pris} kr)</span>
                     </label>
                     {valda[item.id] > 0 && (
                       <div style={{ display: "flex", gap: "0.25rem", alignItems: "center" }}>
@@ -183,18 +217,53 @@ function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
                       </div>
                     )}
                     {item.ärValfri && valda[item.id] > 0 && (
-                      <input
-                        type="text"
-                        value={valfriText[item.id] || ""}
-                        onChange={(e) => setValfriText(prev => ({
-                          ...prev,
-                          [item.id]: e.target.value
-                        }))}
-                        placeholder="Skriv vad du vill ha"
-                        maxLength={140}
-                        style={{ flexBasis: "100%", marginLeft: "2rem", marginTop: "0.2rem" }}
-                        aria-label="Valfri önskan"
-                      />
+                      <div style={{ 
+                        flexBasis: "100%", 
+                        marginTop: "0.75rem",
+                        padding: "0.5rem",
+                        backgroundColor: darkMode ? "#4a4a4a" : "#f0f8ff",
+                        borderRadius: "6px",
+                        border: "2px solid #007bff"
+                      }}>
+                        <label htmlFor={`valfri-${slug}-${item.id}`} style={{ 
+                          display: "block", 
+                          fontSize: "0.9rem", 
+                          fontWeight: "bold", 
+                          marginBottom: "0.5rem",
+                          color: "#007bff"
+                        }}>
+                          🍯 Ange vilken sås du vill ha:
+                        </label>
+                        <input
+                          id={`valfri-${slug}-${item.id}`}
+                          type="text"
+                          value={valfriText[item.id] || ""}
+                          onChange={(e) => setValfriText(prev => ({
+                            ...prev,
+                            [item.id]: e.target.value
+                          }))}
+                          placeholder="t.ex. sweet chili, teriyaki, soja..."
+                          maxLength={140}
+                          style={{ 
+                            width: "100%",
+                            padding: "0.75rem",
+                            fontSize: "1rem",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                            backgroundColor: darkMode ? "#2a2a2a" : "white",
+                            color: darkMode ? "white" : "black"
+                          }}
+                          aria-label="Ange vilken sås du vill ha"
+                        />
+                        <div style={{ 
+                          fontSize: "0.8rem", 
+                          color: "#666", 
+                          marginTop: "0.25rem",
+                          textAlign: "right"
+                        }}>
+                          {(valfriText[item.id] || "").length}/140 tecken
+                        </div>
+                      </div>
                     )}
                   </div>
                 ))}
@@ -223,8 +292,14 @@ const knappStil = {
   all: "unset",
   cursor: "pointer",
   fontSize: "18px",
-  padding: "0 6px",
+  padding: "0.25rem 0.5rem",
   userSelect: "none",
+  backgroundColor: "#007bff",
+  color: "white",
+  borderRadius: "4px",
+  minWidth: "32px",
+  textAlign: "center",
+  fontWeight: "bold"
 };
 
 export default Undermeny;

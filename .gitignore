@@ -141,5 +141,10 @@ backend/orders.sqlite
 backend/orders.sqlite-shm
 backend/orders.sqlite-wal
 
+# PostgreSQL backup files
+*.backup
+*.dump
+*.sql
+
 # Exports directory
 backend/exports/

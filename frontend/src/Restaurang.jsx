@@ -17,7 +17,8 @@ function Restaurang() {
         navigate("/login");
         return;
       }
-      if (profile.role !== "admin") {
+      // Admin kan komma åt alla restauranger, andra användare kan komma åt sin egen
+      if (profile.role !== "admin" && profile.role !== "restaurant") {
         navigate("/");
         return;
       }
@@ -60,7 +61,8 @@ function Restaurang() {
         navigate("/login");
         return;
       }
-     if (profile.role !== "admin") {
+     // Admin kan komma åt alla restauranger, andra användare kan komma åt sin egen
+     if (profile.role !== "admin" && profile.role !== "restaurant") {
         navigate("/");
         return;
       }

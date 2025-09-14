@@ -1,32 +1,52 @@
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
+const pool = require("./db");
 
-const dbPath = path.join(__dirname, "orders.sqlite");
-const db = new sqlite3.Database(dbPath);
+async function migrateUserRoles() {
+  try {
+    // Kontrollera om kolumnen role finns
+    const columnExists = await pool.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'users' 
+        AND column_name = 'role'
+        AND table_schema = 'public'
+      )
+    `);
 
-// Lägg till kolumnen role om den saknas
-db.all("PRAGMA table_info(users)", (err, cols) => {
-  if (err) {
-    console.error(err);
-    return db.close();
-  }
-  if (!cols.some((c) => c.name === "role")) {
-    db.run("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'customer'", runUpdate);
-  } else {
-    runUpdate();
-  }
-});
-
-function runUpdate() {
-  db.run(
-    "UPDATE users SET role = CASE WHEN isAdmin = 1 THEN 'admin' ELSE 'customer' END",
-    (err) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log("Migrering klar");
-      }
-      db.close();
+    if (!columnExists.rows[0].exists) {
+      // Lägg till kolumnen role
+      await pool.query("ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'customer'");
+      console.log("Lade till role-kolumn");
     }
-  );
+
+    // Kontrollera om isAdmin-kolumnen finns
+    const isAdminExists = await pool.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'users' 
+        AND column_name = 'isAdmin'
+        AND table_schema = 'public'
+      )
+    `);
+
+    if (isAdminExists.rows[0].exists) {
+      // Uppdatera roller baserat på isAdmin
+      await pool.query(`
+        UPDATE users SET role = CASE WHEN isAdmin = 1 THEN 'admin' ELSE 'customer' END
+      `);
+      console.log("Uppdaterade roller baserat på isAdmin");
+    }
+
+    console.log("Migrering klar");
+  } catch (error) {
+    console.error("Fel vid migrering av användarroller:", error);
+  } finally {
+    await pool.end();
+  }
 }
+
+// Kör migrering om scriptet körs direkt
+if (require.main === module) {
+  migrateUserRoles();
+}
+
+module.exports = { migrateUserRoles };
