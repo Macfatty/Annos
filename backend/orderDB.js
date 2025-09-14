@@ -6,7 +6,7 @@ const pool = require("./db");
 function hamtaDagensOrdrar(restaurant_slug, callback) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const todayStart = today.getTime();
+  const todayStart = today.toISOString();
   
   const query = `
     SELECT o.*, 
@@ -57,7 +57,7 @@ function hamtaDagensOrdrar(restaurant_slug, callback) {
 function hamtaAllaDagensOrdrar(callback) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const todayStart = today.getTime();
+  const todayStart = today.toISOString();
   
   const query = `
     SELECT o.*, 
@@ -130,7 +130,7 @@ function markeraOrderSomKlar(orderId, callback) {
     WHERE id = $2
   `;
   
-  const now = Date.now();
+  const now = new Date().toISOString();
   pool.query(query, [now, orderId], (err, result) => {
     if (err) {
       console.error("Fel vid markering av order som klar:", err);
@@ -194,7 +194,7 @@ function uppdateraOrderStatus(orderId, newStatus, callback) {
     WHERE id = $3
   `;
   
-  const now = Date.now();
+  const now = new Date().toISOString();
   pool.query(query, [newStatus, now, orderId], (err, result) => {
     if (err) {
       console.error("Fel vid uppdatering av orderstatus:", err);
@@ -312,7 +312,7 @@ function tilldelaOrderTillKurir(orderId, courierId, callback) {
     WHERE id = $3
   `;
   
-  const now = Date.now();
+  const now = new Date().toISOString();
   pool.query(query, [courierId, now, orderId], (err, result) => {
     if (err) {
       console.error("Fel vid tilldelning av order till kurir:", err);
@@ -332,7 +332,7 @@ function markeraOrderSomLevererad(orderId, callback) {
     WHERE id = $2
   `;
   
-  const now = Date.now();
+  const now = new Date().toISOString();
   pool.query(query, [now, orderId], (err, result) => {
     if (err) {
       console.error("Fel vid markering av order som levererad:", err);

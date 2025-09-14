@@ -79,7 +79,7 @@ function verifyJWT(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // { userId, role, name, email, … }
     return next();
-  } catch {
+  } catch (error) {
     return res.status(401).json({ error: 'Invalid token' });
   }
 }

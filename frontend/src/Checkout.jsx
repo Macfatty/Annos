@@ -5,7 +5,7 @@ import { fetchProfile, createOrder } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-function Checkout({ varukorg, setVarukorg, restaurang }) {
+function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
   const navigate = useNavigate();
   const darkMode = document.body.classList.contains("dark");
 
@@ -75,10 +75,18 @@ function Checkout({ varukorg, setVarukorg, restaurang }) {
 
       // Validera att alla obligatoriska fält är ifyllda
       const saknadeFalt = [];
-      if (!kundinfo.namn?.trim()) saknadeFalt.push("Namn");
-      if (!kundinfo.email?.trim()) saknadeFalt.push("E-post");
-      if (!kundinfo.telefon?.trim()) saknadeFalt.push("Telefon");
-      if (!kundinfo.adress?.trim()) saknadeFalt.push("Adress");
+      if (!kundinfo.namn?.trim()) {
+        saknadeFalt.push("Namn");
+      }
+      if (!kundinfo.email?.trim()) {
+        saknadeFalt.push("E-post");
+      }
+      if (!kundinfo.telefon?.trim()) {
+        saknadeFalt.push("Telefon");
+      }
+      if (!kundinfo.adress?.trim()) {
+        saknadeFalt.push("Adress");
+      }
 
       if (saknadeFalt.length > 0) {
         alert(`❌ Fyll i eller uppdatera din information för att kunna lägga en beställning.\n\nSaknade fält: ${saknadeFalt.join(", ")}\n\nAnvänd "🔄 Uppdatera från profil"-knappen för att fylla i automatiskt.`);

@@ -170,7 +170,7 @@ function AdminPanel() {
               }}
             >
               <p><strong>⏰ Tid:</strong> {new Date(order.created_at).toLocaleTimeString("sv-SE")}</p>
-              <p><strong>🏪 Restaurang:</strong> {order.restaurant_slug || 'Okänd'}</p>
+              <p><strong>🏪 Restaurang:</strong> {order.restaurant_slug || "Okänd"}</p>
               <p><strong>👤 Kund:</strong> {order.customer_name || order.namn} | {order.customer_phone || order.telefon}</p>
               <p><strong>📍 Adress:</strong> {order.customer_address || order.adress}</p>
               {order.extraInfo && <p><strong>📦 Info:</strong> {order.extraInfo}</p>}
@@ -184,10 +184,10 @@ function AdminPanel() {
                         {rad.tillval.map((t, j) => (
                           <li key={j}>
                             + {t.namn} 
-                            {t.pris !== 0 && ` (${t.pris > 0 ? '+' : ''}${t.pris} kr)`}
+                            {t.pris !== 0 && ` (${t.pris > 0 ? "+" : ""}${t.pris} kr)`}
                             {t.customNote && (
-                              <span style={{ fontStyle: 'italic', color: '#666' }}>
-                                {' '}- "{t.customNote}"
+                              <span style={{ fontStyle: "italic", color: "#666" }}>
+                                {" "}- "{t.customNote}"
                               </span>
                             )}
                           </li>

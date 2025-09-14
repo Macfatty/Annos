@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -13,9 +13,9 @@ function RestaurangVy() {
 
   useEffect(() => {
     fetchOrders();
-  }, [selectedRestaurant, statusFilter]);
+  }, [selectedRestaurant, statusFilter, fetchOrders]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -39,7 +39,7 @@ function RestaurangVy() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedRestaurant, statusFilter]);
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
@@ -233,16 +233,16 @@ function RestaurangVy() {
                         <li key={index}>
                           {item.name} x{item.quantity} - {formatPrice(item.line_total)} kr
                           {item.options && item.options.length > 0 && (
-                            <ul style={{ marginLeft: '1rem', fontSize: '0.9em' }}>
+                            <ul style={{ marginLeft: "1rem", fontSize: "0.9em" }}>
                               {item.options.map((option, optIndex) => (
                                 <li key={optIndex}>
                                   + {option.label}
                                   {option.price_delta !== 0 && (
-                                    ` (${option.price_delta > 0 ? '+' : ''}${formatPrice(option.price_delta)} kr)`
+                                    ` (${option.price_delta > 0 ? "+" : ""}${formatPrice(option.price_delta)} kr)`
                                   )}
                                   {option.custom_note && (
-                                    <span style={{ fontStyle: 'italic', color: '#666' }}>
-                                      {' '}- "{option.custom_note}"
+                                    <span style={{ fontStyle: "italic", color: "#666" }}>
+                                      {" "}- "{option.custom_note}"
                                     </span>
                                   )}
                                 </li>

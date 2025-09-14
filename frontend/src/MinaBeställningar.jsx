@@ -99,10 +99,10 @@ function MinaBeställningar({ onBeställIgen }) {
                     {rad.tillval.map((t, i) => (
                       <li key={i}>
                         + {t.namn}
-                        {t.pris !== 0 && ` (${t.pris > 0 ? '+' : ''}${t.pris} kr)`}
+                        {t.pris !== 0 && ` (${t.pris > 0 ? "+" : ""}${t.pris} kr)`}
                         {t.customNote && (
-                          <span style={{ fontStyle: 'italic', color: '#666' }}>
-                            {' '}- "{t.customNote}"
+                          <span style={{ fontStyle: "italic", color: "#666" }}>
+                            {" "}- "{t.customNote}"
                           </span>
                         )}
                       </li>

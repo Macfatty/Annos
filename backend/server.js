@@ -101,7 +101,7 @@ app.get("/api/tillbehor/:restaurang", (req, res) => {
 });
 
 // Skapa beställning
-app.post("/api/order", verifyRole(["customer", "admin"]), async (req, res) => {
+app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req, res) => {
   const client = await pool.connect();
   
   try {
@@ -120,7 +120,7 @@ app.post("/api/order", verifyRole(["customer", "admin"]), async (req, res) => {
       return sum + (rad.total || 0);
     }, 0);
     const totalInOre = Math.round(total * 100); // Konvertera till öre
-    const now = Date.now();
+    const now = new Date().toISOString();
 
     // Använd transaktion för att säkerställa data-integritet
     await client.query('BEGIN');
@@ -224,8 +224,13 @@ app.post("/api/order", verifyRole(["customer", "admin"]), async (req, res) => {
 });
 
 // Hämta dagens ordrar för restaurang
-app.get("/api/admin/orders/today", verifyRole(["admin", "restaurant"]), (req, res) => {
+app.get("/api/admin/orders/today", verifyJWT, verifyRole(["admin", "restaurant"]), (req, res) => {
   const { slug } = req.query;
+  
+  // Kontrollera att användaren har behörighet för den begärda restaurangen
+  if (slug && req.user.restaurant_slug !== slug) {
+    return res.status(403).json({ error: "Forbidden: Wrong restaurant slug" });
+  }
   
   if (slug) {
     // Hämta ordrar för specifik restaurang
@@ -249,7 +254,7 @@ app.get("/api/admin/orders/today", verifyRole(["admin", "restaurant"]), (req, re
 });
 
 // Markera order som klar
-app.put("/api/admin/orders/:id/klart", verifyRole(["admin", "restaurant"]), (req, res) => {
+app.put("/api/admin/orders/:id/klart", verifyJWT, verifyRole(["admin", "restaurant"]), (req, res) => {
   const { id } = req.params;
   
   markeraOrderSomKlar(id, (err) => {
