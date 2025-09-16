@@ -91,3 +91,83 @@ För att undvika att inline-skript eller externa resurser blockeras av webbläsa
      );
      next();
    });
+
+## Instruktioner för Cursor/AI-agenter
+
+Denna fil beskriver regler för kodändringar och samarbete i detta projekt. Cursor och andra AI-agenter ska följa dessa riktlinjer.
+
+---
+
+## 1. Kodstil och kvalitet
+
+- Följ alltid ESLint och Prettier. Kod med lint-fel får inte mergas.
+- Strängar ska använda dubbla citattecken (`"`), inte enkla (`'`).
+- Behåll befintlig indentering och whitespace.
+- Ta bort oanvända variabler och importer.
+- Undvik att ändra funktionsnamn, variabler, kommentarer eller logik som redan fungerar.
+- Cursor/AI-agent får ENDAST ändra kodrader där ESLint ger fel. Rör inte kod som redan är korrekt.
+
+### Exempel
+
+```js
+// Före
+const foo = 'bar';
+// Efter
+const foo = "bar";
+```
+
+---
+
+## 2. Backend-regler
+
+- Använd RESTful routing (GET, POST, PUT, DELETE på rätt endpoints).
+- All input ska valideras och saneras.
+- Inga hemligheter/API-nycklar i kod – använd `.env`-filer.
+- JWT eller annan auth-token ska hanteras säkert (helst HTTP-only cookie).
+
+---
+
+## 3. Accessibility & UX
+
+- Alla inputs ska ha `label` och `aria-label`.
+- Knappar och formulär ska vara tangentbordsnavigerbara.
+- Layouten ska fungera på både mobil och desktop.
+
+---
+
+## 4. Struktur & dokumentation
+
+- Frontend och backend ska vara separerade.
+- Dela upp komponenter, API-klienter och hjälpfunktioner i egna filer.
+- README ska innehålla instruktioner för installation, drift och deployment.
+- Dokumentera större ändringar i README eller i PR-beskrivning.
+
+---
+
+## 5. Testning & CI/CD
+
+- Automatisk lint och test via GitHub Actions (eller motsvarande) innan merge.
+- Skriv tester för viktiga backend-routes och frontend-flöden.
+
+---
+
+## 6. Versionshantering
+
+- Branch-namn ska vara beskrivande, t.ex. `fix/login-bug`, `feature/admin-panel`.
+- Pull requests ska beskriva vad som ändras och varför.
+- Kod ska alltid granskas innan merge.
+
+---
+
+## 7. Cursor/AI-agent: Viktiga instruktioner
+
+- Cursor ska ENDAST göra ändringar som krävs för att koden följer ESLint, Prettier och projektets policy.
+- Cursor får INTE ändra kod, struktur eller logik som redan är korrekt och fungerar.
+- Hänvisa alltid till denna fil vid AI-baserade kodändringar.
+- Om du är osäker: be om förtydligande innan du ändrar.
+
+---
+
+## 8. Kontakt & support
+
+- Vid frågor om regler eller kodstil, kontakta repo-ägaren via GitHub Issues eller diskussioner.
