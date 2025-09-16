@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MinaBeställningar from "./MinaBeställningar";
-import { fetchProfile } from "./api";
+import { fetchProfile, updateProfile } from "./api";
 
 function MinProfil() {
   const navigate = useNavigate();
@@ -80,11 +80,21 @@ function MinProfil() {
 
   const sparaProfil = async () => {
     try {
-      // Här skulle vi normalt skicka till backend
-      // För nu sparar vi bara i localStorage
-      localStorage.setItem("kundinfo", JSON.stringify(profil));
+      // Skicka till backend för att spara i databasen
+      const updatedProfile = await updateProfile({
+        namn: profil.namn,
+        telefon: profil.telefon,
+        adress: profil.adress || ""
+      });
+      
+      // Uppdatera lokal state med den sparade profilen
+      setProfil(updatedProfile);
+      
+      // Uppdatera även localStorage för kompatibilitet
+      localStorage.setItem("kundinfo", JSON.stringify(updatedProfile));
+      
       setRedigerar(false);
-      alert("✅ Profil sparad!");
+      alert("✅ Profil sparad i databasen!");
     } catch (err) {
       console.error("Fel vid sparande av profil:", err);
       alert("❌ Kunde inte spara profil");

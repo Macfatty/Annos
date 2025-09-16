@@ -21,7 +21,7 @@
       "allergener": [],
       "bild": "",
       "vegansk": true,
-      "glutenfri": true,
+      "glutenfri": false,
       "tillgänglig": true,
       "antal": null
     },

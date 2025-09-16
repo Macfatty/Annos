@@ -105,7 +105,7 @@ app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req,
   const client = await pool.connect();
   
   try {
-    const { order, restaurant_slug, namn, telefon, adress, email } = req.body;
+    const { order, restaurant_slug, namn, telefon, adress, email, ovrigt } = req.body;
 
     if (!order || !Array.isArray(order) || order.length === 0) {
       return res.status(400).json({ message: "Beställning saknas eller är tom" });
@@ -130,8 +130,8 @@ app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req,
       INSERT INTO orders
       (restaurant_slug, customer_name, customer_phone, customer_address, customer_email,
        status, payment_method, payment_status, items_total, delivery_fee, discount_total,
-       grand_total, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+       grand_total, customer_notes, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING id
     `;
 
@@ -150,6 +150,7 @@ app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req,
         0, // delivery_fee
         0, // discount_total
         totalInOre, // grand_total
+        ovrigt || '', // customer_notes
         now,
         now
       ]
@@ -288,13 +289,49 @@ app.get("/api/profile", verifyJWT, async (req, res) => {
       [user.email]
     );
 
+    // Hämta användarens roll från JWT-token
+    const userRole = req.user.role;
+    
     res.json({
       ...user,
+      role: userRole,
       orders: ordersResult.rows
     });
   } catch (error) {
     console.error("Fel vid hämtning av profil:", error);
     res.status(500).json({ error: "Kunde inte hämta profil" });
+  }
+});
+
+// Uppdatera användarprofil
+app.put("/api/profile", verifyJWT, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { namn, telefon, adress } = req.body;
+
+    // Validera input
+    if (!namn || !telefon) {
+      return res.status(400).json({ error: "Namn och telefon krävs" });
+    }
+
+    const updateResult = await pool.query(
+      "UPDATE users SET namn = $1, telefon = $2, adress = $3 WHERE id = $4 RETURNING id, email, namn, telefon, adress, restaurant_slug",
+      [namn, telefon, adress || "", userId]
+    );
+
+    if (updateResult.rows.length === 0) {
+      return res.status(404).json({ error: "Användare inte hittad" });
+    }
+
+    const updatedUser = updateResult.rows[0];
+    
+    res.json({
+      ...updatedUser,
+      role: req.user.role
+    });
+  } catch (error) {
+    console.error("Fel vid uppdatering av profil:", error);
+    res.status(500).json({ error: "Kunde inte uppdatera profil" });
   }
 });
 

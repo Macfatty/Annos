@@ -94,15 +94,13 @@ function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
       }
 
       const payload = {
-        kund: {
-          namn: kundinfo.namn,
-          email: kundinfo.email,
-          telefon: kundinfo.telefon,
-          adress: kundinfo.adress,
-          ovrigt: kundinfo.ovrigt,
-        },
         order: varukorg,
         restaurant_slug: restaurant_slug,
+        namn: kundinfo.namn,
+        email: kundinfo.email,
+        telefon: kundinfo.telefon,
+        adress: kundinfo.adress,
+        ovrigt: kundinfo.ovrigt,
       };
 
       await createOrder(payload);

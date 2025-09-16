@@ -1,7 +1,7 @@
 // src/AdminPanel.jsx
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchProfile } from "./api";
+import { fetchProfile, fetchAdminOrders, markOrderAsDone } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -32,17 +32,7 @@ function AdminPanel() {
   const hamtaOrdrar = useCallback(async (valdRestaurang = null) => {
     setLoading(true);
     try {
-      const url = valdRestaurang 
-        ? `${BASE_URL}/api/admin/orders/today?slug=${valdRestaurang}`
-        : `${BASE_URL}/api/admin/orders/today`;
-      
-      const res = await fetch(url, {
-        credentials: "include"
-      });
-      if (!res.ok) {
-        throw new Error("Kunde inte hämta ordrar");
-      }
-      const data = await res.json();
+      const data = await fetchAdminOrders(valdRestaurang);
       setOrdrar(data);
       setFel(null);
     } catch (err) {
@@ -64,13 +54,7 @@ function AdminPanel() {
   // Markera som klar
   const markeraSomKlar = async (id) => {
     try {
-      const res = await fetch(`${BASE_URL}/api/admin/orders/${id}/klart`, {
-        method: "PATCH",
-        credentials: "include"
-      });
-      if (!res.ok) {
-        throw new Error("Kunde inte markera som klar");
-      }
+      await markOrderAsDone(id);
       setOrdrar((prev) => prev.filter((o) => o.id !== id));
     } catch (err) {
       console.error(err);

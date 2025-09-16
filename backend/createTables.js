@@ -35,6 +35,7 @@ const createTables = async () => {
       delivery_fee DECIMAL(10,2) DEFAULT 0,
       discount_total DECIMAL(10,2) DEFAULT 0,
       grand_total DECIMAL(10,2) NOT NULL,
+      customer_notes TEXT,
       order_json JSONB,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW(),
