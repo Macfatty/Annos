@@ -8,10 +8,6 @@ function KurirVy() {
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("pending");
 
-  useEffect(() => {
-    fetchOrders();
-  }, [filter, fetchOrders]);
-
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
@@ -32,6 +28,10 @@ function KurirVy() {
       setLoading(false);
     }
   }, [filter]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [filter, fetchOrders]);
 
   const acceptOrder = async (orderId) => {
     try {

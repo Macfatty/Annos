@@ -15,6 +15,7 @@ import Tack from "./Tack";
 import AdminPanel from "./AdminPanel";
 import KurirVy from "./KurirVy";
 import RestaurangVy from "./RestaurangVy";
+import ErrorBoundary from "./ErrorBoundary";
 import { fetchProfile, logout, checkBackendHealth } from "./api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -335,8 +336,16 @@ function App() {
         <Route path="/profil" element={<MinProfil />} />
         <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
         <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/kurir" element={<KurirVy />} />
-        <Route path="/kurir-vy" element={<KurirVy />} />
+        <Route path="/kurir" element={
+          <ErrorBoundary>
+            <KurirVy />
+          </ErrorBoundary>
+        } />
+        <Route path="/kurir-vy" element={
+          <ErrorBoundary>
+            <KurirVy />
+          </ErrorBoundary>
+        } />
         <Route path="/restaurang/:slug/incoming" element={<RestaurangVy />} />
         <Route path="/restaurang-vy" element={<RestaurangVy />} />
         
