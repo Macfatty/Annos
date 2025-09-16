@@ -111,9 +111,78 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <KurirVy />
   </ErrorBoundary>
 } />
+<Route path="/kurir-vy" element={
+  <ErrorBoundary>
+    <KurirVy />
+  </ErrorBoundary>
+} />
 ```
 
 **Syfte**: Isolerar fel i kurirfunktionaliteten så att resten av appen fortsätter fungera.
+
+### 3. RestaurangVy-komponenten (App.jsx)
+```jsx
+<Route path="/restaurang/:slug/incoming" element={
+  <ErrorBoundary>
+    <RestaurangVy />
+  </ErrorBoundary>
+} />
+<Route path="/restaurang-vy" element={
+  <ErrorBoundary>
+    <RestaurangVy />
+  </ErrorBoundary>
+} />
+```
+
+**Syfte**: Skyddar restauranghanteringsfunktionaliteten från fel som kan uppstå vid orderhantering.
+
+### 4. AdminPanel-komponenten (App.jsx)
+```jsx
+<Route path="/admin" element={
+  <ErrorBoundary>
+    <AdminPanel />
+  </ErrorBoundary>
+} />
+```
+
+**Syfte**: Isolerar fel i adminfunktionaliteten för att förhindra att hela systemet påverkas.
+
+### 5. Checkout-komponenten (App.jsx)
+```jsx
+<Route path="/checkout" element={
+  <ErrorBoundary>
+    <Checkout
+      varukorg={varukorg}
+      setVarukorg={setVarukorg}
+      restaurant_slug={restaurant_slug}
+    />
+  </ErrorBoundary>
+} />
+```
+
+**Syfte**: Skyddar den kritiska checkout-processen från fel som kan förhindra beställningar.
+
+## Felhanteringsstrategi i Annos-projektet
+
+### Hierarkisk felhantering
+Vi använder en hierarkisk approach med ErrorBoundary på flera nivåer:
+
+1. **Global nivå**: Fångar alla oväntade fel i hela applikationen
+2. **Route-nivå**: Isolerar fel per funktionalitetsområde (kurir, restaurang, admin, checkout)
+3. **Komponent-nivå**: Skyddar kritiska komponenter från att krascha
+
+### Komponenter som omfattas
+- **KurirVy**: Hanterar kurirfunktionalitet och orderleverans
+- **RestaurangVy**: Hanterar restaurangorder och statusuppdateringar
+- **AdminPanel**: Administrativa funktioner och systemhantering
+- **Checkout**: Kritiska beställningsprocesser och betalningar
+
+### Felhantering i UI
+ErrorBoundary visar användarvänliga felmeddelanden med:
+- Tydliga instruktioner för användaren
+- "Försök igen"-knapp för att återställa komponenten
+- "Ladda om sidan"-knapp som fallback
+- Tekniska detaljer endast i utvecklingsläge
 
 ## Vad fångar ErrorBoundary?
 

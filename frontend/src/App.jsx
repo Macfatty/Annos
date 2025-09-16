@@ -335,7 +335,11 @@ function App() {
         <Route path="/valj-restaurang" element={<ValjRestaurang />} />
         <Route path="/profil" element={<MinProfil />} />
         <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
-        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/admin" element={
+          <ErrorBoundary>
+            <AdminPanel />
+          </ErrorBoundary>
+        } />
         <Route path="/kurir" element={
           <ErrorBoundary>
             <KurirVy />
@@ -346,8 +350,16 @@ function App() {
             <KurirVy />
           </ErrorBoundary>
         } />
-        <Route path="/restaurang/:slug/incoming" element={<RestaurangVy />} />
-        <Route path="/restaurang-vy" element={<RestaurangVy />} />
+        <Route path="/restaurang/:slug/incoming" element={
+          <ErrorBoundary>
+            <RestaurangVy />
+          </ErrorBoundary>
+        } />
+        <Route path="/restaurang-vy" element={
+          <ErrorBoundary>
+            <RestaurangVy />
+          </ErrorBoundary>
+        } />
         
         {/* Admin test routes */}
         <Route path="/admin-test" element={<Start />} />
@@ -373,11 +385,13 @@ function App() {
         <Route
           path="/checkout"
           element={
-            <Checkout
-              varukorg={varukorg}
-              setVarukorg={setVarukorg}
-              restaurant_slug={restaurant_slug}
-            />
+            <ErrorBoundary>
+              <Checkout
+                varukorg={varukorg}
+                setVarukorg={setVarukorg}
+                restaurant_slug={restaurant_slug}
+              />
+            </ErrorBoundary>
           }
         />
         <Route path="/tack" element={<Tack />} />

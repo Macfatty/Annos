@@ -254,6 +254,100 @@ app.get("/api/admin/orders/today", verifyJWT, verifyRole(["admin", "restaurant"]
   }
 });
 
+// GET /api/admin/orders - Hämta ordrar för restaurang
+app.get("/api/admin/orders", verifyJWT, verifyRole(["admin", "restaurant"]), (req, res) => {
+  const { slug, status } = req.query;
+  
+  // Kontrollera att användaren har behörighet för den begärda restaurangen
+  if (slug && req.user.role === "restaurant" && req.user.restaurant_slug !== slug) {
+    return res.status(403).json({ error: "Forbidden: Wrong restaurant slug" });
+  }
+  
+  if (slug) {
+    if (status) {
+      // Hämta ordrar för specifik restaurang med status-filter
+      hamtaOrdrarMedStatus(slug, status, (err, orders) => {
+        if (err) {
+          console.error("Fel vid hämtning av ordrar med status:", err);
+          return res.status(500).json({ error: "Kunde inte hämta ordrar" });
+        }
+        res.json(orders);
+      });
+    } else {
+      // Hämta ordrar för specifik restaurang
+      hamtaDagensOrdrar(slug, (err, orders) => {
+        if (err) {
+          console.error("Fel vid hämtning av ordrar:", err);
+          return res.status(500).json({ error: "Kunde inte hämta ordrar" });
+        }
+        res.json(orders);
+      });
+    }
+  } else {
+    // Hämta alla ordrar (för admin)
+    hamtaAllaDagensOrdrar((err, orders) => {
+      if (err) {
+        console.error("Fel vid hämtning av alla ordrar:", err);
+        return res.status(500).json({ error: "Kunde inte hämta ordrar" });
+      }
+      res.json(orders);
+    });
+  }
+});
+
+// GET /api/courier/orders - Hämta kurirordrar
+app.get("/api/courier/orders", verifyJWT, verifyRole(["courier", "admin"]), (req, res) => {
+  const { status } = req.query;
+  const courierId = req.user.role === "admin" ? null : req.user.userId;
+  
+  if (!status) {
+    return res.status(400).json({ error: "Status parameter krävs" });
+  }
+  
+  hamtaKurirOrdrar(status, courierId, (err, orders) => {
+    if (err) {
+      console.error("Fel vid hämtning av kurirordrar:", err);
+      return res.status(500).json({ error: "Kunde inte hämta ordrar" });
+    }
+    res.json(orders);
+  });
+});
+
+// PATCH /api/courier/orders/:id/accept - Acceptera order
+app.patch("/api/courier/orders/:id/accept", verifyJWT, verifyRole(["courier", "admin"]), (req, res) => {
+  const { id } = req.params;
+  const courierId = req.user.userId;
+  
+  tilldelaOrderTillKurir(id, courierId, (err) => {
+    if (err) {
+      console.error("Fel vid orderacceptans:", err);
+      return res.status(500).json({ error: "Kunde inte acceptera order" });
+    }
+    res.json({ 
+      message: "Order accepterad", 
+      orderId: id, 
+      assignedTo: courierId 
+    });
+  });
+});
+
+// PATCH /api/courier/orders/:id/delivered - Markera order som levererad
+app.patch("/api/courier/orders/:id/delivered", verifyJWT, verifyRole(["courier", "admin"]), (req, res) => {
+  const { id } = req.params;
+  
+  markeraOrderSomLevererad(id, (err) => {
+    if (err) {
+      console.error("Fel vid leverans:", err);
+      return res.status(500).json({ error: "Kunde inte markera som levererad" });
+    }
+    res.json({ 
+      message: "Order levererad", 
+      orderId: id, 
+      deliveredAt: new Date().toISOString() 
+    });
+  });
+});
+
 // Markera order som klar
 app.put("/api/admin/orders/:id/klart", verifyJWT, verifyRole(["admin", "restaurant"]), (req, res) => {
   const { id } = req.params;

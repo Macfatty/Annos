@@ -11,10 +11,6 @@ function RestaurangVy() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedRestaurant, setSelectedRestaurant] = useState(slug || "campino");
 
-  useEffect(() => {
-    fetchOrders();
-  }, [selectedRestaurant, statusFilter, fetchOrders]);
-
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
@@ -40,6 +36,10 @@ function RestaurangVy() {
       setLoading(false);
     }
   }, [selectedRestaurant, statusFilter]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [selectedRestaurant, statusFilter, fetchOrders]);
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
