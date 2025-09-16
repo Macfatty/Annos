@@ -40,15 +40,15 @@ async function apiRequest(endpoint, options = {}) {
     clearTimeout(timeoutId);
     
     // Hantera timeout
-    if (error.name === 'AbortError') {
-      const timeoutError = new Error('Request timeout');
+    if (error.name === "AbortError") {
+      const timeoutError = new Error("Request timeout");
       timeoutError.status = 408;
       throw timeoutError;
     }
     
     // Hantera nätverksfel och andra fel
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      const networkError = new Error('NetworkError when attempting to fetch resource');
+    if (error.name === "TypeError" && error.message.includes("fetch")) {
+      const networkError = new Error("NetworkError when attempting to fetch resource");
       networkError.status = 0; // Nätverksfel
       throw networkError;
     }
@@ -61,8 +61,8 @@ export async function checkBackendHealth(retries = 2) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const response = await fetch(`${BASE_URL}/api/test`, {
-        method: 'GET',
-        credentials: 'include',
+        method: "GET",
+        credentials: "include",
         signal: AbortSignal.timeout(5000) // 5 sekunder timeout för health check
       });
       return response.ok;
