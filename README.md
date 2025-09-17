@@ -1,4 +1,4 @@
-# Annos – Hemkörningsapp
+ då du centralicerade och uppdaterade api osv innan väl # Annos – Hemkörningsapp
 
 **Annos** är en fullständig webbaserad hemkörningsapp med rollbaserad åtkomst, statusmaskin för ordrar, betalningsintegration och månadsvisa utbetalningar till restauranger.
 
@@ -106,20 +106,19 @@ VITE_API_BASE_URL=http://localhost:3001
 # Skapa databas
 createdb annos_dev
 
-# Skapa tabeller (automatiskt vid första körning)
+# Kör admin-skript (om admin-användare saknas)
 cd backend
-node createTables.js  # Skapar PostgreSQL-tabeller
-
-# Kör admin-skript
 node skapaAdmin.js [restaurant_slug]  # Skapar admin@example.com / admin123
 ```
 
 **Notera:**
-Systemet använder endast PostgreSQL. SQLite-stöd har tagits bort för att undvika förvirring.
+- Systemet använder endast PostgreSQL. SQLite-stöd har tagits bort för att undvika förvirring.
+- Tabeller och sequences skapas automatiskt vid första körning av servern.
+- Startup-processen hanterar databas-skapande och sequence-synkronisering automatiskt.
 
 ### 5. Starta systemet
 ```bash
-# Terminal 1 - Backend
+# Terminal 1 - Backend (använder startup.js med full SoC-implementation)
 cd backend
 npm start
 
@@ -127,6 +126,12 @@ npm start
 cd frontend
 npm run dev
 ```
+
+**Startup-processen:**
+1. **Infrastructure Setup** - Kontrollerar PostgreSQL-anslutning
+2. **Data Migration** - Skapar tabeller och sequences automatiskt
+3. **Maintenance Tasks** - Synkroniserar sequences
+4. **Application Startup** - Startar Express server
 
 ### 6. Åtkomst
 - **Frontend**: http://localhost:5173

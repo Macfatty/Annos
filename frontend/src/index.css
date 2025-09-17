@@ -8,6 +8,27 @@
   -moz-osx-font-smoothing: grayscale;
 
   color-scheme: light dark;
+
+  /* CSS-variabler för ljust läge */
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --button-bg: #f9f9f9;
+  --button-text: #000000;
+  --button-hover: #747bff;
+  --border-color: #ddd;
+  --card-bg: #ffffff;
+  --card-border: #ddd;
+  --input-bg: #ffffff;
+  --input-border: #ccc;
+  --link-color: #646cff;
+  --link-hover: #535bf2;
+  --error-bg: #f8d7da;
+  --error-border: #f5c6cb;
+  --error-text: #dc3545;
+  --success-bg: #d1f2eb;
+  --success-text: #0f5132;
+  --warning-bg: #fff3cd;
+  --warning-text: #856404;
 }
 
 * {
@@ -18,61 +39,105 @@ body {
   margin: 0;
   min-height: 100vh;
   padding: 0;
-  background-color: #ffffff;
-  color: #000000;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 /* Mörkt läge */
 body.dark {
-  background-color: #121212;
-  color: #ffffff;
+  --bg-color: #121212;
+  --text-color: #ffffff;
+  --button-bg: #1a1a1a;
+  --button-text: #ffffff;
+  --button-hover: #646cff;
+  --border-color: #333;
+  --card-bg: #1e1e1e;
+  --card-border: #333;
+  --input-bg: #1e1e1e;
+  --input-border: #555;
+  --link-color: #7c7cff;
+  --link-hover: #8b8bff;
+  --error-bg: #2d1b1b;
+  --error-border: #721c24;
+  --error-text: #f8d7da;
+  --success-bg: #1b2d1b;
+  --success-text: #d1f2eb;
+  --warning-bg: #2d2b1b;
+  --warning-text: #fff3cd;
 }
 
 /* Länkar */
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--link-color);
   text-decoration: none;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--link-hover);
 }
 
 /* Knappar */
 button {
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 1px solid var(--border-color);
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--button-hover);
+  background-color: var(--button-hover);
+  color: white;
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
+/* Input-fält */
+input, textarea, select {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-family: inherit;
+}
 
-  a:hover {
-    color: #747bff;
-  }
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--button-hover);
+  border-color: var(--button-hover);
+}
 
-  button {
-    background-color: #f9f9f9;
-    color: #000;
-  }
+/* Kort och containrar */
+.card, .container {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-color);
+}
+
+/* Felmeddelanden */
+.error {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+}
+
+/* Varningar */
+.warning {
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+/* Framgångsmeddelanden */
+.success {
+  background-color: var(--success-bg);
+  color: var(--success-text);
 }
 /* === FIX: Global a11y-fokusring + sticky-top kompatibilitet === */
 :focus-visible {

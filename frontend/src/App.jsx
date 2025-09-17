@@ -243,7 +243,7 @@ function App() {
         >
           🔄 Försök igen
         </button>
-        <p style={{ fontSize: "0.9rem", color: "#666" }}>
+        <p style={{ fontSize: "0.9rem", color: "var(--text-color)", opacity: "0.7" }}>
           Starta backend med: <code>cd backend && npm start</code>
         </p>
       </div>
@@ -396,8 +396,8 @@ function App() {
         />
         <Route path="/tack" element={<Tack />} />
         <Route path="/restaurang" element={<Restaurang />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login onLoginSuccess={loadProfile} />} />
+        <Route path="/register" element={<Register onRegisterSuccess={loadProfile} />} />
         <Route
           path="/campino"
           element={

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-function Login() {
+function Login({ onLoginSuccess }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [losenord, setLosenord] = useState("");
@@ -31,6 +31,12 @@ function Login() {
           })
         );
 
+        // Direkt state-uppdatering för samma flik
+        if (onLoginSuccess) {
+          onLoginSuccess();
+        }
+        
+        // Cross-tab sync
         window.dispatchEvent(new Event("storage"));
         navigate("/valj-restaurang");
       } else {

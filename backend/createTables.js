@@ -69,9 +69,13 @@ const createTables = async () => {
     console.log('✅ Tabeller skapade i PostgreSQL');
   } catch (err) {
     console.error('❌ Fel vid skapande av tabeller:', err.stack);
-  } finally {
-    await pool.end();
+    throw err; // Kasta felet så att startup kan hantera det
   }
 };
 
-createTables();
+// Kör createTables om scriptet anropas direkt
+if (require.main === module) {
+  createTables();
+}
+
+module.exports = { createTables };

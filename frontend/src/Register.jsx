@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-function Register() {
+function Register({ onRegisterSuccess }) {
   const navigate = useNavigate();
   const [namn, setNamn] = useState("");
   const [email, setEmail] = useState("");
@@ -20,6 +20,10 @@ function Register() {
 
       if (res.ok) {
         alert("Registrering lyckades!");
+        // Direkt state-uppdatering om callback finns
+        if (onRegisterSuccess) {
+          onRegisterSuccess();
+        }
         navigate("/login");
       } else {
         let data = {};

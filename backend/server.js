@@ -107,12 +107,29 @@ app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req,
   try {
     const { order, restaurant_slug, namn, telefon, adress, email, ovrigt } = req.body;
 
+    // Validera order-data
     if (!order || !Array.isArray(order) || order.length === 0) {
-      return res.status(400).json({ message: "Beställning saknas eller är tom" });
+      return res.status(400).json({ 
+        error: "Beställning saknas eller är tom",
+        code: "INVALID_ORDER"
+      });
     }
 
+    // Validera kunduppgifter
     if (!restaurant_slug || !namn || !telefon || !adress || !email) {
-      return res.status(400).json({ message: "Kunduppgifter saknas" });
+      return res.status(400).json({ 
+        error: "Kunduppgifter saknas",
+        code: "MISSING_CUSTOMER_DATA"
+      });
+    }
+
+    // Validera email-format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ 
+        error: "Ogiltig e-postadress",
+        code: "INVALID_EMAIL"
+      });
     }
 
     // Beräkna total
@@ -157,10 +174,14 @@ app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req,
     );
 
     const orderId = orderResult.rows[0].id;
-    console.log("Ny beställning sparad med ID:", orderId);
 
     // Spara order items
     for (const orderItem of order) {
+      // Validera order item
+      if (!orderItem.namn || !orderItem.pris) {
+        throw new Error(`Ogiltigt order item: saknar namn eller pris`);
+      }
+
       const itemSql = `
         INSERT INTO order_items (order_id, name, quantity, unit_price, line_total)
         VALUES ($1, $2, $3, $4, $5)
@@ -207,8 +228,7 @@ app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req,
 
     // Committa transaktionen
     await client.query('COMMIT');
-
-    console.log("Beställning sparad framgångsrikt");
+    
     res.json({
       message: "Beställning mottagen",
       orderId: orderId,
@@ -217,8 +237,46 @@ app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req,
 
   } catch (error) {
     console.error("Fel vid skapande av beställning:", error);
-    await client.query('ROLLBACK');
-    res.status(500).json({ message: "Internt serverfel" });
+    
+    // Rollback transaktionen
+    try {
+      await client.query('ROLLBACK');
+    } catch (rollbackError) {
+      console.error("Fel vid rollback:", rollbackError);
+    }
+    
+    // Returnera specifika felkoder baserat på feltyp
+    if (error.code === '23505') { // Unique constraint violation
+      // Kontrollera om det är PRIMARY KEY constraint (sequence problem)
+      if (error.constraint === 'orders_pkey') {
+        console.error("⚠️  Sequence problem upptäckt:", error.detail);
+        return res.status(500).json({ 
+          error: "Databasfel - kontakta support",
+          code: "SEQUENCE_ERROR",
+          hint: "Sequence behöver synkroniseras"
+        });
+      } else {
+        return res.status(409).json({ 
+          error: "Beställning med denna information finns redan",
+          code: "DUPLICATE_ORDER"
+        });
+      }
+    } else if (error.code === '23503') { // Foreign key violation
+      return res.status(400).json({ 
+        error: "Ogiltig restaurang eller data",
+        code: "INVALID_REFERENCE"
+      });
+    } else if (error.message.includes('Ogiltigt order item')) {
+      return res.status(400).json({ 
+        error: error.message,
+        code: "INVALID_ORDER_ITEM"
+      });
+    } else {
+      return res.status(500).json({ 
+        error: "Internt serverfel",
+        code: "INTERNAL_ERROR"
+      });
+    }
   } finally {
     client.release();
   }
@@ -352,13 +410,45 @@ app.patch("/api/courier/orders/:id/delivered", verifyJWT, verifyRole(["courier",
 app.put("/api/admin/orders/:id/klart", verifyJWT, verifyRole(["admin", "restaurant"]), (req, res) => {
   const { id } = req.params;
   
-  markeraOrderSomKlar(id, (err) => {
-    if (err) {
-      console.error("Fel vid markering av order som klar:", err);
-      return res.status(500).json({ error: "Kunde inte markera order som klar" });
-    }
-    res.json({ message: "Order markerad som klar" });
-  });
+  // Kontrollera att ordern tillhör rätt restaurang för restaurant-användare
+  if (req.user.role === "restaurant") {
+    // Hämta orderns restaurant_slug för validering
+    const checkQuery = "SELECT restaurant_slug FROM orders WHERE id = $1";
+    pool.query(checkQuery, [id], (err, result) => {
+      if (err) {
+        console.error("Fel vid hämtning av order-slug:", err);
+        return res.status(500).json({ error: "Kunde inte verifiera order" });
+      }
+      
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: "Order inte hittad" });
+      }
+      
+      const orderRestaurantSlug = result.rows[0].restaurant_slug;
+      
+      if (req.user.restaurant_slug !== orderRestaurantSlug) {
+        return res.status(403).json({ error: "Forbidden: Wrong restaurant slug" });
+      }
+      
+      // Fortsätt med markering
+      markeraOrderSomKlar(id, (err) => {
+        if (err) {
+          console.error("Fel vid markering av order som klar:", err);
+          return res.status(500).json({ error: "Kunde inte markera order som klar" });
+        }
+        res.json({ message: "Order markerad som klar" });
+      });
+    });
+  } else {
+    // Admin kan markera alla ordrar
+    markeraOrderSomKlar(id, (err) => {
+      if (err) {
+        console.error("Fel vid markering av order som klar:", err);
+        return res.status(500).json({ error: "Kunde inte markera order som klar" });
+      }
+      res.json({ message: "Order markerad som klar" });
+    });
+  }
 });
 
 // Hämta användarprofil

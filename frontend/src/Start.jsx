@@ -35,7 +35,7 @@ function Start() {
   return (
     <div style={{ padding: "2rem", textAlign: "center", fontFamily: "sans-serif" }}>
       <h1 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>
-        VÄLKOMMEN TILL <span style={{ color: "#007bff" }}>ANNOS-HEMKÖRNING</span>
+        VÄLKOMMEN TILL <span style={{ color: "var(--link-color)" }}>ANNOS-HEMKÖRNING</span>
       </h1>
       <p style={{ fontSize: "1.25rem", marginBottom: "2rem", maxWidth: "600px", margin: "auto" }}>
         Varsågod och registrera dig för att smidigt beställa från din favorit restaurang eller butik.
@@ -84,7 +84,7 @@ function Start() {
       )}
 
       {/* Footer med länkar */}
-      <footer style={{ marginTop: "4rem", fontSize: "0.9rem", color: darkMode ? "#ccc" : "gray" }}>
+      <footer style={{ marginTop: "4rem", fontSize: "0.9rem", color: "var(--text-color)", opacity: "0.7" }}>
         <p>
           Vi lagrar dina uppgifter enligt GDPR och använder dem endast för att hantera din beställning.
         </p>

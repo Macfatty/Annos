@@ -18,7 +18,10 @@
   },
   "scripts": {
     "test": "jest",
+    "start": "node startup.js",
+    "start:dev": "node server.js",
     "payouts:run": "node backend/tasks/generatePayouts.js",
+    "fix-sequences": "node fixSequence.js",
     "prepush": "npm test"
   },
   "jest": {
