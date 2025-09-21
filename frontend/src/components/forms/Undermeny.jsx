@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
-import "./App.css";
-import { getAccessories } from "./utils/getAccessoriesByRestaurant";
+import "../../styles/App.css";
+import { getAccessories } from "../../utils/getAccessoriesByRestaurant";
 
 function Undermeny({ ratt, onClose, onAddToCart, isLoggedIn }) {
   const [oppenKategori, setOppenKategori] = useState(null);

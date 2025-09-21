@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MinaBeställningar from "./MinaBeställningar";
-import { fetchProfile, updateProfile } from "./api";
+import { fetchProfile, updateProfile } from "../../services/api";
 
 function MinProfil() {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchProfile } from "./api";
+import { fetchProfile } from "../../services/api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./App.css";
-import { fetchProfile, createOrder } from "./api";
+import "../../styles/App.css";
+import { fetchProfile, createOrder } from "../../services/api";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// const BASE_URL = import.meta.env.VITE_API_BASE_URL; // Unused for now
 
 function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
           return;
         }
       } catch (err) {
-        console.log("Kunde inte hämta profil, försöker med localStorage");
+        console.log("Kunde inte hämta profil, försöker med localStorage", err);
       }
 
       // Fallback till localStorage om profil inte kunde hämtas

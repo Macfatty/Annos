@@ -1,22 +1,22 @@
-import { useState, useEffect, useCallback } from "react";
-import "./App.css";
-import Undermeny from "./Undermeny";
-import Kundvagn from "./Kundvagn";
-import Checkout from "./Checkout";
-import Restaurang from "./Restaurang";
-import MinaBeställningar from "./MinaBeställningar";
-import Login from "./Login";
-import Register from "./Register";
-import Start from "./Start";
-import ValjRestaurang from "./ValjRestaurang";
-import MinProfil from "./MinProfil";
+import { useState, useEffect } from "react";
+import "./styles/App.css";
+import Undermeny from "./components/forms/Undermeny";
+import Kundvagn from "./pages/customer/Kundvagn";
+import Checkout from "./pages/customer/Checkout";
+import Restaurang from "./pages/restaurant/Restaurang";
+import MinaBeställningar from "./pages/customer/MinaBeställningar";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Start from "./pages/Start";
+import ValjRestaurang from "./pages/restaurant/ValjRestaurang";
+import MinProfil from "./pages/customer/MinProfil";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import Tack from "./Tack";
-import AdminPanel from "./AdminPanel";
-import KurirVy from "./KurirVy";
-import RestaurangVy from "./RestaurangVy";
-import ErrorBoundary from "./ErrorBoundary";
-import { fetchProfile, logout, checkBackendHealth } from "./api";
+import Tack from "./pages/customer/Tack";
+import AdminPanel from "./pages/admin/AdminPanel";
+import KurirVy from "./pages/courier/KurirVy";
+import RestaurangVy from "./pages/restaurant/RestaurangVy";
+import ErrorBoundary from "./components/common/ErrorBoundary";
+import { useAuth, useCart, useTheme } from "./hooks";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -25,25 +25,33 @@ function App() {
   const location = useLocation();
   const path = location.pathname.toLowerCase();
 
+  // Custom hooks
+  const { 
+    inloggad, 
+    authLoading, 
+    backendError, 
+    isAdmin, 
+    isCourier, 
+    isRestaurant, 
+    loggaUt 
+  } = useAuth();
+  
+  const { 
+    varukorg, 
+    valdRatt, 
+    antalVaror, 
+    addToCart, 
+    setValdRatt, 
+    setRedigeringsIndex,
+    setVarukorg
+  } = useCart();
+  
+  const { tema, växlaTema } = useTheme();
+
+  // Local state för meny
   const [meny, setMeny] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [valdRatt, setValdRatt] = useState(null);
-  const [redigeringsIndex, setRedigeringsIndex] = useState(null);
-  const [varukorg, setVarukorg] = useState(() => {
-    const sparad = localStorage.getItem("varukorg");
-    return sparad ? JSON.parse(sparad) : [];
-  });
-  const [inloggad, setInloggad] = useState(false);
-  const [role, setRole] = useState("");
-  const [authLoading, setAuthLoading] = useState(true); // Ny state för auth-loading
-  const [backendError, setBackendError] = useState(false); // Ny state för backend-fel
-  const isAdmin = role === "admin";
-  const isCourier = role === "courier";
-  const isRestaurant = role === "restaurant";
-  const [tema, setTema] = useState(
-    () => localStorage.getItem("tema") || "light"
-  );
   const [restaurant_slug, setRestaurant_slug] = useState("campino");
 
   useEffect(() => {
@@ -61,14 +69,7 @@ function App() {
     }
   }, [location.pathname]);
 
-  useEffect(() => {
-    document.body.className = tema;
-    localStorage.setItem("tema", tema);
-  }, [tema]);
-
-  useEffect(() => {
-    localStorage.setItem("varukorg", JSON.stringify(varukorg));
-  }, [varukorg]);
+  // Tema och varukorg hanteras nu av custom hooks
 
   useEffect(() => {
     const fetchMeny = async () => {
@@ -105,95 +106,11 @@ function App() {
   }, [restaurant_slug]);
 
 
-  const loadProfile = useCallback(async () => {
-    setAuthLoading(true);
-    
-    try {
-      // Kontrollera först om vi har någon indikation på att användaren är inloggad
-      const hasStoredAuth = localStorage.getItem("kundinfo");
-      
-      // Om ingen lagrad autentisering finns, hoppa över profilhämtning
-      if (!hasStoredAuth) {
-        setInloggad(false);
-        setRole("");
-        setBackendError(false); // Ingen backend-fel om ingen auth finns
-        return;
-      }
+  // Autentisering, tema och varukorg hanteras nu av custom hooks
 
-      // Kontrollera om backend är tillgänglig innan vi försöker hämta profil
-      const backendAvailable = await checkBackendHealth();
-      if (!backendAvailable) {
-        console.warn("Backend inte tillgänglig - användaren förblir utloggad");
-        setInloggad(false);
-        setRole("");
-        setBackendError(true);
-        return;
-      }
-      
-      setBackendError(false); // Backend är tillgänglig
-
-      const data = await fetchProfile();
-      setInloggad(true);
-      setRole(data.role || "");
-    } catch (err) {
-      if (err?.status === 401) {
-        // Session har förfallit - rensa lokal data
-        localStorage.removeItem("kundinfo");
-        localStorage.removeItem("varukorg");
-        setInloggad(false);
-        setRole("");
-        console.log("Session förfallen - användaren är utloggad");
-      } else if (err?.status === 0) {
-        // Nätverksfel - backend är inte tillgänglig
-        console.warn("Nätverksfel vid profilhämtning - användaren förblir utloggad");
-        setInloggad(false);
-        setRole("");
-        setBackendError(true);
-      } else if (err?.status === 408) {
-        // Timeout - backend svarar för långsamt
-        console.warn("Timeout vid profilhämtning - användaren förblir utloggad");
-        setInloggad(false);
-        setRole("");
-        setBackendError(true);
-      } else {
-        // Andra fel
-        console.error("Fel vid profilhämtning:", err);
-        setInloggad(false);
-        setRole("");
-        setBackendError(true);
-      }
-    } finally {
-      setAuthLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
-
-  useEffect(() => {
-    const observer = () => {
-      loadProfile();
-    };
-    window.addEventListener("storage", observer);
-    return () => {
-      window.removeEventListener("storage", observer);
-    };
-  }, [loadProfile]);
-
-  const växlaTema = () => {
-    setTema((prev) => (prev === "light" ? "dark" : "light"));
-  };
-
-  const retryConnection = () => {
-    setBackendError(false);
-    setAuthLoading(true);
-    loadProfile();
-  };
-
-  // Lägg till retry-funktion för när användaren klickar på retry-knappen
+  // Retry-funktion för backend-fel
   const handleRetry = () => {
-    retryConnection();
+    window.location.reload(); // Enkel lösning för att ladda om sidan
   };
 
   // Visa loading-indikator medan autentisering kontrolleras
@@ -298,21 +215,9 @@ function App() {
                 )}
                 <button
                   onClick={async () => {
-                    try {
-                      await logout();
-                      localStorage.clear();
-                      window.dispatchEvent(new Event("storage"));
-                      alert("Du är nu utloggad.");
-                      navigate("/");
-                      setInloggad(false);
-                    } catch (err) {
-                      console.error("Logout error:", err);
-                      // Logga ut lokalt även om API-anropet misslyckas
-                      localStorage.clear();
-                      window.dispatchEvent(new Event("storage"));
-                      navigate("/");
-                      setInloggad(false);
-                    }
+                    await loggaUt();
+                    alert("Du är nu utloggad.");
+                    navigate("/");
                   }}
                 >
                   🚪 Logga ut
@@ -396,8 +301,8 @@ function App() {
         />
         <Route path="/tack" element={<Tack />} />
         <Route path="/restaurang" element={<Restaurang />} />
-        <Route path="/login" element={<Login onLoginSuccess={loadProfile} />} />
-        <Route path="/register" element={<Register onRegisterSuccess={loadProfile} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/campino"
           element={
@@ -446,17 +351,7 @@ function App() {
                   ratt={valdRatt}
                   isLoggedIn={inloggad}
                   onClose={() => setValdRatt(null)}
-                  onAddToCart={(val) => {
-                    if (redigeringsIndex !== null) {
-                      const ny = [...varukorg];
-                      ny[redigeringsIndex] = val;
-                      setVarukorg(ny);
-                      setRedigeringsIndex(null);
-                    } else {
-                      setVarukorg([...varukorg, val]);
-                    }
-                    setValdRatt(null);
-                  }}
+                  onAddToCart={addToCart}
                 />
               )}
             </div>
@@ -510,17 +405,7 @@ function App() {
                   ratt={valdRatt}
                   isLoggedIn={inloggad}
                   onClose={() => setValdRatt(null)}
-                  onAddToCart={(val) => {
-                    if (redigeringsIndex !== null) {
-                      const ny = [...varukorg];
-                      ny[redigeringsIndex] = val;
-                      setVarukorg(ny);
-                      setRedigeringsIndex(null);
-                    } else {
-                      setVarukorg([...varukorg, val]);
-                    }
-                    setValdRatt(null);
-                  }}
+                  onAddToCart={addToCart}
                 />
               )}
             </div>
@@ -535,7 +420,7 @@ function App() {
             className="kundvagn-flyt"
             aria-label="Gå till kundvagn"
           >
-            🛒 Kundvagn ({varukorg.length})
+            🛒 Kundvagn ({antalVaror})
           </button>
         )}
       {isCourier && (

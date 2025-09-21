@@ -1,4 +1,4 @@
- då du centralicerade och uppdaterade api osv innan väl # Annos – Hemkörningsapp
+# Annos – Hemkörningsapp
 
 **Annos** är en fullständig webbaserad hemkörningsapp med rollbaserad åtkomst, statusmaskin för ordrar, betalningsintegration och månadsvisa utbetalningar till restauranger.
 
@@ -38,15 +38,39 @@
 
 ```
 annos/
-├── frontend/           → React-klient
-├── backend/            → Express API
-├── docs/              → Dokumentation
-│   ├── database.md    → Databasstruktur
-│   ├── functions.md   → Systemfunktioner
-│   ├── restaurant.md  → Restaurangvy
-│   ├── courier.md     → Kurirvy
-│   └── payments.md    → Betalningsarkitektur
-└── backend/exports/   → Månadsvisa payout-filer
+├── frontend/                    → React-klient (REORGANISERAD)
+│   ├── src/
+│   │   ├── components/         → Återanvändbara UI-komponenter
+│   │   │   ├── common/        → Gemensamma komponenter
+│   │   │   └── forms/         → Formulärkomponenter
+│   │   ├── pages/             → Sidkomponenter
+│   │   │   ├── auth/          → Inloggning/registrering
+│   │   │   ├── customer/      → Kundfunktioner
+│   │   │   ├── admin/         → Admin-panel
+│   │   │   ├── restaurant/    → Restaurangvy
+│   │   │   └── courier/       → Kurirvy
+│   │   ├── services/          → API-tjänster (NY ARKITEKTUR)
+│   │   │   ├── auth/          → Autentisering
+│   │   │   ├── orders/        → Beställningar
+│   │   │   ├── menu/          → Meny-data
+│   │   │   └── payments/      → Betalningar
+│   │   ├── hooks/             → Custom React hooks
+│   │   └── utils/             → Hjälpfunktioner
+├── backend/                    → Express API (REORGANISERAD)
+│   ├── src/                   → Ny organiserad struktur
+│   │   ├── config/            → Konfiguration
+│   │   ├── controllers/       → API-kontrollrar
+│   │   ├── middleware/        → Middleware
+│   │   ├── routes/            → API-rutter
+│   │   └── services/          → Affärslogik
+│   └── server.js              → Huvudserver (med nya endpoints)
+├── docs/                      → Dokumentation
+│   ├── database.md            → Databasstruktur
+│   ├── functions.md           → Systemfunktioner
+│   ├── restaurant.md          → Restaurangvy
+│   ├── courier.md             → Kurirvy
+│   └── payments.md            → Betalningsarkitektur
+└── backend/exports/           → Månadsvisa payout-filer
 ```
 
 ## ⚡ Snabbstart
@@ -201,6 +225,29 @@ node backend/tasks/generatePayouts.js --from=2024-01-01 --to=2024-01-31
 - **CSV**: `backend/exports/{restaurant_slug}/{YYYY-MM}.csv`
 - **JSON**: `backend/exports/{restaurant_slug}/{YYYY-MM}.json`
 - **Filrättigheter**: 0600 (endast ägare kan läsa)
+
+## 🚀 Senaste Framsteg (2024-09-21)
+
+### ✅ Frontend-reorganisation (KLAR)
+- **Ny mappstruktur**: Komponenter, sidor, tjänster, hooks och verktyg är nu organiserade
+- **Custom hooks**: `useAuth`, `useCart`, `useTheme`, `useApi` för återanvändbar logik
+- **Service-arkitektur**: `AuthService`, `OrderService`, `MenuService`, `PaymentService`
+- **Uppdaterad för nya API**: Frontend använder nu nya meny-endpoints
+
+### ✅ Backend-reorganisation (PÅBÖRJAD)
+- **Ny mappstruktur**: `src/config/`, `src/controllers/`, `src/middleware/`, `src/routes/`, `src/services/`
+- **Nya meny-endpoints**: Integrerade i `server.js` för stegvis migration
+- **Miljövariabler fixade**: `.env` med korrekt PostgreSQL-lösenord
+
+### ✅ Integration (VERIFIERAD)
+- **Backend fungerar**: Nya endpoints svarar korrekt
+- **Databasanslutning**: `annos_dev`-databas verifierad
+- **API-tester**: Alla nya meny-endpoints testade och fungerar
+
+### 🔄 Nästa steg
+- Migrera autentisering till ny struktur
+- Migrera beställningsendpoints
+- Fullständig testning av hela flödet
 
 ## 🧪 Testning och Kvalitet
 

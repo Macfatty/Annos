@@ -10,11 +10,14 @@
 3. ✅ Fungerar autentisering?
 4. ✅ Fungerar alla API-endpoints?
 5. ✅ Fungerar KurirVy och RestaurangVy?
+6. ✅ Fungerar custom hooks (`useAuth`, `useCart`, `useTheme`)?
+7. ✅ Fungerar service-klasser (`AuthService`, `OrderService`, `MenuService`)?
 
 ### Varför detta är kritiskt:
 - Ändringar som påverkar admin-användare påverkar också slutanvändare (kunder)
 - Om admin inte kan lägga beställningar, kan inte kunderna heller
 - Bryta beställningsflödet = bryta hela applikationen
+- Service-klasser och custom hooks påverkar flera komponenter
 
 ## 🚨 REGEL 2: Behåll befintlig autentisering
 
@@ -40,7 +43,37 @@
 3. Testa att allt fungerar igen
 4. Gör mindre, säkrare ändringar istället
 
-## 🚨 REGEL 4: Ändra INTE layout utan tillstånd
+## 🚨 REGEL 4: Följ service-arkitekturen
+
+**Använd ALLTID service-klasser och custom hooks för API-anrop och delad logik.**
+
+### Vad som är OBLIGATORISKT:
+- Använd `AuthService` för all autentisering (login, logout, profile)
+- Använd `OrderService` för alla beställningsrelaterade API-anrop
+- Använd `MenuService` för meny-data och tillbehör
+- Använd `PaymentService` för betalningsrelaterade funktioner
+- Använd custom hooks (`useAuth`, `useCart`, `useTheme`) för komponentstate
+- Importera services från `services/index.js`
+
+### Vad som är FÖRBJUDET:
+- Direkta API-anrop i komponenter (använd services istället)
+- Duplicerad logik mellan komponenter (använd custom hooks)
+- Blanda olika API-hanteringsmetoder
+- Ändra service-klasser utan att testa alla användare
+
+### Service-användning:
+```javascript
+// ✅ KORREKT - Använd service-klasser
+import { AuthService, OrderService } from '../services';
+
+const { login, logout } = AuthService;
+const { createOrder, fetchOrders } = OrderService;
+
+// ❌ FÖRBJUDET - Direkta API-anrop
+const response = await fetch('/api/orders', { ... });
+```
+
+## 🚨 REGEL 5: Ändra INTE layout utan tillstånd
 
 **Ändra INTE visuell layout, styling eller UI-struktur utan explicit tillstånd från användaren.**
 
@@ -77,7 +110,7 @@ const response = await fetch(`${BASE_URL}/api/endpoint`, {
 ## 🎯 Målsättning:
 **Varje ändring ska förbättra systemet utan att bryta befintlig funktionalitet.**
 
-## 🔐 REGEL 5: Autentiseringsstandard - UPPDATERAD
+## 🔐 REGEL 6: Autentiseringsstandard - UPPDATERAD
 
 **Använd ALLTID cookies för autentisering. Systemet använder `credentials: "include"` för alla API-anrop.**
 
@@ -131,7 +164,7 @@ verifyAdminForSlug  // FÖRBJUDET för nya endpoints
 - **Konsekvent**: Samma autentisering överallt
 - **Skalbar**: Fungerar med microservices-arkitektur
 
-## 🔐 REGEL 6: API-autentisering - KONKRET SAMMANFATTNING
+## 🔐 REGEL 7: API-autentisering - KONKRET SAMMANFATTNING
 
 **KRITISK: Blanda INTE autentiseringsmetoder! Systemet använder cookies för autentisering.**
 
@@ -284,7 +317,7 @@ export async function createOrder(payload) {
 
 ---
 
-## 🔒 **REGEL 7: SÄKERHET OCH KÄNSLIG DATA**
+## 🔒 **REGEL 8: SÄKERHET OCH KÄNSLIG DATA**
 
 ### **KRITISKT: Aldrig hårdkoda lösenord eller API-nycklar!**
 

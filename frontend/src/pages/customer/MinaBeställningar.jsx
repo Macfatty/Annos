@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import "./App.css";
-import { fetchProfile } from "./api";
+import "../../styles/App.css";
+import { fetchProfile } from "../../services/api";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

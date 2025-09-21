@@ -1,9 +1,9 @@
 // src/AdminPanel.jsx
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchProfile, fetchAdminOrders, markOrderAsDone } from "./api";
+import { fetchProfile, fetchAdminOrders, markOrderAsDone } from "../../services/api";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// const BASE_URL = import.meta.env.VITE_API_BASE_URL; // Unused for now
 
 function AdminPanel() {
   const navigate = useNavigate();

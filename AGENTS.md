@@ -9,15 +9,31 @@ This document describes how agents should contribute to the Annos fullstack weba
 - Backend tests must pass using `npm test` in `backend/`.
 
 ## Frontend guidelines
+
+### Project Structure
+- **Organized folder structure**: Components, pages, services, hooks, and utilities are properly separated
+- **Custom hooks**: Use `useAuth`, `useCart`, `useTheme`, `useApi` for reusable logic
+- **Service layer**: API calls organized in dedicated service files (`authService`, `orderService`, `menuService`, `paymentService`)
+- **Component organization**: 
+  - `pages/` - Route components (auth, customer, admin, courier, restaurant)
+  - `components/` - Reusable UI components (common, forms, layout)
+  - `services/` - API and external service integrations
+  - `hooks/` - Custom React hooks for shared logic
+  - `utils/` - Helper functions and utilities
+
+### Code Quality
 - Follow ESLint hook rules strictly: no React hooks inside loops, conditions or nested callbacks.
 - `useRef` may only be used as `useRef({})` or via `React.createRef()` if multiple dynamic refs are required.
 - Do not use `useMemo` to create refs.
 - Do not create `useRef` or `useState` inside loops such as `map`, `forEach`, `for`, etc.
+- Use custom hooks for shared state and logic instead of duplicating code
+- Prefer service classes over individual functions for API calls
+
+### UI/UX Requirements
 - Code must work on both mobile and desktop (iOS, Android, Chrome, Safari).
 - Sticky category nav: Use `position: sticky` with `top: 0` and appropriate `z-index`.
 - All buttons and inputs must be keyboard-accessible (a11y).
 - Use semantic HTML tags + `aria-label` for accessibility.
-- Separate components logically (routes, views, shared UI, API handling).
 - Avoid duplicate accessories in submenus (e.g., meat/sauce/drinks must not appear twice).
 - Submenu categories should stay sticky for better UX on mobile.
 - Shopping cart should not take over full screen on mobile — layout must scale smartly.
@@ -40,7 +56,23 @@ This document describes how agents should contribute to the Annos fullstack weba
   - Can mark orders as "levererad"
   - Will show offline/integrated maps in future
 
-## Backend rules
+## Service Architecture
+
+### Frontend Services
+- **AuthService**: Handles authentication, profile management, login/logout
+- **OrderService**: Manages orders, order status, admin/restaurant/courier order operations
+- **MenuService**: Handles menu data, accessories, restaurant information
+- **PaymentService**: Manages payments, invoices, payment methods
+- **API Client**: Centralized HTTP client with error handling, timeouts, and retry logic
+
+### Service Usage Guidelines
+- Always use service classes instead of direct API calls
+- Import services from `services/index.js` for consistency
+- Use custom hooks (`useAuth`, `useCart`, `useTheme`) for component state management
+- Handle errors consistently using the centralized error handling in services
+- Use the `useApi` hook for API calls with loading states and error handling
+
+### Backend rules
 - Express routes must use correct HTTP methods (GET, POST, PUT, DELETE).
 - JWT-based auth (bearer token) for all profile and order endpoints.
 - Use `.env` for secrets. No hardcoded credentials.

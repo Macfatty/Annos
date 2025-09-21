@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import "./App.css";
+import "../../styles/App.css";
 
 function Tack() {
   const navigate = useNavigate();
