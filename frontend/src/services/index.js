@@ -12,15 +12,9 @@ export * from "./auth/authService";
 // Order Service
 export * from "./orders/orderService";
 
-// Menu Service
-export * from "./menu/menuService";
-
-// Payment Service
-export * from "./payments/paymentService";
-
 // Bakåtkompatibilitet - exportera gamla API-funktioner
-export { 
-  fetchProfile, 
+export {
+  fetchProfile,
   updateProfile, 
   logout, 
   createOrder, 

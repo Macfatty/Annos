@@ -230,8 +230,8 @@ node backend/tasks/generatePayouts.js --from=2024-01-01 --to=2024-01-31
 
 ### ✅ Frontend-reorganisation (KLAR)
 - **Ny mappstruktur**: Komponenter, sidor, tjänster, hooks och verktyg är nu organiserade
-- **Custom hooks**: `useAuth`, `useCart`, `useTheme`, `useApi` för återanvändbar logik
-- **Service-arkitektur**: `AuthService`, `OrderService`, `MenuService`, `PaymentService`
+- **Custom hooks**: `useAuth`, `useCart`, `useTheme`, `useApi` för återanvändbar logik (historisk implementation finns nu i `Legacy/frontend/src/hooks/useApi.js`)
+- **Service-arkitektur**: `AuthService`, `OrderService` och (historiskt) `MenuService` + `PaymentService` – de två senare är arkiverade under `Legacy/frontend/src/services/...`
 - **Uppdaterad för nya API**: Frontend använder nu nya meny-endpoints
 
 ### ✅ Backend-reorganisation (PÅBÖRJAD)
