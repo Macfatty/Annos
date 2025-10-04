@@ -926,14 +926,5 @@ app.get("/api/orders", verifyJWT, async (req, res) => {
   }
 });
 
-// Starta servern
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Servern körs på http://localhost:${PORT}`);
-    console.log(`Frontend: ${process.env.FRONTEND_ORIGIN || "http://localhost:5173"}`);
-    console.log(`Admin Panel: ${process.env.FRONTEND_ORIGIN || "http://localhost:5173"}/admin`);
-  });
-}
-
 module.exports = app;
 module.exports.corsOptions = corsOptions;
