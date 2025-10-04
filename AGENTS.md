@@ -14,6 +14,7 @@ This document describes how agents should contribute to the Annos fullstack weba
 - **Organized folder structure**: Components, pages, services, hooks, and utilities are properly separated
 - **Custom hooks**: Use `useAuth`, `useCart`, `useTheme`, `useApi` for reusable logic
 - **Service layer**: API calls organized in dedicated service files (`authService`, `orderService`, `menuService`, `paymentService`)
+  - Historiska implementationer av `menuService` och `paymentService` finns nu under `Legacy/frontend/src/services/...`
 - **Component organization**: 
   - `pages/` - Route components (auth, customer, admin, courier, restaurant)
   - `components/` - Reusable UI components (common, forms, layout)
@@ -26,7 +27,7 @@ This document describes how agents should contribute to the Annos fullstack weba
 - `useRef` may only be used as `useRef({})` or via `React.createRef()` if multiple dynamic refs are required.
 - Do not use `useMemo` to create refs.
 - Do not create `useRef` or `useState` inside loops such as `map`, `forEach`, `for`, etc.
-- Use custom hooks for shared state and logic instead of duplicating code
+- Use custom hooks for shared state and logic instead of duplicating code (legacy `useApi`-hook ligger kvar i `Legacy/frontend/src/hooks/useApi.js`)
 - Prefer service classes over individual functions for API calls
 
 ### UI/UX Requirements
