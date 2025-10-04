@@ -54,6 +54,7 @@ async function testNewEndpoints() {
     console.log("");
 
     console.log("🎉 Alla tester passerade! De nya endpoints fungerar korrekt.");
+
   } catch (error) {
     console.error("❌ Test misslyckades:", error.message);
     console.error("   Detaljer:", error);
