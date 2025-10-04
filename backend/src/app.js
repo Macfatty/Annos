@@ -8,6 +8,7 @@ const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth_new');
 const orderRoutes = require('./routes/orders');
 const menuRoutes = require('./routes/menu_simple');
+const legacyApp = require('../server');
 
 /**
  * Express Application
@@ -43,6 +44,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/menu', menuRoutes);
 
+// Legacy application routes for backward compatibility
+app.use(legacyApp);
+
 // Legacy profile endpoint for backward compatibility
 app.get('/api/profile', require('./middleware/authMiddleware').verifyJWT, (req, res) => {
   res.json({
@@ -59,10 +63,10 @@ app.get('/api/profile', require('./middleware/authMiddleware').verifyJWT, (req, 
 });
 
 // 404 handler
-app.use('*', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: 'Endpoint not found'
+    message: "Endpoint not found"
   });
 });
 

@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 
 const SECRET = process.env.JWT_SECRET;
 
-const app = require('./server');
+const app = require("./src/app");
 const pool = require('./db');
 
 describe('API endpoints', () => {

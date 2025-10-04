@@ -104,9 +104,9 @@ async function startupSequence() {
     console.log('   - Startar Express server...');
     
     // Importera och starta server
-    const app = require('./server');
-    const PORT = process.env.PORT || 3000;
-    
+    const app = require("./src/app");
+    const PORT = process.env.PORT || 3001;
+
     app.listen(PORT, () => {
       console.log(`   ✅ Servern körs på http://localhost:${PORT}`);
       console.log(`   ✅ Frontend: ${process.env.FRONTEND_ORIGIN || "http://localhost:5173"}`);
