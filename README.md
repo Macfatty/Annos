@@ -58,12 +58,16 @@ annos/
 │   │   └── utils/             → Hjälpfunktioner
 ├── backend/                    → Express API (REORGANISERAD)
 │   ├── src/                   → Ny organiserad struktur
-│   │   ├── config/            → Konfiguration
-│   │   ├── controllers/       → API-kontrollrar
-│   │   ├── middleware/        → Middleware
-│   │   ├── routes/            → API-rutter
-│   │   └── services/          → Affärslogik
-│   └── server.js              → Huvudserver (med nya endpoints)
+│   │   ├── app.js            → Aktiva Express-applikationen (middleware & routes)
+│   │   ├── server.js         → Modern serverstart som mountar `src/app.js`
+│   │   ├── config/           → Konfiguration
+│   │   ├── controllers/      → API-kontrollrar
+│   │   ├── middleware/       → Middleware
+│   │   ├── routes/           → API-rutter
+│   │   └── services/         → Affärslogik
+│   ├── startup.js            → Produktionsstart (kör full SoC-sekvens)
+│   └── legacy/               → Backend-specifika hjälpmedel som ännu inte migrerats
+├── Legacy/                     → Arkiverade backend/frontend-implementationer (tidigare `backend/server.js` m.fl.)
 ├── docs/                      → Dokumentation
 │   ├── database.md            → Databasstruktur
 │   ├── functions.md           → Systemfunktioner
@@ -72,6 +76,8 @@ annos/
 │   └── payments.md            → Betalningsarkitektur
 └── backend/exports/           → Månadsvisa payout-filer
 ```
+
+> **Notera:** Den aktiva Express-stackens kärna finns i `backend/src/app.js` (Express-applikationen) och `backend/src/server.js` (HTTP-start). Legacyvarianten som tidigare låg i `backend/server.js` är arkiverad under `Legacy/backend/` för referens.
 
 ## ⚡ Snabbstart
 
@@ -235,8 +241,9 @@ node backend/tasks/generatePayouts.js --from=2024-01-01 --to=2024-01-31
 - **Uppdaterad för nya API**: Frontend använder nu nya meny-endpoints
 
 ### ✅ Backend-reorganisation (PÅBÖRJAD)
-- **Ny mappstruktur**: `src/config/`, `src/controllers/`, `src/middleware/`, `src/routes/`, `src/services/`
-- **Nya meny-endpoints**: Integrerade i `server.js` för stegvis migration
+- **Ny mappstruktur**: `src/app.js`, `src/server.js` samt `src/config/`, `src/controllers/`, `src/middleware/`, `src/routes/`, `src/services/`
+- **Nya meny-endpoints**: Körs via `src/app.js` och mountas av `src/server.js`
+- **Legacy**: Tidigare `backend/server.js` och relaterade versioner är arkiverade i `Legacy/backend/`
 - **Miljövariabler fixade**: `.env` med korrekt PostgreSQL-lösenord
 
 ### ✅ Integration (VERIFIERAD)

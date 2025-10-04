@@ -77,8 +77,8 @@ npm start  # Använder startup.js med full sequence
 
 ### **Development (snabb startup):**
 ```bash
-cd backend  
-npm run start:dev  # Använder server.js direkt
+cd backend
+npm run start:dev  # Kör src/server.js direkt (förutsätter färdig databas)
 ```
 
 ### **Manuell sequence-fix:**
@@ -95,7 +95,7 @@ npm run fix-sequences
 - Sequence-synkronisering
 - Server startup
 
-### **server.js (Development)**
+### **src/server.js (Development)**
 - Direkt server startup
 - Förutsätter att databas finns
 - Snabbare för utveckling
@@ -154,7 +154,7 @@ npm start  # För production
 
 ### **Undvik:**
 ```bash
-node server.js  # Hoppar över startup sequence
+node src/server.js  # Hoppar över startup sequence (kör utan SoC-säkerhetskontroller)
 ```
 
 ### **För development:**

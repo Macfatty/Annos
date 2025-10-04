@@ -31,11 +31,11 @@
 | **package-lock.json** | Låsta versionsnummer för Node.js-beroenden |
 | **package.json** | Node.js-beroenden och skript |
 | **POSTGRESQL_MIGRATION_SUMMARY.md** | Sammanfattning av PostgreSQL-migrering |
-| **server.js** | Huvudserverfil med Express.js-applikation, API-routes och middleware |
-| **Legacy/backend/server_end.js** | Alternativ serverfil (legacy/backup) |
-| **Legacy/backend/server_fixed.js** | Ytterligare servervariant (legacy/backup) |
+| **src/app.js** | Aktiv Express-applikation med middleware och API-rutter |
+| **src/server.js** | Serverstart som importerar `src/app.js` |
 | **server.test.js** | Testfiler för serverfunktionalitet |
 | **skapaAdmin.js** | Skript för att skapa administratörskonton |
+| **legacy/** | Temporära backend-hjälpverktyg som väntar på migrering |
 
 ### Backend - Data och menyhantering
 
@@ -78,6 +78,13 @@
 |-----|------------------|
 | **legacy/initDB.js** | Legacy databasinitialisering |
 | **legacy/README.md** | Dokumentation för legacy-komponenter |
+
+## Legacy (`Legacy/`)
+
+| Fil / Katalog | Syfte / funktion |
+|---------------|------------------|
+| **Legacy/backend/** | Arkiverade Express-servrar (inklusive tidigare `backend/server.js`-implementationen och varianter) |
+| **Legacy/frontend/** | Arkiverade frontend-tjänster, hooks och komponenter |
 
 ## Frontend (`frontend/`)
 
@@ -205,7 +212,7 @@
 
 | Filtyp | Roll | Exempel |
 |--------|------|---------|
-| **.js** | Node.js/Express server-filer | `server.js`, `authMiddleware.js` |
+| **.js** | Node.js/Express server-filer | `src/server.js`, `authMiddleware.js` |
 | **.jsx** | React-komponenter | `App.jsx`, `Login.jsx` |
 | **.json** | Konfigurations- och datafiler | `package.json`, `campino.json` |
 | **.css** | Stilar och tema | `index.css`, `App.css` |

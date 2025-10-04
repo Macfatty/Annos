@@ -241,7 +241,7 @@ npm test
 ## ✅ All Endpoints Converted
 
 - ✅ `/api/register` - User registration
-- ✅ `/api/login` - User login (in server.js)
+- ✅ `/api/login` - User login (via `src/app.js` och `src/routes/auth_new.js`)
 - ✅ `/api/order` - Order creation
 - ✅ `/api/profile` - User profile retrieval
 - ✅ `/api/my-orders` - User's orders
