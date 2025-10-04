@@ -32,8 +32,8 @@
 | **package.json** | Node.js-beroenden och skript |
 | **POSTGRESQL_MIGRATION_SUMMARY.md** | Sammanfattning av PostgreSQL-migrering |
 | **server.js** | Huvudserverfil med Express.js-applikation, API-routes och middleware |
-| **server_end.js** | Alternativ serverfil (legacy/backup) |
-| **server_fixed.js** | Ytterligare servervariant (legacy/backup) |
+| **Legacy/backend/server_end.js** | Alternativ serverfil (legacy/backup) |
+| **Legacy/backend/server_fixed.js** | Ytterligare servervariant (legacy/backup) |
 | **server.test.js** | Testfiler för serverfunktionalitet |
 | **skapaAdmin.js** | Skript för att skapa administratörskonton |
 
@@ -45,7 +45,7 @@
 | **Data/menuData.js** | Centraliserad menyhantering för alla restauranger |
 | **Data/tillbehorData.js** | Tillbehörsdata för alla restauranger |
 | **Data/menyer/campino.json** | Campino-restaurangens meny |
-| **Data/menyer/orginal_meny.json** | Original meny (legacy) |
+| **Legacy/backend/Data/menyer/orginal_meny.json** | Original meny (legacy) |
 | **Data/menyer/sunsushi.json** | SunSushi-restaurangens meny |
 | **Data/Tillbehör/campinotillbehör/drycker.json** | Campino drycker-tillbehör |
 | **Data/Tillbehör/campinotillbehör/grönt.json** | Campino grönt-tillbehör |

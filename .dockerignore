@@ -1,0 +1,2 @@
+# Exclude legacy assets from Docker build contexts
+Legacy/
