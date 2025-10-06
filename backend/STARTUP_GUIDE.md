@@ -93,9 +93,10 @@ npm run fix-sequences
 - Full SoC-implementation
 - Databas-skapande
 - Sequence-synkronisering
-- Server startup
+- Server startup via `startServer`
 
 ### **src/server.js (Development)**
+- Exporterar `startServer(app, options)`
 - Direkt server startup
 - Förutsätter att databas finns
 - Snabbare för utveckling
@@ -122,6 +123,11 @@ if (currentSeq < maxId) {
   await client.query(`SELECT setval('${sequence}', ${nextId})`);
 }
 ```
+
+### **Poolfel (idle clients):**
+- `src/config/database.js` loggar oväntade fel men avslutar inte processen
+- Automatisk återanslutning med exponentiell backoff (1s → 2s → 4s ... upp till 30s)
+- Lyckad återanslutning loggas som "🔄 PostgreSQL pool recovered after transient error"
 
 ## 🎯 Fördelar med SoC
 
