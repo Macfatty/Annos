@@ -3,6 +3,30 @@ import { useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+function normalizeUser(payload, fallbackEmail) {
+  if (!payload) {
+    return null;
+  }
+
+  const candidate = payload.user || payload.data?.user || payload;
+
+  if (!candidate) {
+    return null;
+  }
+
+  return {
+    namn: candidate.namn ?? "",
+    email: candidate.email ?? fallbackEmail ?? "",
+    telefon: candidate.telefon ?? "",
+    adress: candidate.adress ?? "",
+  };
+}
+
+function persistUser(user) {
+  localStorage.setItem("kundinfo", JSON.stringify(user));
+  window.dispatchEvent(new Event("storage"));
+}
+
 function Login({ onLoginSuccess }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -17,34 +41,29 @@ function Login({ onLoginSuccess }) {
         body: JSON.stringify({ email, losenord }),
       });
 
-      const data = await res.json();
+      const payload = await res.json().catch(() => null);
 
-      if (res.ok) {
-        // 🔐 Spara användarinfo för profil & checkout
-        localStorage.setItem(
-          "kundinfo",
-          JSON.stringify({
-            namn: data.namn,
-            email: data.email,
-            telefon: data.telefon,
-            adress: data.adress || "",
-          })
-        );
-
-        // Direkt state-uppdatering för samma flik
-        if (onLoginSuccess) {
-          onLoginSuccess();
-        }
-        
-        // Cross-tab sync
-        window.dispatchEvent(new Event("storage"));
-        navigate("/valj-restaurang");
-      } else {
-        alert("Fel inloggningsuppgifter");
+      if (!res.ok || (payload && payload.success === false)) {
+        const message = payload?.message || "Fel inloggningsuppgifter";
+        throw new Error(message);
       }
+
+      const user = normalizeUser(payload?.data ?? payload, email);
+
+      if (!user) {
+        throw new Error("Kunde inte tolka användaruppgifterna");
+      }
+
+      persistUser(user);
+
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
+
+      navigate("/valj-restaurang");
     } catch (err) {
       console.error(err);
-      alert("Kunde inte logga in.");
+      alert(err.message || "Kunde inte logga in.");
     }
   };
 
@@ -57,17 +76,22 @@ function Login({ onLoginSuccess }) {
         body: JSON.stringify({ token: window.googleToken || "" }),
       });
 
-      await res.json();
+      const payload = await res.json().catch(() => null);
 
-      if (res.ok) {
-        window.dispatchEvent(new Event("storage"));
-        navigate("/valj-restaurang");
-      } else {
-        alert("Kunde inte logga in med Google");
+      if (!res.ok || (payload && payload.success === false)) {
+        throw new Error(payload?.message || "Kunde inte logga in med Google");
       }
+
+      const user = normalizeUser(payload?.data ?? payload, email);
+
+      if (user) {
+        persistUser(user);
+      }
+
+      navigate("/valj-restaurang");
     } catch (err) {
       console.error(err);
-      alert("Kunde inte logga in med Google.");
+      alert(err.message || "Kunde inte logga in med Google.");
     }
   };
 
@@ -80,17 +104,22 @@ function Login({ onLoginSuccess }) {
         body: JSON.stringify({ identityToken: window.appleToken || "" }),
       });
 
-      await res.json();
+      const payload = await res.json().catch(() => null);
 
-      if (res.ok) {
-        window.dispatchEvent(new Event("storage"));
-        navigate("/valj-restaurang");
-      } else {
-        alert("Kunde inte logga in med Apple");
+      if (!res.ok || (payload && payload.success === false)) {
+        throw new Error(payload?.message || "Kunde inte logga in med Apple");
       }
+
+      const user = normalizeUser(payload?.data ?? payload, email);
+
+      if (user) {
+        persistUser(user);
+      }
+
+      navigate("/valj-restaurang");
     } catch (err) {
       console.error(err);
-      alert("Kunde inte logga in med Apple.");
+      alert(err.message || "Kunde inte logga in med Apple.");
     }
   };
 
@@ -131,7 +160,7 @@ function Login({ onLoginSuccess }) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: "1.25rem", // mellanrum mellan alla knappar
+          gap: "1.25rem",
           marginBottom: "2rem",
         }}
       >
@@ -144,7 +173,7 @@ function Login({ onLoginSuccess }) {
           aria-label="Logga in med Google"
           style={{ width: "100%", maxWidth: "400px" }}
         >
-           Logga in med Google
+          Logga in med Google
         </button>
 
         <button
@@ -152,7 +181,7 @@ function Login({ onLoginSuccess }) {
           aria-label="Logga in med Apple"
           style={{ width: "100%", maxWidth: "400px" }}
         >
-           Logga in med Apple
+          Logga in med Apple
         </button>
 
         <button
