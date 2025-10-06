@@ -1,5 +1,29 @@
 import { apiRequest } from "../apiClient";
 
+function normalizeUserPayload(payload, fallbackEmail) {
+  if (!payload) {
+    return null;
+  }
+
+  const candidate = payload.user || payload.data?.user || payload;
+
+  if (!candidate) {
+    return null;
+  }
+
+  return {
+    namn: candidate.namn ?? "",
+    email: candidate.email ?? fallbackEmail ?? "",
+    telefon: candidate.telefon ?? "",
+    adress: candidate.adress ?? "",
+  };
+}
+
+function persistUser(user) {
+  localStorage.setItem("kundinfo", JSON.stringify(user));
+  window.dispatchEvent(new Event("storage"));
+}
+
 /**
  * Autentiseringsservice
  * Hanterar inloggning, utloggning, profilhantering och session
@@ -88,33 +112,38 @@ export class AuthService {
    */
   static async login(email, password) {
     try {
+      const credentials = { email };
+
+      if (typeof password === "string" && password.trim().length > 0) {
+        credentials.password = password;
+        credentials.losenord = password;
+      }
+
       const res = await apiRequest("/api/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(credentials),
       });
-      
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || "Inloggning misslyckades");
+
+      const payload = await res.json().catch(() => ({}));
+
+      if (!res.ok || payload.success === false) {
+        throw new Error(payload.message || "Inloggning misslyckades");
       }
-      
-      const data = await res.json();
-      
-      // Spara användarinfo för profil & checkout
-      localStorage.setItem(
-        "kundinfo",
-        JSON.stringify({
-          namn: data.namn,
-          email: data.email,
-          telefon: data.telefon,
-          adress: data.adress || "",
-        })
-      );
-      
-      // Cross-tab sync
-      window.dispatchEvent(new Event("storage"));
-      
-      return data;
+
+      const normalizedUser = normalizeUserPayload(payload?.data ?? payload, email);
+
+      if (!normalizedUser) {
+        throw new Error("Inloggning misslyckades");
+      }
+
+      persistUser(normalizedUser);
+
+      return {
+        success: payload.success ?? true,
+        message: payload.message,
+        user: normalizedUser,
+        token: payload?.data?.token ?? payload.token,
+      };
     } catch (error) {
       console.error("Fel vid inloggning:", error);
       throw error;

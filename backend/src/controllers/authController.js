@@ -59,16 +59,22 @@ class AuthController {
    */
   static async login(req, res, next) {
     try {
-      const { email, password } = req.body;
+      const { email, password, losenord } = req.body;
+      const submittedPassword =
+        typeof password === 'string' && password.trim().length > 0
+          ? password
+          : typeof losenord === 'string'
+            ? losenord
+            : '';
 
-      if (!email || !password) {
+      if (!email || !submittedPassword) {
         return res.status(400).json({
           success: false,
           message: 'Email and password are required'
         });
       }
 
-      const result = await AuthService.login(email, password);
+      const result = await AuthService.login(email, submittedPassword);
 
       // Set HTTP-only cookie
       res.cookie('token', result.token, {

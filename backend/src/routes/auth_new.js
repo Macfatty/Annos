@@ -20,7 +20,18 @@ const registerValidation = [
 
 const loginValidation = [
   body('email').isEmail().normalizeEmail(),
-  body('password').notEmpty()
+  body('password').custom((value, { req }) => {
+    if (typeof value === 'string' && value.trim().length > 0) {
+      return true;
+    }
+
+    if (typeof req.body.losenord === 'string' && req.body.losenord.trim().length > 0) {
+      req.body.password = req.body.losenord;
+      return true;
+    }
+
+    throw new Error('Password is required');
+  })
 ];
 
 const updateProfileValidation = [
