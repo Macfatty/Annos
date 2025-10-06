@@ -5,12 +5,32 @@ require("dotenv").config();
  * Database configuration
  * Centraliserad databaskonfiguration för PostgreSQL
  */
+
+// Validera nödvändiga miljövariabler (acceptera PG* som alternativ)
+function getEnv(key, fallbackKey) {
+  return process.env[key] || (fallbackKey ? process.env[fallbackKey] : undefined);
+}
+
+const requiredKeys = [
+  ["DB_USER", "PGUSER"],
+  ["DB_PASSWORD", "PGPASSWORD"],
+  ["DB_HOST", "PGHOST"],
+  ["DB_NAME", "PGDATABASE"],
+  ["DB_PORT", "PGPORT"],
+];
+
+for (const [primary, alt] of requiredKeys) {
+  if (!getEnv(primary, alt)) {
+    throw new Error(`Missing required environment variable: ${primary} (or ${alt})`);
+  }
+}
+
 const pool = new Pool({
-  user: process.env.DB_USER || process.env.PGUSER || "postgres",
-  password: process.env.DB_PASSWORD || process.env.PGPASSWORD || "asha",
-  host: process.env.DB_HOST || process.env.PGHOST || "localhost",
-  database: process.env.DB_NAME || process.env.PGDATABASE || "annos",
-  port: parseInt(process.env.DB_PORT || process.env.PGPORT, 10) || 5432,
+  user: getEnv("DB_USER", "PGUSER"),
+  password: getEnv("DB_PASSWORD", "PGPASSWORD"),
+  host: getEnv("DB_HOST", "PGHOST"),
+  database: getEnv("DB_NAME", "PGDATABASE"),
+  port: parseInt(getEnv("DB_PORT", "PGPORT"), 10),
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
   connectionTimeoutMillis: 2000 // Return an error after 2 seconds if connection could not be established

@@ -4,14 +4,32 @@ const { createTables } = require("./createTables");
 const { autoFixSequences } = require("./autoFixSequences");
 
 // Konfiguration för anslutning till PostgreSQL
+function getEnv(key, fallbackKey) {
+  return process.env[key] || (fallbackKey ? process.env[fallbackKey] : undefined);
+}
+
+const required = [
+  ["DB_USER", "PGUSER"],
+  ["DB_HOST", "PGHOST"],
+  ["DB_PASSWORD", "PGPASSWORD"],
+  ["DB_PORT", "PGPORT"],
+  ["DB_NAME", "PGDATABASE"],
+];
+
+for (const [k, alt] of required) {
+  if (!getEnv(k, alt)) {
+    throw new Error(`Missing required environment variable: ${k} (or ${alt})`);
+  }
+}
+
 const dbConfig = {
-  user: process.env.DB_USER || process.env.PGUSER || "postgres",
-  host: process.env.DB_HOST || process.env.PGHOST || "localhost",
-  password: process.env.DB_PASSWORD || process.env.PGPASSWORD || "asha",
-  port: parseInt(process.env.DB_PORT || process.env.PGPORT) || 5432,
+  user: getEnv("DB_USER", "PGUSER"),
+  host: getEnv("DB_HOST", "PGHOST"),
+  password: getEnv("DB_PASSWORD", "PGPASSWORD"),
+  port: parseInt(getEnv("DB_PORT", "PGPORT")),
 };
 
-const dbName = process.env.DB_NAME || process.env.PGDATABASE || "annos";
+const dbName = getEnv("DB_NAME", "PGDATABASE");
 
 // Pool för anslutning till PostgreSQL (utan specifik databas först)
 const adminPool = new Pool({
