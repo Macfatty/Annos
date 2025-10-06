@@ -32,7 +32,8 @@
 | **package.json** | Node.js-beroenden och skript |
 | **POSTGRESQL_MIGRATION_SUMMARY.md** | Sammanfattning av PostgreSQL-migrering |
 | **src/app.js** | Aktiv Express-applikation med middleware och API-rutter |
-| **src/server.js** | Serverstart som importerar `src/app.js` |
+| **src/server.js** | Serverstart (exporterar `startServer`) som importerar `src/app.js` |
+| **src/config/database.js** | PostgreSQL-pool med automatisk återanslutning |
 | **server.test.js** | Testfiler för serverfunktionalitet |
 | **skapaAdmin.js** | Skript för att skapa administratörskonton |
 | **legacy/** | Temporära backend-hjälpverktyg som väntar på migrering |
@@ -83,7 +84,7 @@
 
 | Fil / Katalog | Syfte / funktion |
 |---------------|------------------|
-| **Legacy/backend/** | Arkiverade Express-servrar (inklusive tidigare `backend/server.js`-implementationen och varianter) |
+| **Legacy/backend/** | Arkiverade Express-prototyper och hjälpskript (tidigare varianter av `backend/server.js`) |
 | **Legacy/frontend/** | Arkiverade frontend-tjänster, hooks och komponenter |
 
 ## Frontend (`frontend/`)

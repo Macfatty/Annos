@@ -104,16 +104,17 @@ async function startupSequence() {
     console.log("   - Startar Express server...");
     
     // Importera och starta server
-    const app = require("./src/app");
+    const { startServer } = require("./src/server");
     const PORT = process.env.PORT || 3001;
 
-    app.listen(PORT, () => {
-      console.log(`   ✅ Servern körs på http://localhost:${PORT}`);
-      console.log(`   ✅ Frontend: ${process.env.FRONTEND_ORIGIN || "http://localhost:5173"}`);
-      console.log(`   ✅ Admin Panel: ${process.env.FRONTEND_ORIGIN || "http://localhost:5173"}/admin`);
-      console.log("\n🎉 Startup sequence slutförd!");
+    startServer({
+      port: PORT,
+      enableLogging: true,
+      onReady: () => {
+        console.log("\n🎉 Startup sequence slutförd!");
+      }
     });
-    
+
   } catch (error) {
     console.error("💥 Startup sequence misslyckades:", error);
     process.exit(1);
