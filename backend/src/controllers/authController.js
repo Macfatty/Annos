@@ -77,11 +77,11 @@ class AuthController {
       const result = await AuthService.login(email, submittedPassword);
 
       // Set HTTP-only cookie
-      res.cookie('token', result.token, {
+      res.cookie("accessToken", result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 15 * 60 * 1000 // 15 minutes
       });
 
       res.cookie('refreshToken', result.refreshToken, {
@@ -95,8 +95,7 @@ class AuthController {
         success: true,
         message: 'Login successful',
         data: {
-          user: result.user,
-          token: result.token
+          user: result.user
         }
       });
     } catch (error) {
@@ -109,7 +108,11 @@ class AuthController {
    */
   static async logout(req, res, next) {
     try {
-      res.clearCookie('token');
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax"
+      });
       res.clearCookie('refreshToken');
       
       res.json({
@@ -218,17 +221,16 @@ class AuthController {
         role: user.role
       });
 
-      res.cookie('token', newToken, {
+      res.cookie("accessToken", newToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 15 * 60 * 1000 // 15 minutes
       });
 
       res.json({
         success: true,
-        message: 'Token refreshed successfully',
-        data: { token: newToken }
+        message: 'Token refreshed successfully'
       });
     } catch (error) {
       next(error);

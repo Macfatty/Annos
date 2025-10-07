@@ -27,8 +27,8 @@ class AuthService {
    * Generate JWT token
    */
   static generateToken(payload) {
-    return jwt.sign(payload, process.env.JWT_SECRET, { 
-      expiresIn: '24h' 
+    return jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "15m"
     });
   }
 

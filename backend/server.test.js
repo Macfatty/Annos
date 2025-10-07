@@ -111,6 +111,78 @@ describe("API endpoints", () => {
     expect(res.statusCode).toBe(401);
   });
 
+  test("POST /api/auth/login sets accessToken cookie without returning token", async () => {
+    const email = `login_${Date.now()}@example.com`;
+    const password = "Secret123";
+
+    await request(app)
+      .post("/api/auth/register")
+      .send({
+        email,
+        password,
+        namn: "Login Test",
+        telefon: "0700000000",
+        adress: "Login Street 1"
+      });
+
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email, password });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.data).toHaveProperty("user");
+    expect(res.body.data).not.toHaveProperty("token");
+
+    const cookies = res.headers["set-cookie"];
+    expect(Array.isArray(cookies)).toBe(true);
+
+    const accessCookie = cookies.find(cookie => cookie.startsWith("accessToken="));
+    const refreshCookie = cookies.find(cookie => cookie.startsWith("refreshToken="));
+
+    expect(accessCookie).toBeDefined();
+    expect(accessCookie).toContain("HttpOnly");
+    expect(accessCookie).toContain("SameSite=Lax");
+    expect(accessCookie).toContain("Max-Age=900");
+
+    expect(refreshCookie).toBeDefined();
+    expect(refreshCookie).toContain("Max-Age=604800");
+    expect(refreshCookie).toContain("SameSite=Strict");
+
+    const refreshRes = await request(app)
+      .post("/api/auth/refresh")
+      .set("Cookie", [refreshCookie.split(";")[0]]);
+
+    expect(refreshRes.statusCode).toBe(200);
+    expect(refreshRes.body).not.toHaveProperty("data");
+
+    const refreshCookies = refreshRes.headers["set-cookie"];
+    expect(Array.isArray(refreshCookies)).toBe(true);
+    const rotatedAccessCookie = refreshCookies.find(cookie => cookie.startsWith("accessToken="));
+    expect(rotatedAccessCookie).toBeDefined();
+    expect(rotatedAccessCookie).toContain("Max-Age=900");
+    expect(rotatedAccessCookie).toContain("SameSite=Lax");
+
+    const logoutRes = await request(app)
+      .post("/api/auth/logout")
+      .set("Cookie", [
+        accessCookie.split(";")[0],
+        refreshCookie.split(";")[0]
+      ]);
+
+    expect(logoutRes.statusCode).toBe(200);
+
+    const logoutCookies = logoutRes.headers["set-cookie"];
+    expect(Array.isArray(logoutCookies)).toBe(true);
+    const clearedAccessCookie = logoutCookies.find(cookie => cookie.startsWith("accessToken="));
+    const clearedRefreshCookie = logoutCookies.find(cookie => cookie.startsWith("refreshToken="));
+
+    expect(clearedAccessCookie).toBeDefined();
+    expect(clearedAccessCookie).toContain("Max-Age=0");
+
+    expect(clearedRefreshCookie).toBeDefined();
+    expect(clearedRefreshCookie).toContain("Max-Age=0");
+  });
+
   test("GET /api/admin/orders/today filters by slug", async () => {
     const token = jwt.sign({ userId: 1, role: "admin", restaurant_slug: "campino" }, SECRET);
 
