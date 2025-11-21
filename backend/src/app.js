@@ -44,10 +44,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/menu", menuRoutes);
 
-// Legacy application routes for backward compatibility
-app.use(legacyApp);
-
-// Legacy profile endpoint for backward compatibility
+// Profile endpoint (must be before legacyApp to override)
 app.get(
   "/api/profile",
   require("./middleware/authMiddleware").verifyJWT,
@@ -65,6 +62,9 @@ app.get(
     });
   }
 );
+
+// Legacy application routes for backward compatibility
+app.use(legacyApp);
 
 // 404 handler
 app.use((req, res) => {

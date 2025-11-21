@@ -1,0 +1,9 @@
+1. testade och logga in och det går
+2. Blir utloggad lika fort som jag loggar in
+3.admin sidan funkar att komma till men blir utloggad och skickad till start sidan direkt 
+5. api error 401 profil, admin-beställningar unatirizen. 
+6, get error på profil session förfallen-användare är utloggad
+7. som icke användare funkar det mesta kan ej komma åt mycket utan att skapa ett konto
+8. förösker skapa konto som en användare och POST error myslyckad registrering api register 
+9.ljust läge funkar som ickeanvändeare och märkt läge 
+

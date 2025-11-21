@@ -14,8 +14,19 @@ class AuthController {
     try {
       const { email, password, namn, telefon, adress } = req.body;
 
+      // DEBUG: Log registration attempt
+      console.log('[REGISTER DEBUG] Request body:', {
+        email,
+        hasPassword: !!password,
+        passwordLength: password?.length,
+        namn,
+        telefon,
+        adress
+      });
+
       // Validate input
       if (!email || !password || !namn) {
+        console.log('[REGISTER DEBUG] Missing required fields');
         return res.status(400).json({
           success: false,
           message: 'Email, password and name are required'
@@ -80,14 +91,14 @@ class AuthController {
       res.cookie('token', result.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
       });
 
       res.cookie('refreshToken', result.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       });
 

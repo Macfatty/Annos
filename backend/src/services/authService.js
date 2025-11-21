@@ -136,6 +136,13 @@ class AuthService {
    */
   static async login(email, password) {
     try {
+      // DEBUG: Log incoming credentials
+      console.log('[AUTH DEBUG] Login attempt:', {
+        email: email,
+        passwordLength: password?.length,
+        passwordType: typeof password
+      });
+
       // Find user
       const result = await pool.query(
         'SELECT * FROM users WHERE email = $1',
@@ -143,13 +150,16 @@ class AuthService {
       );
 
       if (result.rows.length === 0) {
+        console.log('[AUTH DEBUG] User not found:', email);
         throw new Error('Invalid credentials');
       }
 
       const user = result.rows[0];
+      console.log('[AUTH DEBUG] User found:', { id: user.id, email: user.email, role: user.role });
 
       // Verify password
       const isValidPassword = await this.comparePassword(password, user.password);
+      console.log('[AUTH DEBUG] Password valid:', isValidPassword);
       if (!isValidPassword) {
         throw new Error('Invalid credentials');
       }

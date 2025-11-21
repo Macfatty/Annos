@@ -65,21 +65,24 @@ function verifyJWT(req, res, next) {
     token = authHeader.split(' ')[1];
   }
 
-  // 2. Om ingen header: hämta från cookie
-  if (!token && req.cookies && req.cookies.accessToken) {
-    token = req.cookies.accessToken;
+  // 2. Om ingen header: hämta från cookie (prova både 'token' och 'accessToken')
+  if (!token && req.cookies) {
+    token = req.cookies.token || req.cookies.accessToken;
   }
 
   // 3. Om fortfarande inget token: 401
   if (!token) {
+    console.log('[AUTH MIDDLEWARE] No token found. Cookies:', req.cookies);
     return res.status(401).json({ error: 'Missing bearer token' });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // { userId, role, name, email, … }
+    console.log('[AUTH MIDDLEWARE] Token verified for user:', decoded.email);
     return next();
   } catch (error) {
+    console.log('[AUTH MIDDLEWARE] Token verification failed:', error.message);
     return res.status(401).json({ error: 'Invalid token' });
   }
 }
