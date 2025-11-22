@@ -148,3 +148,11 @@ backend/orders.sqlite-wal
 
 # Exports directory
 backend/exports/
+
+# Claude session tracking (local only)
+.claude/session-tracker.json
+.claude/session-status.md
+.claude/*.tmp
+.claude/*.bak
+# But allow template
+!.claude/session-tracker.template.json

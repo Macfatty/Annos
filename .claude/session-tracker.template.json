@@ -1,0 +1,20 @@
+{
+  "$schema": "Session Tracker Template - Copy to session-tracker.json and customize",
+  "sessionStartTime": "2025-01-01T00:00:00Z",
+  "tokenBudget": 200000,
+  "tokensUsed": 0,
+  "tokensRemaining": 200000,
+  "lastUpdated": "2025-01-01T00:00:00Z",
+  "conversationTurns": 0,
+  "majorTasks": [
+    "Initialize session tracking"
+  ],
+  "filesCreated": 0,
+  "filesModified": 0,
+  "commitsCreated": 0,
+  "_comments": {
+    "usage": "Copy this file to session-tracker.json and update with actual session data",
+    "security": "session-tracker.json is gitignored - stays local",
+    "command": "cp .claude/session-tracker.template.json .claude/session-tracker.json"
+  }
+}
