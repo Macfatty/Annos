@@ -740,14 +740,26 @@ app.put("/api/profile", verifyJWT, async (req, res) => {
     const userId = req.user.userId;
     const { namn, telefon, adress } = req.body;
 
-    // Validera input
-    if (!namn || !telefon) {
-      return res.status(400).json({ error: "Namn och telefon krävs" });
+    // Validera input med specifika felmeddelanden
+    const saknadeFalt = [];
+    if (!namn || namn.trim() === "") {
+      saknadeFalt.push("Namn");
+    }
+    if (!telefon || telefon.trim() === "") {
+      saknadeFalt.push("Telefon");
+    }
+
+    if (saknadeFalt.length > 0) {
+      return res.status(400).json({
+        error: "Obligatoriska fält saknas",
+        missingFields: saknadeFalt,
+        message: `Följande fält måste fyllas i: ${saknadeFalt.join(", ")}`
+      });
     }
 
     const updateResult = await pool.query(
       "UPDATE users SET namn = $1, telefon = $2, adress = $3 WHERE id = $4 RETURNING id, email, namn, telefon, adress, restaurant_slug",
-      [namn, telefon, adress || "", userId]
+      [namn.trim(), telefon.trim(), adress?.trim() || "", userId]
     );
 
     if (updateResult.rows.length === 0) {
@@ -755,7 +767,7 @@ app.put("/api/profile", verifyJWT, async (req, res) => {
     }
 
     const updatedUser = updateResult.rows[0];
-    
+
     res.json({
       ...updatedUser,
       role: req.user.role

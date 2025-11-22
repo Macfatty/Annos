@@ -116,24 +116,40 @@ function MinProfil() {
 
   const sparaProfil = async () => {
     try {
+      // Validera obligatoriska fält
+      const saknadeFalt = [];
+      if (!profil.namn?.trim()) {
+        saknadeFalt.push("Namn");
+      }
+      if (!profil.telefon?.trim()) {
+        saknadeFalt.push("Telefon");
+      }
+
+      if (saknadeFalt.length > 0) {
+        alert(`❌ Följande fält måste fyllas i:\n\n${saknadeFalt.join("\n")}`);
+        return;
+      }
+
       // Skicka till backend för att spara i databasen
       const updatedProfile = await updateProfile({
-        namn: profil.namn,
-        telefon: profil.telefon,
-        adress: profil.adress || ""
+        namn: profil.namn.trim(),
+        telefon: profil.telefon.trim(),
+        adress: profil.adress?.trim() || ""
       });
-      
+
       // Uppdatera lokal state med den sparade profilen
       setProfil(updatedProfile);
-      
+
       // Uppdatera även localStorage för kompatibilitet
       localStorage.setItem("kundinfo", JSON.stringify(updatedProfile));
-      
+
       setRedigerar(false);
       alert("✅ Profil sparad i databasen!");
     } catch (err) {
       console.error("Fel vid sparande av profil:", err);
-      alert("❌ Kunde inte spara profil");
+      // Show backend error message if available
+      const errorMessage = err.message || "Kunde inte spara profil. Kontrollera att alla obligatoriska fält är ifyllda.";
+      alert(`❌ ${errorMessage}`);
     }
   };
 
@@ -203,7 +219,9 @@ function MinProfil() {
             
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
               <div style={{ width: "100%", maxWidth: "400px" }}>
-                <label htmlFor="namn" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>Namn</label>
+                <label htmlFor="namn" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>
+                  Namn <span style={{ color: "red" }}>*</span>
+                </label>
                 <input
                   id="namn"
                   value={profil.namn || ""}
@@ -213,7 +231,8 @@ function MinProfil() {
                     hanteraInputChange("namn", e.target.value);
                   }}
                   onFocus={() => console.log("[MinProfil] Namn focused. redigerar:", redigerar, "readOnly:", !redigerar)}
-                  aria-label="Ditt namn"
+                  aria-label="Ditt namn (obligatoriskt)"
+                  required
                   style={{
                     width: "100%",
                     padding: "0.75rem",
@@ -250,18 +269,21 @@ function MinProfil() {
               </div>
 
               <div style={{ width: "100%", maxWidth: "400px" }}>
-                <label htmlFor="telefon" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>Telefonnummer</label>
+                <label htmlFor="telefon" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>
+                  Telefonnummer <span style={{ color: "red" }}>*</span>
+                </label>
                 <input
                   id="telefon"
                   type="tel"
                   value={profil.telefon || ""}
                   readOnly={!redigerar}
                   onChange={(e) => hanteraInputChange("telefon", e.target.value)}
-                  aria-label="Ditt telefonnummer"
-                  style={{ 
-                    width: "100%", 
-                    padding: "0.75rem", 
-                    borderRadius: "4px", 
+                  aria-label="Ditt telefonnummer (obligatoriskt)"
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "4px",
                     border: "1px solid #ccc",
                     backgroundColor: redigerar ? "white" : "#f8f9fa"
                   }}

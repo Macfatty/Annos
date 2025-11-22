@@ -72,7 +72,20 @@ export class AuthService {
       });
 
       if (!res.ok) {
-        const err = new Error(`Profile update ${res.status}`);
+        // Try to extract error message from backend
+        let errorMessage = `Profile update ${res.status}`;
+        try {
+          const errorData = await res.json();
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {
+          // Ignore JSON parse errors
+        }
+
+        const err = new Error(errorMessage);
         err.status = res.status;
         throw err;
       }
