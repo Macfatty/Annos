@@ -103,10 +103,15 @@ function MinProfil() {
   };
 
   const hanteraInputChange = (fält, värde) => {
-    setProfil(prev => ({
-      ...prev,
-      [fält]: värde
-    }));
+    console.log(`[MinProfil] hanteraInputChange: ${fält} = "${värde}"`);
+    setProfil(prev => {
+      const updated = {
+        ...prev,
+        [fält]: värde
+      };
+      console.log("[MinProfil] Uppdaterad profil:", updated);
+      return updated;
+    });
   };
 
   const sparaProfil = async () => {
@@ -139,6 +144,7 @@ function MinProfil() {
 
     switch (aktiv) {
       case "info": {
+        console.log("[MinProfil] Rendering info section. redigerar:", redigerar);
         return (
           <div style={{ textAlign: "center", maxWidth: "500px", margin: "0 auto" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
@@ -146,14 +152,18 @@ function MinProfil() {
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 {!redigerar ? (
                   <button
-                    onClick={() => setRedigerar(true)}
-                    style={{ 
-                      padding: "0.5rem 1rem", 
-                      backgroundColor: "#007bff", 
-                      color: "white", 
-                      border: "none", 
-                      borderRadius: "4px", 
-                      cursor: "pointer" 
+                    onClick={() => {
+                      console.log("[MinProfil] Aktiverar redigeringsläge");
+                      console.log("[MinProfil] Profil före redigering:", profil);
+                      setRedigerar(true);
+                    }}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer"
                     }}
                   >
                     ✏️ Redigera
@@ -198,12 +208,16 @@ function MinProfil() {
                   id="namn"
                   value={profil.namn || ""}
                   readOnly={!redigerar}
-                  onChange={(e) => hanteraInputChange("namn", e.target.value)}
+                  onChange={(e) => {
+                    console.log("[MinProfil] Namn onChange:", e.target.value, "readOnly:", !redigerar);
+                    hanteraInputChange("namn", e.target.value);
+                  }}
+                  onFocus={() => console.log("[MinProfil] Namn focused. redigerar:", redigerar, "readOnly:", !redigerar)}
                   aria-label="Ditt namn"
-                  style={{ 
-                    width: "100%", 
-                    padding: "0.75rem", 
-                    borderRadius: "4px", 
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "4px",
                     border: "1px solid #ccc",
                     backgroundColor: redigerar ? "white" : "#f8f9fa"
                   }}
@@ -211,20 +225,26 @@ function MinProfil() {
               </div>
 
               <div style={{ width: "100%", maxWidth: "400px" }}>
-                <label htmlFor="email" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>E-postadress</label>
+                <label htmlFor="email" style={{ display: "block", marginBottom: "0.5rem", textAlign: "left" }}>
+                  E-postadress
+                  <span style={{ fontSize: "0.8rem", color: "#999", marginLeft: "0.5rem" }}>
+                    (kan ej ändras)
+                  </span>
+                </label>
                 <input
                   id="email"
                   type="email"
                   value={profil.email || ""}
-                  readOnly={!redigerar}
-                  onChange={(e) => hanteraInputChange("email", e.target.value)}
-                  aria-label="Din e-postadress"
-                  style={{ 
-                    width: "100%", 
-                    padding: "0.75rem", 
-                    borderRadius: "4px", 
+                  readOnly={true}
+                  aria-label="Din e-postadress (kan ej ändras)"
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "4px",
                     border: "1px solid #ccc",
-                    backgroundColor: redigerar ? "white" : "#f8f9fa"
+                    backgroundColor: "#f0f0f0",
+                    cursor: "not-allowed",
+                    color: "#666"
                   }}
                 />
               </div>
