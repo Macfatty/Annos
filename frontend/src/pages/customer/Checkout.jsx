@@ -22,7 +22,8 @@ function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
       try {
         // Först försök hämta från profil
         const profile = await fetchProfile();
-        if (profile) {
+
+        if (profile && typeof profile === 'object' && profile.email) {
           setKundinfo({
             namn: profile.namn || "",
             email: profile.email || "",
@@ -33,7 +34,7 @@ function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
           return;
         }
       } catch (err) {
-        console.log("Kunde inte hämta profil, försöker med localStorage", err);
+        console.log("[Checkout] Kunde inte hämta profil från server, försöker med localStorage", err);
       }
 
       // Fallback till localStorage om profil inte kunde hämtas
@@ -41,6 +42,15 @@ function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
       if (sparad) {
         try {
           const info = JSON.parse(sparad);
+
+          // Clean up contaminated localStorage (from before authService fix)
+          if (info.success !== undefined || (info.data && typeof info.data === 'object' && !info.email)) {
+            console.log("[Checkout] Detected contaminated localStorage - clearing");
+            localStorage.removeItem("kundinfo");
+            // Leave fields empty, user can fill manually or click "Uppdatera från profil"
+            return;
+          }
+
           setKundinfo({
             namn: info.namn || "",
             email: info.email || "",
@@ -49,7 +59,8 @@ function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
             ovrigt: info.ovrigt || "",
           });
         } catch (err) {
-          console.error("Fel vid parsing av kundinfo:", err);
+          console.error("[Checkout] Fel vid parsing av kundinfo:", err);
+          localStorage.removeItem("kundinfo");
         }
       }
     };

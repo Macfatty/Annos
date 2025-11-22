@@ -97,12 +97,12 @@ export function useCart() {
     varukorg,
     valdRatt,
     redigeringsIndex,
-    
+
     // Computed properties
     totalPris,
     antalVaror,
     isCartEmpty,
-    
+
     // Actions
     addToCart,
     removeFromCart,
@@ -112,5 +112,6 @@ export function useCart() {
     cancelEdit,
     setValdRatt,
     setRedigeringsIndex,
+    setVarukorg, // Export for direct cart manipulation (Checkout, Kundvagn)
   };
 }

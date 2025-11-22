@@ -161,9 +161,8 @@ export class OrderService {
    */
   static async markOrderAsDone(orderId) {
     try {
-      const res = await apiRequest(`/api/restaurant/orders/${orderId}/status`, {
+      const res = await apiRequest(`/api/order/${orderId}/done`, {
         method: "PATCH",
-        body: JSON.stringify({ status: "ready" }),
       });
 
       if (!res.ok) {
@@ -273,7 +272,7 @@ export class OrderService {
    */
   static async updateAdminOrderStatus(orderId, status) {
     try {
-      const res = await apiRequest(`/api/admin/orders/${orderId}/status`, {
+      const res = await apiRequest(`/api/order/${orderId}/status`, {
         method: "PATCH",
         body: JSON.stringify({ status }),
       });

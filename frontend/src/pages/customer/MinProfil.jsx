@@ -30,15 +30,46 @@ function MinProfil() {
 
   useEffect(() => {
     const load = async () => {
-      const data = await fetchProfile();
-      if (data) {
-        setProfil(data);
-        localStorage.setItem("kundinfo", JSON.stringify(data));
-      } else {
+      try {
+        const data = await fetchProfile();
+
+        // Validate that we got a proper user object
+        if (data && typeof data === 'object' && data.email) {
+          setProfil(data);
+          localStorage.setItem("kundinfo", JSON.stringify(data));
+        } else {
+          console.warn("[MinProfil] Invalid profile data received:", data);
+          throw new Error("Invalid profile data");
+        }
+      } catch (err) {
+        console.error("[MinProfil] Error loading profile:", err);
+
+        // Try localStorage as fallback
         const fallback = localStorage.getItem("kundinfo");
         if (fallback) {
-          setProfil(JSON.parse(fallback));
+          try {
+            const parsed = JSON.parse(fallback);
+
+            // Clean up contaminated localStorage (from before authService fix)
+            if (parsed.success !== undefined || (parsed.data && typeof parsed.data === 'object' && !parsed.email)) {
+              console.log("[MinProfil] Detected contaminated localStorage - clearing and redirecting to login");
+              localStorage.removeItem("kundinfo");
+              alert("Din session har förfallit. Vänligen logga in igen.");
+              navigate("/login");
+              return;
+            }
+
+            // Valid localStorage data
+            setProfil(parsed);
+          } catch (parseErr) {
+            console.error("[MinProfil] Invalid localStorage data:", parseErr);
+            localStorage.removeItem("kundinfo");
+            alert("Kunde inte ladda profil. Vänligen logga in igen.");
+            navigate("/login");
+          }
         } else {
+          // No fallback, redirect to login
+          alert("Kunde inte ladda profil. Vänligen logga in igen.");
           navigate("/login");
         }
       }
