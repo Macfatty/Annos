@@ -40,13 +40,21 @@ export class AuthService {
         err.status = res.status;
         throw err;
       }
-      return res.json();
+      const response = await res.json();
+
+      // Unwrap backend response: { success: true, data: {...} } -> {...}
+      if (response.success && response.data) {
+        return response.data;
+      }
+
+      // Fallback for legacy format (direct user object)
+      return response;
     } catch (error) {
       // Om det är ett nätverksfel eller 401, låt det bubbla upp
       if (error.status === 401 || error.status === 0) {
         throw error;
       }
-      
+
       // För andra fel, logga och kasta vidare
       console.error("Fel vid profilhämtning:", error);
       throw error;
@@ -62,14 +70,22 @@ export class AuthService {
         method: "PUT",
         body: JSON.stringify(profilData),
       });
-      
+
       if (!res.ok) {
         const err = new Error(`Profile update ${res.status}`);
         err.status = res.status;
         throw err;
       }
-      
-      return res.json();
+
+      const response = await res.json();
+
+      // Unwrap backend response: { success: true, message: "...", data: {...} } -> {...}
+      if (response.success && response.data) {
+        return response.data;
+      }
+
+      // Fallback for legacy format (direct user object)
+      return response;
     } catch (error) {
       console.error("Fel vid profiluppdatering:", error);
       throw error;
