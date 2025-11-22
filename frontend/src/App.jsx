@@ -17,8 +17,7 @@ import KurirVy from "./pages/courier/KurirVy";
 import RestaurangVy from "./pages/restaurant/RestaurangVy";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import { useAuth, useCart, useTheme } from "./hooks";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { fetchMenu } from "./services/api";
 
 function App() {
   const navigate = useNavigate();
@@ -72,29 +71,18 @@ function App() {
   // Tema och varukorg hanteras nu av custom hooks
 
   useEffect(() => {
-    const fetchMeny = async () => {
-      if (!BASE_URL) {
-        setError(
-          "Fel: VITE_API_BASE_URL saknas i .env. Ange adressen till backend."
-        );
-        setLoading(false);
-        return;
-      }
+    const loadMenu = async () => {
       try {
-        const res = await fetch(
-          `${BASE_URL}/api/meny?restaurang=${restaurant_slug}`
-        );
-        if (!res.ok) {
-          throw new Error("Något gick fel vid hämtning");
-        }
-        const data = await res.json();
+        setLoading(true);
+        const data = await fetchMenu(restaurant_slug);
         setMeny(data);
+        setError(null);
       } catch (err) {
-        console.error("Fel:", err);
-        if (err.message === "Failed to fetch") {
-          setError(
-            "Kunde inte ansluta till servern. Kontrollera VITE_API_BASE_URL."
-          );
+        console.error("Fel vid hämtning av meny:", err);
+        if (err.status === 0) {
+          setError("Kunde inte ansluta till servern. Kontrollera att backend körs.");
+        } else if (err.status === 404) {
+          setError(`Meny hittades inte för restaurang: ${restaurant_slug}`);
         } else {
           setError("Kunde inte ladda menydata från servern.");
         }
@@ -102,7 +90,7 @@ function App() {
         setLoading(false);
       }
     };
-    fetchMeny();
+    loadMenu();
   }, [restaurant_slug]);
 
 

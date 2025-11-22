@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import "../../styles/App.css";
-import { fetchProfile } from "../../services/api";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { fetchProfile, fetchMyOrders } from "../../services/api";
 
 function MinaBeställningar({ onBeställIgen }) {
   const [bestallningar, setBestallningar] = useState([]);
@@ -10,26 +8,17 @@ function MinaBeställningar({ onBeställIgen }) {
   const [laddar, setLaddar] = useState(true);
 
   useEffect(() => {
-    fetchProfile()
-      .then((profile) => {
+    const loadOrders = async () => {
+      try {
+        const profile = await fetchProfile();
         if (!profile) {
           setFel("Du är inte inloggad.");
-          return null;
+          setLaddar(false);
+          return;
         }
-        return fetch(`${BASE_URL}/api/my-orders`, {
-          credentials: "include",
-        });
-      })
-      .then((res) => {
-        if (!res) {
-          return null;
-        }
-        if (!res.ok) {
-          throw new Error("Kunde inte ladda beställningar.");
-        }
-        return res.json();
-      })
-      .then((data) => {
+
+        const data = await fetchMyOrders();
+
         const bearbetade = (data || []).map((order) => {
           let rader = [];
           try {
@@ -54,13 +43,16 @@ function MinaBeställningar({ onBeställIgen }) {
           }
           return { ...order, rader };
         });
+
         setBestallningar(bearbetade);
         setLaddar(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         setFel(err.message);
         setLaddar(false);
-      });
+      }
+    };
+
+    loadOrders();
   }, []);
 
   if (laddar) {

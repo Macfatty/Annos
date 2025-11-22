@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { register } from "../../services/api";
 
 function Register({ onRegisterSuccess }) {
   const navigate = useNavigate();
@@ -12,33 +11,18 @@ function Register({ onRegisterSuccess }) {
 
   const registrera = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ namn, email, telefon, losenord }),
-      });
+      await register({ namn, email, telefon, losenord });
 
-      if (res.ok) {
-        alert("Registrering lyckades!");
-        // Direkt state-uppdatering om callback finns
-        if (onRegisterSuccess) {
-          onRegisterSuccess();
-        }
-        navigate("/login");
-      } else {
-        let data = {};
-        try {
-          data = await res.json();
-        } catch (err) {
-          console.error("Kunde inte tolka svar som JSON", err);
-        }
-        const message =
-          data.error || (Array.isArray(data.errors) ? data.errors[0] : "");
-        alert(`Registrering misslyckades: ${message}`);
+      alert("Registrering lyckades!");
+
+      if (onRegisterSuccess) {
+        onRegisterSuccess();
       }
+
+      navigate("/login");
     } catch (err) {
       console.error(err);
-      alert("Fel vid registrering.");
+      alert(err.message || "Fel vid registrering.");
     }
   };
 

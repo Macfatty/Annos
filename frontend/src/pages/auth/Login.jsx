@@ -1,31 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-function normalizeUser(payload, fallbackEmail) {
-  if (!payload) {
-    return null;
-  }
-
-  const candidate = payload.user || payload.data?.user || payload;
-
-  if (!candidate) {
-    return null;
-  }
-
-  return {
-    namn: candidate.namn ?? "",
-    email: candidate.email ?? fallbackEmail ?? "",
-    telefon: candidate.telefon ?? "",
-    adress: candidate.adress ?? "",
-  };
-}
-
-function persistUser(user) {
-  localStorage.setItem("kundinfo", JSON.stringify(user));
-  window.dispatchEvent(new Event("storage"));
-}
+import { login, loginWithGoogle, loginWithApple } from "../../services/api";
 
 function Login({ onLoginSuccess }) {
   const navigate = useNavigate();
@@ -34,27 +9,7 @@ function Login({ onLoginSuccess }) {
 
   const loggaIn = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, losenord }),
-      });
-
-      const payload = await res.json().catch(() => null);
-
-      if (!res.ok || (payload && payload.success === false)) {
-        const message = payload?.message || "Fel inloggningsuppgifter";
-        throw new Error(message);
-      }
-
-      const user = normalizeUser(payload?.data ?? payload, email);
-
-      if (!user) {
-        throw new Error("Kunde inte tolka användaruppgifterna");
-      }
-
-      persistUser(user);
+      await login(email, losenord);
 
       if (onLoginSuccess) {
         onLoginSuccess();
@@ -69,25 +24,7 @@ function Login({ onLoginSuccess }) {
 
   const loggaInMedGoogle = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/auth/google`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ token: window.googleToken || "" }),
-      });
-
-      const payload = await res.json().catch(() => null);
-
-      if (!res.ok || (payload && payload.success === false)) {
-        throw new Error(payload?.message || "Kunde inte logga in med Google");
-      }
-
-      const user = normalizeUser(payload?.data ?? payload, email);
-
-      if (user) {
-        persistUser(user);
-      }
-
+      await loginWithGoogle(window.googleToken || "");
       navigate("/valj-restaurang");
     } catch (err) {
       console.error(err);
@@ -97,25 +34,7 @@ function Login({ onLoginSuccess }) {
 
   const loggaInMedApple = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/auth/apple`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ identityToken: window.appleToken || "" }),
-      });
-
-      const payload = await res.json().catch(() => null);
-
-      if (!res.ok || (payload && payload.success === false)) {
-        throw new Error(payload?.message || "Kunde inte logga in med Apple");
-      }
-
-      const user = normalizeUser(payload?.data ?? payload, email);
-
-      if (user) {
-        persistUser(user);
-      }
-
+      await loginWithApple(window.appleToken || "");
       navigate("/valj-restaurang");
     } catch (err) {
       console.error(err);

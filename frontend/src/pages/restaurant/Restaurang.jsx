@@ -1,8 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchProfile } from "../../services/api";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { fetchProfile, fetchTodaysOrders, markOrderAsReady } from "../../services/api";
 
 function Restaurang() {
   const navigate = useNavigate();
@@ -12,7 +10,7 @@ function Restaurang() {
 
   const hamtaOrdrar = useCallback(async () => {
     try {
-     const profile = await fetchProfile();
+      const profile = await fetchProfile();
       if (!profile) {
         navigate("/login");
         return;
@@ -22,24 +20,16 @@ function Restaurang() {
         navigate("/");
         return;
       }
-      const res = await fetch(
-        `${BASE_URL}/api/admin/orders/today?slug=${profile.restaurant_slug}`,
-        {
-          credentials: "include",
-        }
-      );
-      if (res.status === 401) {
-        navigate("/login");
-        return;
-      }
-      if (!res.ok) {
-        throw new Error("Kunde inte hämta dagens ordrar");
-      }
-      const data = await res.json();
+
+      const data = await fetchTodaysOrders(profile.restaurant_slug);
       setDagensOrdrar(data);
       setFel(null);
     } catch (err) {
       console.error(err);
+      if (err.status === 401) {
+        navigate("/login");
+        return;
+      }
       setFel("Något gick fel vid hämtning");
     } finally {
       setLoading(false);
@@ -61,24 +51,19 @@ function Restaurang() {
         navigate("/login");
         return;
       }
-     // Admin kan komma åt alla restauranger, andra användare kan komma åt sin egen
-     if (profile.role !== "admin" && profile.role !== "restaurant") {
+      // Admin kan komma åt alla restauranger, andra användare kan komma åt sin egen
+      if (profile.role !== "admin" && profile.role !== "restaurant") {
         navigate("/");
         return;
       }
-      const res = await fetch(`${BASE_URL}/api/admin/orders/${orderId}/klart`, {
-        method: "PATCH",
-        credentials: "include",
-      });
-      if (res.status === 401) {
+
+      await markOrderAsReady(orderId);
+      setDagensOrdrar((prev) => prev.filter((o) => o.id !== orderId));
+    } catch (err) {
+      if (err.status === 401) {
         navigate("/login");
         return;
       }
-      if (!res.ok) {
-        throw new Error("Kunde inte markera order som klar");
-      }
-      setDagensOrdrar((prev) => prev.filter((o) => o.id !== orderId));
-    } catch (err) {
       alert("❌ Kunde inte markera som klar");
       console.error(err);
     }

@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import "./RestaurangVy.css";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { fetchAdminOrders, updateAdminOrderStatus } from "../../services/api";
 
 function RestaurangVy() {
   const { slug } = useParams();
@@ -15,22 +14,10 @@ function RestaurangVy() {
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
-      
-      const params = new URLSearchParams({ slug: selectedRestaurant });
-      if (statusFilter !== "all") {
-        params.append("status", statusFilter);
-      }
-
-      const response = await fetch(`${BASE_URL}/api/admin/orders?${params}`, {
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Kunde inte hämta ordrar");
-      }
-
-      const data = await response.json();
+      const filterStatus = statusFilter !== "all" ? statusFilter : null;
+      const data = await fetchAdminOrders(selectedRestaurant, filterStatus);
       setOrders(data);
+      setError(null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -42,21 +29,9 @@ function RestaurangVy() {
     fetchOrders();
   }, [selectedRestaurant, statusFilter, fetchOrders]);
 
-  const updateOrderStatus = async (orderId, newStatus) => {
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/admin/orders/${orderId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Kunde inte uppdatera status");
-      }
+      await updateAdminOrderStatus(orderId, newStatus);
 
       // Uppdatera lokal state
       setOrders(prevOrders =>
@@ -74,7 +49,7 @@ function RestaurangVy() {
       case "received":
         return (
           <button
-            onClick={() => updateOrderStatus(order.id, "accepted")}
+            onClick={() => handleUpdateOrderStatus(order.id, "accepted")}
             className="status-button accept"
             aria-label="Acceptera order"
           >
@@ -84,7 +59,7 @@ function RestaurangVy() {
       case "accepted":
         return (
           <button
-            onClick={() => updateOrderStatus(order.id, "in_progress")}
+            onClick={() => handleUpdateOrderStatus(order.id, "in_progress")}
             className="status-button progress"
             aria-label="Påbörja tillverkning"
           >
@@ -94,7 +69,7 @@ function RestaurangVy() {
       case "in_progress":
         return (
           <button
-            onClick={() => updateOrderStatus(order.id, "out_for_delivery")}
+            onClick={() => handleUpdateOrderStatus(order.id, "out_for_delivery")}
             className="status-button delivery"
             aria-label="Skicka ut order"
           >

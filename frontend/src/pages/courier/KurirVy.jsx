@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import "./KurirVy.css";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { fetchCourierOrders, acceptOrder, markOrderAsDelivered } from "../../services/api";
 
 function KurirVy() {
   const [orders, setOrders] = useState([]);
@@ -9,20 +8,13 @@ function KurirVy() {
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("pending");
 
-  const fetchOrders = useCallback(async () => {
+  const loadOrders = useCallback(async () => {
     try {
       setLoading(true);
-      
-      const response = await fetch(`${BASE_URL}/api/courier/orders?status=${filter}`, {
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Kunde inte hämta ordrar");
-      }
-
-      const data = await response.json();
+      const statusFilter = filter !== "all" ? filter : null;
+      const data = await fetchCourierOrders(statusFilter);
       setOrders(data);
+      setError(null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -31,22 +23,13 @@ function KurirVy() {
   }, [filter]);
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    loadOrders();
+  }, [loadOrders]);
 
   const handleAcceptOrder = async (orderId) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/courier/orders/${orderId}/accept`, {
-        method: "PATCH",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Kunde inte acceptera order");
-      }
-
-      // Uppdatera listan
-      await fetchOrders();
+      await acceptOrder(orderId);
+      await loadOrders();
     } catch (err) {
       alert(`Fel: ${err.message}`);
     }
@@ -54,17 +37,8 @@ function KurirVy() {
 
   const handleDeliverOrder = async (orderId) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/courier/orders/${orderId}/delivered`, {
-        method: "PATCH",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Kunde inte markera som levererad");
-      }
-
-      // Uppdatera listan
-      await fetchOrders();
+      await markOrderAsDelivered(orderId);
+      await loadOrders();
     } catch (err) {
       alert(`Fel: ${err.message}`);
     }
