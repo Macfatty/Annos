@@ -1,6 +1,6 @@
 # Working Principles & Development Guidelines
 **Project:** Annos Food Ordering Platform
-**Date:** 2025-11-22
+**Date:** 2025-11-22 (Updated)
 **Purpose:** Ensure long-term code quality and robust, maintainable solutions
 
 ---
@@ -10,6 +10,15 @@
 > **"No Quick-Fixes. Only Robust, Long-Term Solutions."**
 
 This document establishes the working principles for the Annos project. These principles prioritize **code quality**, **maintainability**, and **long-term sustainability** over short-term convenience.
+
+---
+
+## Related Documentation
+
+**Important companion guides:**
+- [API Response Standards](./api-response-standards.md) - How to handle API responses correctly
+- [API Architecture](./api-architecture.md) - Overall API design and patterns
+- [API Migration Report](./api-migration-report.md) - History and lessons learned
 
 ---
 
