@@ -44,26 +44,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/menu", menuRoutes);
 
-// Profile endpoint (must be before legacyApp to override)
-app.get(
-  "/api/profile",
-  require("./middleware/authMiddleware").verifyJWT,
-  (req, res) => {
-    res.json({
-      success: true,
-      data: {
-        id: req.user.id,
-        email: req.user.email,
-        namn: req.user.namn || "",
-        telefon: req.user.telefon || "",
-        adress: req.user.adress || "",
-        role: req.user.role
-      }
-    });
-  }
-);
-
 // Legacy application routes for backward compatibility
+// This includes profile endpoints (GET/PUT /api/profile) that read from database
 app.use(legacyApp);
 
 // 404 handler

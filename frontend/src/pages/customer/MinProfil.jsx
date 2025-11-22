@@ -238,7 +238,8 @@ function MinProfil() {
                     padding: "0.75rem",
                     borderRadius: "4px",
                     border: "1px solid #ccc",
-                    backgroundColor: redigerar ? "white" : "#f8f9fa"
+                    backgroundColor: redigerar ? "white" : "#f8f9fa",
+                    color: "#000"
                   }}
                 />
               </div>
@@ -285,7 +286,8 @@ function MinProfil() {
                     padding: "0.75rem",
                     borderRadius: "4px",
                     border: "1px solid #ccc",
-                    backgroundColor: redigerar ? "white" : "#f8f9fa"
+                    backgroundColor: redigerar ? "white" : "#f8f9fa",
+                    color: "#000"
                   }}
                 />
               </div>
@@ -298,14 +300,15 @@ function MinProfil() {
                   readOnly={!redigerar}
                   onChange={(e) => hanteraInputChange("adress", e.target.value)}
                   aria-label="Din adress"
-                  style={{ 
-                    width: "100%", 
-                    padding: "0.75rem", 
-                    borderRadius: "4px", 
-                    border: "1px solid #ccc", 
-                    minHeight: "80px", 
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    minHeight: "80px",
                     resize: "vertical",
-                    backgroundColor: redigerar ? "white" : "#f8f9fa"
+                    backgroundColor: redigerar ? "white" : "#f8f9fa",
+                    color: "#000"
                   }}
                 />
               </div>
