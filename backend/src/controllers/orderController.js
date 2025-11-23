@@ -178,11 +178,11 @@ class OrderController {
   static async markOrderAsDone(req, res, next) {
     try {
       const { orderId } = req.params;
-      const updatedOrder = await OrderService.updateOrderStatus(orderId, 'ready');
+      const updatedOrder = await OrderService.updateOrderStatus(orderId, 'ready_for_pickup');
 
       res.json({
         success: true,
-        message: 'Order marked as ready',
+        message: 'Order marked as ready for pickup',
         data: updatedOrder
       });
     } catch (error) {

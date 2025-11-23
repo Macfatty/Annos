@@ -39,16 +39,9 @@ const ORDER_STATUS = {
   /**
    * ACCEPTED - Restaurant has accepted the order
    * Restaurant commits to preparing this order
-   * Next: IN_PROGRESS
-   */
-  ACCEPTED: 'accepted',
-
-  /**
-   * IN_PROGRESS - Restaurant is preparing the order
-   * Food is being cooked/assembled
    * Next: READY_FOR_PICKUP
    */
-  IN_PROGRESS: 'in_progress',
+  ACCEPTED: 'accepted',
 
   /**
    * READY_FOR_PICKUP - Order is ready for courier pickup
@@ -102,11 +95,6 @@ const STATUS_TRANSITIONS = {
   ],
 
   [ORDER_STATUS.ACCEPTED]: [
-    ORDER_STATUS.IN_PROGRESS,
-    ORDER_STATUS.CANCELLED
-  ],
-
-  [ORDER_STATUS.IN_PROGRESS]: [
     ORDER_STATUS.READY_FOR_PICKUP,
     ORDER_STATUS.CANCELLED
   ],
@@ -139,7 +127,6 @@ const STATUS_TRANSITIONS = {
 const STATUS_DISPLAY_NAMES = {
   [ORDER_STATUS.RECEIVED]: 'Mottagen',
   [ORDER_STATUS.ACCEPTED]: 'Accepterad',
-  [ORDER_STATUS.IN_PROGRESS]: 'Tillagas',
   [ORDER_STATUS.READY_FOR_PICKUP]: 'Klar för hämtning',
   [ORDER_STATUS.ASSIGNED]: 'Tilldelad kurir',
   [ORDER_STATUS.OUT_FOR_DELIVERY]: 'Ute för leverans',
@@ -155,7 +142,6 @@ const STATUS_DISPLAY_NAMES = {
 const STATUS_COLORS = {
   [ORDER_STATUS.RECEIVED]: '#FF6B6B',        // Red - New/Urgent
   [ORDER_STATUS.ACCEPTED]: '#4ECDC4',        // Cyan - Acknowledged
-  [ORDER_STATUS.IN_PROGRESS]: '#45B7D1',     // Blue - Active work
   [ORDER_STATUS.READY_FOR_PICKUP]: '#F9CA24', // Yellow - Ready/Waiting
   [ORDER_STATUS.ASSIGNED]: '#A29BFE',        // Purple - Assigned
   [ORDER_STATUS.OUT_FOR_DELIVERY]: '#FD79A8', // Pink - In transit

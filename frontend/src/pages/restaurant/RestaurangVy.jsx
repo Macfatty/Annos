@@ -59,21 +59,11 @@ function RestaurangVy() {
       case "accepted":
         return (
           <button
-            onClick={() => handleUpdateOrderStatus(order.id, "in_progress")}
+            onClick={() => handleUpdateOrderStatus(order.id, "ready_for_pickup")}
             className="status-button progress"
-            aria-label="Påbörja tillverkning"
+            aria-label="Klar för hämtning"
           >
-            Påbörja tillverkning
-          </button>
-        );
-      case "in_progress":
-        return (
-          <button
-            onClick={() => handleUpdateOrderStatus(order.id, "out_for_delivery")}
-            className="status-button delivery"
-            aria-label="Skicka ut order"
-          >
-            Skicka ut order
+            Klar för hämtning
           </button>
         );
       default:
@@ -85,9 +75,9 @@ function RestaurangVy() {
     switch (status) {
       case "received": return "#ff6b6b";
       case "accepted": return "#4ecdc4";
-      case "in_progress": return "#45b7d1";
-      case "out_for_delivery": return "#f9ca24";
-      case "delivered": return "#6c5ce7";
+      case "ready_for_pickup": return "#f9ca24";
+      case "out_for_delivery": return "#fd79a8";
+      case "delivered": return "#00b894";
       default: return "#ddd";
     }
   };
