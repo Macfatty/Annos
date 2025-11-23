@@ -136,6 +136,11 @@ function KurirVy() {
                 <p>📞 {order.customer_phone}</p>
                 <p>📍 {order.customer_address}</p>
                 {order.customer_email && <p>📧 {order.customer_email}</p>}
+                {order.customer_notes && (
+                  <p className="customer-notes">
+                    <strong>💬 Meddelande:</strong> {order.customer_notes}
+                  </p>
+                )}
               </div>
 
               <div className="order-items">

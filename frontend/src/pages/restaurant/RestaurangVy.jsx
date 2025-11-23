@@ -198,6 +198,11 @@ function RestaurangVy() {
                 <h4>{order.customer_name}</h4>
                 <p>📞 {order.customer_phone}</p>
                 <p>📍 {order.customer_address}</p>
+                {order.customer_notes && (
+                  <p className="customer-notes">
+                    <strong>💬 Meddelande:</strong> {order.customer_notes}
+                  </p>
+                )}
               </div>
 
               <div className="order-details">
@@ -219,7 +224,7 @@ function RestaurangVy() {
                                     ` (${option.price_delta > 0 ? "+" : ""}${formatPrice(option.price_delta)} kr)`
                                   )}
                                   {option.custom_note && (
-                                    <span style={{ fontStyle: "italic", color: "#666" }}>
+                                    <span className="option-note">
                                       {" "}- "{option.custom_note}"
                                     </span>
                                   )}
