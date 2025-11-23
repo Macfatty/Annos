@@ -78,8 +78,15 @@ function verifyJWT(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // BACKWARD COMPATIBILITY: Support both old JWTs with 'id' and new JWTs with 'userId'
+    // DO NOT REMOVE THIS - See docs/TOKEN_FLOW.md for migration strategy
+    if (!decoded.userId && decoded.id) {
+      decoded.userId = decoded.id;
+    }
+
     req.user = decoded; // { userId, role, name, email, … }
-    console.log('[AUTH MIDDLEWARE] Token verified for user:', decoded.email);
+    console.log('[AUTH MIDDLEWARE] Token verified for user:', decoded.email, '(userId:', decoded.userId, ')');
     return next();
   } catch (error) {
     console.log('[AUTH MIDDLEWARE] Token verification failed:', error.message);

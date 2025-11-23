@@ -116,18 +116,27 @@ class AuthController {
   }
 
   /**
-   * Logout user
+   * Logout user and revoke all refresh tokens
    */
   static async logout(req, res, next) {
     try {
+      // Revoke all refresh tokens for this user
+      const userId = req.user.userId || req.user.id;
+      if (userId) {
+        await AuthService.revokeAllUserTokens(userId);
+      }
+
       res.clearCookie('token');
       res.clearCookie('refreshToken');
-      
+
       res.json({
         success: true,
         message: 'Logout successful'
       });
     } catch (error) {
+      // Even if revoking tokens fails, clear cookies
+      res.clearCookie('token');
+      res.clearCookie('refreshToken');
       next(error);
     }
   }
@@ -137,7 +146,8 @@ class AuthController {
    */
   static async getProfile(req, res, next) {
     try {
-      const userId = req.user.id;
+      // BACKWARD COMPATIBILITY: Support both userId and id
+      const userId = req.user.userId || req.user.id;
       const user = await AuthService.getUserById(userId);
 
       res.json({
@@ -154,7 +164,8 @@ class AuthController {
    */
   static async updateProfile(req, res, next) {
     try {
-      const userId = req.user.id;
+      // BACKWARD COMPATIBILITY: Support both userId and id
+      const userId = req.user.userId || req.user.id;
       const { namn, telefon, adress } = req.body;
 
       const updatedUser = await AuthService.updateProfile(userId, {
@@ -178,7 +189,8 @@ class AuthController {
    */
   static async changePassword(req, res, next) {
     try {
-      const userId = req.user.id;
+      // BACKWARD COMPATIBILITY: Support both userId and id
+      const userId = req.user.userId || req.user.id;
       const { currentPassword, newPassword } = req.body;
 
       if (!currentPassword || !newPassword) {
@@ -207,7 +219,9 @@ class AuthController {
   }
 
   /**
-   * Refresh token
+   * Refresh token with token rotation (Industry Standard)
+   * Token Rotation: When a refresh token is used, it is revoked and a new one is issued
+   * This prevents replay attacks and limits the damage if a token is compromised
    */
   static async refreshToken(req, res, next) {
     try {
@@ -220,29 +234,59 @@ class AuthController {
         });
       }
 
-      const decoded = AuthService.verifyRefreshToken(refreshToken);
-      const user = await AuthService.getUserById(decoded.id);
+      // Validate refresh token from database (checks revocation, expiry)
+      const tokenData = await AuthService.validateRefreshToken(refreshToken);
 
-      const newToken = AuthService.generateToken({
-        id: user.id,
-        email: user.email,
-        role: user.role
+      if (!tokenData) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid or expired refresh token'
+        });
+      }
+
+      // Generate new access token
+      const newAccessToken = AuthService.generateToken({
+        userId: tokenData.id,  // Use userId for consistency
+        email: tokenData.email,
+        role: tokenData.role
       });
 
-      res.cookie('token', newToken, {
+      // Generate new refresh token (Token Rotation)
+      const newRefreshToken = AuthService.generateRefreshToken({
+        userId: tokenData.id,
+        email: tokenData.email
+      });
+
+      // Revoke old refresh token and save new one
+      await AuthService.revokeRefreshToken(refreshToken, newRefreshToken);
+      await AuthService.saveRefreshToken(tokenData.id, newRefreshToken);
+
+      // Set new cookies
+      res.cookie('token', newAccessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      });
+
+      res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       });
 
       res.json({
         success: true,
         message: 'Token refreshed successfully',
-        data: { token: newToken }
+        data: { token: newAccessToken }
       });
     } catch (error) {
-      next(error);
+      console.error('Token refresh error:', error);
+      res.status(401).json({
+        success: false,
+        message: 'Failed to refresh token'
+      });
     }
   }
 }

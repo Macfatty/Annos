@@ -36,9 +36,99 @@ class AuthService {
    * Generate refresh token
    */
   static generateRefreshToken(payload) {
-    return jwt.sign(payload, process.env.REFRESH_SECRET, { 
-      expiresIn: '7d' 
+    return jwt.sign(payload, process.env.REFRESH_SECRET || process.env.JWT_SECRET, {
+      expiresIn: '7d'
     });
+  }
+
+  /**
+   * Save refresh token to database
+   * @param {number} userId - User ID
+   * @param {string} token - Refresh token
+   * @returns {Promise<void>}
+   */
+  static async saveRefreshToken(userId, token) {
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
+
+    await pool.query(
+      `INSERT INTO refresh_tokens (user_id, token, expires_at)
+       VALUES ($1, $2, $3)`,
+      [userId, token, expiresAt]
+    );
+  }
+
+  /**
+   * Validate and get user from refresh token
+   * @param {string} token - Refresh token
+   * @returns {Promise<Object|null>} User object or null if invalid
+   */
+  static async validateRefreshToken(token) {
+    try {
+      // Verify JWT signature
+      const decoded = this.verifyRefreshToken(token);
+
+      // Check if token exists and is not revoked in database
+      const result = await pool.query(
+        `SELECT rt.*, u.id, u.email, u.role, u.namn, u.telefon, u.adress
+         FROM refresh_tokens rt
+         JOIN users u ON rt.user_id = u.id
+         WHERE rt.token = $1
+           AND rt.revoked = FALSE
+           AND rt.expires_at > NOW()`,
+        [token]
+      );
+
+      if (result.rows.length === 0) {
+        return null;
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Refresh token validation error:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Revoke refresh token (used during token rotation)
+   * @param {string} oldToken - Old refresh token to revoke
+   * @param {string} newToken - New replacement token (optional)
+   */
+  static async revokeRefreshToken(oldToken, newToken = null) {
+    await pool.query(
+      `UPDATE refresh_tokens
+       SET revoked = TRUE,
+           revoked_at = NOW(),
+           replaced_by_token = $2
+       WHERE token = $1`,
+      [oldToken, newToken]
+    );
+  }
+
+  /**
+   * Revoke all refresh tokens for a user (used during logout)
+   * @param {number} userId - User ID
+   */
+  static async revokeAllUserTokens(userId) {
+    await pool.query(
+      `UPDATE refresh_tokens
+       SET revoked = TRUE,
+           revoked_at = NOW()
+       WHERE user_id = $1 AND revoked = FALSE`,
+      [userId]
+    );
+  }
+
+  /**
+   * Clean up expired tokens (should be run periodically)
+   */
+  static async cleanupExpiredTokens() {
+    const result = await pool.query(
+      `DELETE FROM refresh_tokens
+       WHERE expires_at < NOW() - INTERVAL '30 days'`
+    );
+    return result.rowCount;
   }
 
   /**
@@ -100,7 +190,7 @@ class AuthService {
       );
 
       const user = result.rows[0];
-      
+
       // Generate tokens
       const token = this.generateToken({
         userId: user.id,  // Use 'userId' for consistency with legacy endpoints
@@ -112,6 +202,9 @@ class AuthService {
         userId: user.id,  // Use 'userId' for consistency
         email: user.email
       });
+
+      // Save refresh token to database
+      await this.saveRefreshToken(user.id, refreshToken);
 
       return {
         user: {
@@ -175,6 +268,9 @@ class AuthService {
         userId: user.id,  // Use 'userId' for consistency
         email: user.email
       });
+
+      // Save refresh token to database
+      await this.saveRefreshToken(user.id, refreshToken);
 
       return {
         user: {

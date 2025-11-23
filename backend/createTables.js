@@ -62,6 +62,24 @@ const createTables = async () => {
       custom_note VARCHAR(500),
       FOREIGN KEY (order_item_id) REFERENCES order_items(id) ON DELETE CASCADE
     );
+
+    -- Refresh tokens table for secure token rotation
+    -- DO NOT MODIFY THIS TABLE - See docs/TOKEN_FLOW.md
+    CREATE TABLE IF NOT EXISTS refresh_tokens (
+      id SERIAL PRIMARY KEY,
+      user_id BIGINT NOT NULL,
+      token VARCHAR(500) UNIQUE NOT NULL,
+      expires_at TIMESTAMP NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW(),
+      revoked BOOLEAN DEFAULT FALSE,
+      revoked_at TIMESTAMP,
+      replaced_by_token VARCHAR(500),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    -- Index for fast token lookup
+    CREATE INDEX IF NOT EXISTS idx_refresh_tokens_token ON refresh_tokens(token);
+    CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id ON refresh_tokens(user_id);
   `;
 
   try {

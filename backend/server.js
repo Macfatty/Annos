@@ -701,7 +701,8 @@ app.put("/api/admin/orders/:id/klart", verifyJWT, verifyRole(["admin", "restaura
 // Hämta användarprofil
 app.get("/api/profile", verifyJWT, async (req, res) => {
   try {
-    const userId = req.user.userId;
+    // BACKWARD COMPATIBILITY: Support both userId (new) and id (old)
+    const userId = req.user.userId || req.user.id;
 
     console.log("[GET /api/profile] req.user:", req.user);
     console.log("[GET /api/profile] userId:", userId);
@@ -742,7 +743,8 @@ app.get("/api/profile", verifyJWT, async (req, res) => {
 // Uppdatera användarprofil
 app.put("/api/profile", verifyJWT, async (req, res) => {
   try {
-    const userId = req.user.userId;
+    // BACKWARD COMPATIBILITY: Support both userId (new) and id (old)
+    const userId = req.user.userId || req.user.id;
     const { namn, telefon, adress } = req.body;
 
     console.log("[PUT /api/profile] req.user:", req.user);
