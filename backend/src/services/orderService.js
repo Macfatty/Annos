@@ -1,4 +1,5 @@
 const pool = require('../config/database');
+const { getAllStatuses } = require('../constants/orderStatuses');
 const { sanitizeInput } = require('../middleware/validation');
 
 /**
@@ -284,10 +285,12 @@ class OrderService {
    */
   static async updateOrderStatus(orderId, status, userId = null) {
     try {
-      const validStatuses = ['received', 'preparing', 'ready', 'assigned', 'delivered', 'cancelled'];
-      
+      // Use canonical status values from constants
+      // DO NOT modify this - see backend/src/constants/orderStatuses.js
+      const validStatuses = getAllStatuses();
+
       if (!validStatuses.includes(status)) {
-        throw new Error('Invalid status');
+        throw new Error(`Invalid status: ${status}. Allowed values: ${validStatuses.join(', ')}`);
       }
 
       let query = 'UPDATE orders SET status = $1, updated_at = NOW()';

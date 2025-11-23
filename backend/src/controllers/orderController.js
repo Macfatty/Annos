@@ -133,7 +133,8 @@ class OrderController {
     try {
       const { orderId } = req.params;
       const { status } = req.body;
-      const userId = req.user?.id;
+      // BACKWARD COMPATIBILITY: Support both userId (new) and id (old)
+      const userId = req.user?.userId || req.user?.id;
 
       if (!status) {
         return res.status(400).json({

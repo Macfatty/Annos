@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { STATUS_TRANSITIONS, isValidTransition } = require("../constants/orderStatuses");
 
 // Rate limiting storage (i produktion bör detta vara Redis eller liknande)
 const rateLimitStore = new Map();
@@ -29,31 +30,29 @@ function rateLimit(windowMs, maxRequests) {
   };
 }
 
-// Statusmaskin för ordrar
-const validTransitions = {
-  'received': ['accepted'],
-  'accepted': ['in_progress'],
-  'in_progress': ['out_for_delivery'],
-  'out_for_delivery': ['delivered'],
-  'delivered': [] // Slutstatus
-};
+/**
+ * Status Transition Validation
+ *
+ * Uses canonical transitions from orderStatuses.js
+ * DO NOT modify - see backend/src/constants/orderStatuses.js
+ */
 
 function isValidStatusTransition(currentStatus, newStatus) {
-  return validTransitions[currentStatus]?.includes(newStatus) || false;
+  return isValidTransition(currentStatus, newStatus);
 }
 
 function validateStatusTransition(req, res, next) {
   const { currentStatus, newStatus } = req.body;
-  
+
   if (!isValidStatusTransition(currentStatus, newStatus)) {
     return res.status(409).json({
       error: "Ogiltig statusövergång",
       currentStatus,
       requestedStatus: newStatus,
-      allowedTransitions: validTransitions[currentStatus] || []
+      allowedTransitions: STATUS_TRANSITIONS[currentStatus] || []
     });
   }
-  
+
   next();
 }
 
@@ -133,14 +132,13 @@ function verifyAdminForSlug(req, res, next) {
     next();
   });
 }
-module.exports = { 
+module.exports = {
   verifyJWT,
-  verifyToken, 
-  verifyRole, 
+  verifyToken,
+  verifyRole,
   verifyAdminForSlug,
   rateLimit,
   isValidStatusTransition,
-  validateStatusTransition,
-  validTransitions
+  validateStatusTransition
 };
 
