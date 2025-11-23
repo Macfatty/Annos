@@ -703,12 +703,17 @@ app.get("/api/profile", verifyJWT, async (req, res) => {
   try {
     const userId = req.user.userId;
 
+    console.log("[GET /api/profile] req.user:", req.user);
+    console.log("[GET /api/profile] userId:", userId);
+
     const userResult = await pool.query(
       "SELECT id, email, namn, telefon, adress, restaurant_slug FROM users WHERE id = $1",
       [userId]
     );
 
+    console.log("[GET /api/profile] Query result rows:", userResult.rows.length);
     if (userResult.rows.length === 0) {
+      console.error("[GET /api/profile] NO USER FOUND with userId:", userId);
       return res.status(404).json({ error: "Användare inte hittad" });
     }
 
@@ -740,6 +745,10 @@ app.put("/api/profile", verifyJWT, async (req, res) => {
     const userId = req.user.userId;
     const { namn, telefon, adress } = req.body;
 
+    console.log("[PUT /api/profile] req.user:", req.user);
+    console.log("[PUT /api/profile] userId:", userId);
+    console.log("[PUT /api/profile] Body:", { namn, telefon, adress });
+
     // Validera input med specifika felmeddelanden
     const saknadeFalt = [];
     if (!namn || namn.trim() === "") {
@@ -757,12 +766,15 @@ app.put("/api/profile", verifyJWT, async (req, res) => {
       });
     }
 
+    console.log("[PUT /api/profile] Executing UPDATE query with userId:", userId);
     const updateResult = await pool.query(
       "UPDATE users SET namn = $1, telefon = $2, adress = $3 WHERE id = $4 RETURNING id, email, namn, telefon, adress, restaurant_slug",
       [namn.trim(), telefon.trim(), adress?.trim() || "", userId]
     );
 
+    console.log("[PUT /api/profile] Update result rows:", updateResult.rows.length);
     if (updateResult.rows.length === 0) {
+      console.error("[PUT /api/profile] NO USER FOUND with userId:", userId);
       return res.status(404).json({ error: "Användare inte hittad" });
     }
 
