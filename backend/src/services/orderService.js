@@ -267,9 +267,9 @@ class OrderService {
           FROM order_item_options oio
           GROUP BY oio.order_item_id
         ) opt ON oi.id = opt.order_item_id
-        WHERE o.status IN ('ready_for_pickup', 'assigned', 'out_for_delivery')
+        WHERE o.status IN ('ready_for_pickup', 'assigned', 'out_for_delivery', 'delivered')
         GROUP BY o.id
-        ORDER BY o.created_at ASC
+        ORDER BY o.created_at DESC
       `;
 
       const result = await pool.query(query);
