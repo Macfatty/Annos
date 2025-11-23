@@ -16,7 +16,14 @@ function RestaurangVy() {
       setLoading(true);
       const filterStatus = statusFilter !== "all" ? statusFilter : null;
       const data = await fetchAdminOrders(selectedRestaurant, filterStatus);
-      setOrders(data);
+
+      // Filter: Visa endast aktiva orders (received, accepted)
+      // Orders med ready_for_pickup och senare hanteras av kurirer
+      const activeOrders = data.filter(order =>
+        ["received", "accepted"].includes(order.status)
+      );
+
+      setOrders(activeOrders);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -33,12 +40,17 @@ function RestaurangVy() {
     try {
       await updateAdminOrderStatus(orderId, newStatus);
 
-      // Uppdatera lokal state
-      setOrders(prevOrders =>
-        prevOrders.map(order =>
-          order.id === orderId ? { ...order, status: newStatus } : order
-        )
-      );
+      // Om order når ready_for_pickup, ta bort från aktiva listan
+      if (newStatus === "ready_for_pickup") {
+        setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+      } else {
+        // Annars uppdatera status i listan
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order.id === orderId ? { ...order, status: newStatus } : order
+          )
+        );
+      }
     } catch (err) {
       alert(`Fel: ${err.message}`);
     }

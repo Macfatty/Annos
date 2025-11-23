@@ -1,19 +1,31 @@
 import { useState, useEffect, useCallback } from "react";
 import "./KurirVy.css";
-import { fetchCourierOrders, acceptOrder, markOrderAsDelivered } from "../../services/api";
+import { fetchCourierOrders, acceptOrder, markOrderAsDelivered, updateAdminOrderStatus } from "../../services/api";
 
 function KurirVy() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("pending");
+  const [filter, setFilter] = useState("available");
 
   const loadOrders = useCallback(async () => {
     try {
       setLoading(true);
-      const statusFilter = filter !== "all" ? filter : null;
-      const data = await fetchCourierOrders(statusFilter);
-      setOrders(data);
+      const data = await fetchCourierOrders(null); // Hämta alla courier orders
+
+      // Filter baserat på vald vy
+      let filteredOrders = data;
+      if (filter === "available") {
+        // Tillgängliga orders: ready_for_pickup
+        filteredOrders = data.filter(order => order.status === "ready_for_pickup");
+      } else if (filter === "my_orders") {
+        // Mina orders: assigned, out_for_delivery
+        filteredOrders = data.filter(order =>
+          ["assigned", "out_for_delivery"].includes(order.status)
+        );
+      }
+
+      setOrders(filteredOrders);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -29,6 +41,15 @@ function KurirVy() {
   const handleAcceptOrder = async (orderId) => {
     try {
       await acceptOrder(orderId);
+      await loadOrders();
+    } catch (err) {
+      alert(`Fel: ${err.message}`);
+    }
+  };
+
+  const handlePickupOrder = async (orderId) => {
+    try {
+      await updateAdminOrderStatus(orderId, "out_for_delivery");
       await loadOrders();
     } catch (err) {
       alert(`Fel: ${err.message}`);
@@ -51,8 +72,9 @@ function KurirVy() {
   const getStatusDisplay = (status) => {
     const statusMap = {
       received: "Mottagen",
-      accepted: "Accepterad", 
-      in_progress: "Pågår",
+      accepted: "Accepterad",
+      ready_for_pickup: "Klar för hämtning",
+      assigned: "Tilldelad",
       out_for_delivery: "Ute för leverans",
       delivered: "Levererad"
     };
@@ -81,15 +103,15 @@ function KurirVy() {
         <h1>Kurirvy</h1>
         
         <div className="filter-buttons">
-          <button 
-            className={filter === "pending" ? "active" : ""}
-            onClick={() => setFilter("pending")}
+          <button
+            className={filter === "available" ? "active" : ""}
+            onClick={() => setFilter("available")}
           >
-            Väntande ordrar
+            Tillgängliga ordrar
           </button>
-          <button 
-            className={filter === "accepted" ? "active" : ""}
-            onClick={() => setFilter("accepted")}
+          <button
+            className={filter === "my_orders" ? "active" : ""}
+            onClick={() => setFilter("my_orders")}
           >
             Mina ordrar
           </button>
@@ -131,17 +153,26 @@ function KurirVy() {
               </div>
 
               <div className="order-actions">
-                {order.status === "pending" && (
-                  <button 
+                {order.status === "ready_for_pickup" && (
+                  <button
                     className="primary accept-button"
                     onClick={() => handleAcceptOrder(order.id)}
                   >
                     Acceptera order
                   </button>
                 )}
-                
-                {order.status === "accepted" && (
-                  <button 
+
+                {order.status === "assigned" && (
+                  <button
+                    className="primary pickup-button"
+                    onClick={() => handlePickupOrder(order.id)}
+                  >
+                    Hämtat order
+                  </button>
+                )}
+
+                {order.status === "out_for_delivery" && (
+                  <button
                     className="primary deliver-button"
                     onClick={() => handleDeliverOrder(order.id)}
                   >
