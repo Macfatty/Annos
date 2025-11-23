@@ -64,6 +64,18 @@ export function useAuth() {
         setRole("");
         setProfil(null);
         console.log("Session förfallen - användaren är utloggad");
+      } else if (err?.status === 404) {
+        // Profil hittades inte - troligen gammalt JWT med fel fältnamn
+        // Rensa lokal data och låt användaren logga in igen
+        console.log("Profil hittades inte (404) - rensar gammal session och behandlar som utloggad");
+        localStorage.removeItem("kundinfo");
+        localStorage.removeItem("varukorg");
+        // Clear old JWT cookie
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        setInloggad(false);
+        setRole("");
+        setProfil(null);
+        setBackendError(false); // Viktigt! Backend fungerar, det är bara JWT som är gammalt
       } else if (err?.status === 0) {
         // Nätverksfel - backend är inte tillgänglig
         console.warn("Nätverksfel vid profilhämtning - användaren förblir utloggad");
