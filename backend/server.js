@@ -9,6 +9,7 @@ const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
 const authRouter = require("./routes/auth");
 const { ensureAssignedCourierId } = require("./migrateDatabase");
+const OrderService = require("./src/services/orderService");
 
 const corsOptions = {
   origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
@@ -601,21 +602,14 @@ app.get("/api/admin/orders", verifyJWT, verifyRole(["admin", "restaurant"]), (re
 });
 
 // GET /api/courier/orders - Hämta kurirordrar
-app.get("/api/courier/orders", verifyJWT, verifyRole(["courier", "admin"]), (req, res) => {
-  const { status } = req.query;
-  const courierId = req.user.role === "admin" ? null : req.user.userId;
-  
-  if (!status) {
-    return res.status(400).json({ error: "Status parameter krävs" });
-  }
-  
-  hamtaKurirOrdrar(status, courierId, (err, orders) => {
-    if (err) {
-      console.error("Fel vid hämtning av kurirordrar:", err);
-      return res.status(500).json({ error: "Kunde inte hämta ordrar" });
-    }
+app.get("/api/courier/orders", verifyJWT, verifyRole(["courier", "admin"]), async (req, res) => {
+  try {
+    const orders = await OrderService.getCourierOrders();
     res.json(orders);
-  });
+  } catch (error) {
+    console.error("Fel vid hämtning av kurirordrar:", error);
+    res.status(500).json({ error: "Kunde inte hämta ordrar" });
+  }
 });
 
 // PATCH /api/courier/orders/:id/accept - Acceptera order

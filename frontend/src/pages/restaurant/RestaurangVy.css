@@ -118,15 +118,16 @@
 .customer-notes {
   margin-top: 0.5rem;
   padding: 0.75rem;
-  background: var(--note-bg, #f8f9fa);
-  border-left: 3px solid var(--primary-color, #007bff);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid #007bff;
   border-radius: 4px;
-  color: var(--text-color, #333);
+  color: var(--text-color);
   font-size: 1rem;
 }
 
 .customer-notes strong {
-  color: var(--text-color, #333);
+  color: var(--text-color);
 }
 
 .order-items {
