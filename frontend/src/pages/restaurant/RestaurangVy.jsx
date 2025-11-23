@@ -8,33 +8,43 @@ function RestaurangVy() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [view, setView] = useState("received"); // "received", "accepted", "history"
   const [selectedRestaurant, setSelectedRestaurant] = useState(slug || "campino");
 
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
-      const filterStatus = statusFilter !== "all" ? statusFilter : null;
-      const data = await fetchAdminOrders(selectedRestaurant, filterStatus);
+      const data = await fetchAdminOrders(selectedRestaurant, null);
 
-      // Filter: Visa endast aktiva orders (received, accepted)
-      // Orders med ready_for_pickup och senare hanteras av kurirer
-      const activeOrders = data.filter(order =>
-        ["received", "accepted"].includes(order.status)
-      );
+      let filteredOrders;
+      if (view === "history") {
+        // Historik: visa delivered orders
+        filteredOrders = data.filter(order => order.status === "delivered");
+      } else {
+        // Aktiva: visa bara received eller accepted
+        if (view === "received") {
+          filteredOrders = data.filter(order => order.status === "received");
+        } else if (view === "accepted") {
+          filteredOrders = data.filter(order => order.status === "accepted");
+        } else {
+          filteredOrders = data.filter(order =>
+            ["received", "accepted"].includes(order.status)
+          );
+        }
+      }
 
-      setOrders(activeOrders);
+      setOrders(filteredOrders);
       setError(null);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [selectedRestaurant, statusFilter]);
+  }, [selectedRestaurant, view]);
 
   useEffect(() => {
     fetchOrders();
-  }, [selectedRestaurant, statusFilter, fetchOrders]);
+  }, [selectedRestaurant, view, fetchOrders]);
 
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
@@ -79,7 +89,7 @@ function RestaurangVy() {
           </button>
         );
       default:
-        return <span className="status-complete">Slutförd</span>;
+        return null;
     }
   };
 
@@ -102,6 +112,29 @@ function RestaurangVy() {
     return (priceInOre / 100).toFixed(2);
   };
 
+  // Gruppera orders per månad för historik
+  const groupOrdersByMonth = (orders) => {
+    const grouped = {};
+
+    orders.forEach(order => {
+      const date = new Date(order.created_at);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      const monthName = date.toLocaleDateString("sv-SE", { year: "numeric", month: "long" });
+
+      if (!grouped[monthKey]) {
+        grouped[monthKey] = {
+          monthName,
+          orders: []
+        };
+      }
+
+      grouped[monthKey].orders.push(order);
+    });
+
+    // Sortera månader i fallande ordning (nyast först)
+    return Object.entries(grouped).sort((a, b) => b[0].localeCompare(a[0]));
+  };
+
   if (loading) {
     return (
       <div className="restaurant-view">
@@ -118,18 +151,20 @@ function RestaurangVy() {
     );
   }
 
+  const groupedHistory = view === "history" ? groupOrdersByMonth(orders) : null;
+
   return (
     <div className="restaurant-view">
       <div className="restaurant-header">
         <h1>Restaurangvy - {selectedRestaurant}</h1>
-        
+
         {/* Restaurant selector for admin */}
         {!slug && (
           <div style={{ marginBottom: "1rem" }}>
             <label htmlFor="restaurant-select">Välj restaurang:</label>
-            <select 
+            <select
               id="restaurant-select"
-              value={selectedRestaurant} 
+              value={selectedRestaurant}
               onChange={(e) => setSelectedRestaurant(e.target.value)}
               style={{ marginLeft: "0.5rem", padding: "0.5rem" }}
             >
@@ -138,112 +173,174 @@ function RestaurangVy() {
             </select>
           </div>
         )}
-        
+
         <div className="filter-buttons">
           <button
-            onClick={() => setStatusFilter("all")}
-            className={statusFilter === "all" ? "active" : ""}
-            aria-label="Visa alla ordrar"
-          >
-            Alla
-          </button>
-          <button
-            onClick={() => setStatusFilter("received")}
-            className={statusFilter === "received" ? "active" : ""}
+            onClick={() => setView("received")}
+            className={view === "received" ? "active" : ""}
             aria-label="Visa nya ordrar"
           >
-            Nya
+            Nya ordrar
           </button>
           <button
-            onClick={() => setStatusFilter("accepted")}
-            className={statusFilter === "accepted" ? "active" : ""}
+            onClick={() => setView("accepted")}
+            className={view === "accepted" ? "active" : ""}
             aria-label="Visa accepterade ordrar"
           >
             Accepterade
           </button>
           <button
-            onClick={() => setStatusFilter("in_progress")}
-            className={statusFilter === "in_progress" ? "active" : ""}
-            aria-label="Visa pågående ordrar"
+            onClick={() => setView("history")}
+            className={view === "history" ? "active" : ""}
+            aria-label="Visa historik"
           >
-            Pågående
-          </button>
-          <button
-            onClick={() => setStatusFilter("out_for_delivery")}
-            className={statusFilter === "out_for_delivery" ? "active" : ""}
-            aria-label="Visa ordrar ute för leverans"
-          >
-            Ute för leverans
+            Historik
           </button>
         </div>
       </div>
 
       <div className="orders-list">
-        {orders.length === 0 ? (
-          <div className="no-orders">Inga ordrar att visa</div>
-        ) : (
-          orders.map((order) => (
-            <div key={order.id} className="order-card">
-              <div className="order-header">
-                <h3>Order #{order.id}</h3>
-                <span
-                  className="status-badge"
-                  style={{ backgroundColor: getStatusColor(order.status) }}
-                >
-                  {order.status}
-                </span>
-              </div>
+        {view === "history" ? (
+          // Historik-vy grupperad per månad
+          groupedHistory && groupedHistory.length > 0 ? (
+            groupedHistory.map(([monthKey, { monthName, orders: monthOrders }]) => (
+              <div key={monthKey} className="history-month-group">
+                <h2 className="month-header">{monthName}</h2>
+                <div className="month-orders">
+                  {monthOrders.map((order) => (
+                    <div key={order.id} className="order-card history-order">
+                      <div className="order-header">
+                        <div>
+                          <h3>Order #{order.id}</h3>
+                          <p className="order-date">{formatTime(order.created_at)}</p>
+                        </div>
+                        <span
+                          className="status-badge"
+                          style={{ backgroundColor: getStatusColor(order.status) }}
+                        >
+                          {order.status}
+                        </span>
+                      </div>
 
-              <div className="customer-info">
-                <h4>{order.customer_name}</h4>
-                <p>📞 {order.customer_phone}</p>
-                <p>📍 {order.customer_address}</p>
-                {order.customer_notes && (
-                  <p className="customer-notes">
-                    <strong>💬 Meddelande:</strong> {order.customer_notes}
-                  </p>
-                )}
-              </div>
+                      <div className="customer-info">
+                        <h4>{order.customer_name}</h4>
+                        <p>📞 {order.customer_phone}</p>
+                        <p>📍 {order.customer_address}</p>
+                        {order.customer_notes && (
+                          <p className="customer-notes">
+                            <strong>💬 Meddelande:</strong> {order.customer_notes}
+                          </p>
+                        )}
+                      </div>
 
-              <div className="order-details">
-                <p><strong>Total:</strong> {formatPrice(order.grand_total)} kr</p>
-                <p><strong>Beställt:</strong> {formatTime(order.created_at)}</p>
-                {order.items && order.items.length > 0 && (
-                  <div className="order-items">
-                    <h5>Varor:</h5>
-                    <ul>
-                      {order.items.map((item, index) => (
-                        <li key={index}>
-                          {item.name} x{item.quantity} - {formatPrice(item.line_total)} kr
-                          {item.options && item.options.length > 0 && (
-                            <ul style={{ marginLeft: "1rem", fontSize: "0.9em" }}>
-                              {item.options.map((option, optIndex) => (
-                                <li key={optIndex}>
-                                  + {option.label}
-                                  {option.price_delta !== 0 && (
-                                    ` (${option.price_delta > 0 ? "+" : ""}${formatPrice(option.price_delta)} kr)`
-                                  )}
-                                  {option.custom_note && (
-                                    <span className="option-note">
-                                      {" "}- "{option.custom_note}"
-                                    </span>
+                      <div className="order-details">
+                        <p><strong>Total:</strong> {formatPrice(order.grand_total)} kr</p>
+                        {order.items && order.items.length > 0 && (
+                          <div className="order-items">
+                            <h5>Varor:</h5>
+                            <ul>
+                              {order.items.map((item, index) => (
+                                <li key={index}>
+                                  {item.name} x{item.quantity} - {formatPrice(item.line_total)} kr
+                                  {item.options && item.options.length > 0 && (
+                                    <ul style={{ marginLeft: "1rem", fontSize: "0.9em" }}>
+                                      {item.options.map((option, optIndex) => (
+                                        <li key={optIndex}>
+                                          + {option.label}
+                                          {option.price_delta !== 0 && (
+                                            ` (${option.price_delta > 0 ? "+" : ""}${formatPrice(option.price_delta)} kr)`
+                                          )}
+                                          {option.custom_note && (
+                                            <span className="option-note">
+                                              {" "}- "{option.custom_note}"
+                                            </span>
+                                          )}
+                                        </li>
+                                      ))}
+                                    </ul>
                                   )}
                                 </li>
                               ))}
                             </ul>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="no-orders">Inga historiska ordrar att visa</div>
+          )
+        ) : (
+          // Aktiva ordrar-vy
+          orders.length === 0 ? (
+            <div className="no-orders">Inga ordrar att visa</div>
+          ) : (
+            orders.map((order) => (
+              <div key={order.id} className="order-card">
+                <div className="order-header">
+                  <h3>Order #{order.id}</h3>
+                  <span
+                    className="status-badge"
+                    style={{ backgroundColor: getStatusColor(order.status) }}
+                  >
+                    {order.status}
+                  </span>
+                </div>
 
-              <div className="order-actions">
-                {getStatusButtons(order)}
+                <div className="customer-info">
+                  <h4>{order.customer_name}</h4>
+                  <p>📞 {order.customer_phone}</p>
+                  <p>📍 {order.customer_address}</p>
+                  {order.customer_notes && (
+                    <p className="customer-notes">
+                      <strong>💬 Meddelande:</strong> {order.customer_notes}
+                    </p>
+                  )}
+                </div>
+
+                <div className="order-details">
+                  <p><strong>Total:</strong> {formatPrice(order.grand_total)} kr</p>
+                  <p><strong>Beställt:</strong> {formatTime(order.created_at)}</p>
+                  {order.items && order.items.length > 0 && (
+                    <div className="order-items">
+                      <h5>Varor:</h5>
+                      <ul>
+                        {order.items.map((item, index) => (
+                          <li key={index}>
+                            {item.name} x{item.quantity} - {formatPrice(item.line_total)} kr
+                            {item.options && item.options.length > 0 && (
+                              <ul style={{ marginLeft: "1rem", fontSize: "0.9em" }}>
+                                {item.options.map((option, optIndex) => (
+                                  <li key={optIndex}>
+                                    + {option.label}
+                                    {option.price_delta !== 0 && (
+                                      ` (${option.price_delta > 0 ? "+" : ""}${formatPrice(option.price_delta)} kr)`
+                                    )}
+                                    {option.custom_note && (
+                                      <span className="option-note">
+                                        {" "}- "{option.custom_note}"
+                                      </span>
+                                    )}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <div className="order-actions">
+                  {getStatusButtons(order)}
+                </div>
               </div>
-            </div>
-          ))
+            ))
+          )
         )}
       </div>
     </div>

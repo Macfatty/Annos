@@ -231,3 +231,34 @@
   margin: 1rem 0;
 }
 
+/* Historik-vy styling */
+.history-period-group {
+  margin-bottom: 2rem;
+}
+
+.period-header {
+  color: var(--text-color);
+  background: var(--card-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.period-orders {
+  display: grid;
+  gap: 1rem;
+}
+
+.history-order {
+  opacity: 0.95;
+}
+
+.order-date {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0 0;
+  opacity: 0.8;
+}
+
