@@ -81,7 +81,7 @@ export class AuthService {
           } else if (errorData.error) {
             errorMessage = errorData.error;
           }
-        } catch (e) {
+        } catch {
           // Ignore JSON parse errors
         }
 

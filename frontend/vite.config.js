@@ -12,8 +12,8 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         cookieDomainRewrite: "localhost",
-        configure: (proxy, _options) => {
-          proxy.on("proxyRes", (proxyRes, req, res) => {
+        configure: (proxy) => {
+          proxy.on("proxyRes", (proxyRes) => {
             // Log för debugging
             if (proxyRes.headers["set-cookie"]) {
               console.log("[VITE PROXY] Set-Cookie:", proxyRes.headers["set-cookie"]);

@@ -23,7 +23,7 @@ function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
         // Först försök hämta från profil
         const profile = await fetchProfile();
 
-        if (profile && typeof profile === 'object' && profile.email) {
+        if (profile && typeof profile === "object" && profile.email) {
           setKundinfo({
             namn: profile.namn || "",
             email: profile.email || "",
@@ -44,7 +44,7 @@ function Checkout({ varukorg, setVarukorg, restaurant_slug }) {
           const info = JSON.parse(sparad);
 
           // Clean up contaminated localStorage (from before authService fix)
-          if (info.success !== undefined || (info.data && typeof info.data === 'object' && !info.email)) {
+          if (info.success !== undefined || (info.data && typeof info.data === "object" && !info.email)) {
             console.log("[Checkout] Detected contaminated localStorage - clearing");
             localStorage.removeItem("kundinfo");
             // Leave fields empty, user can fill manually or click "Uppdatera från profil"

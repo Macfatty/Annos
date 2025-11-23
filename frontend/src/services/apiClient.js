@@ -34,15 +34,15 @@ async function refreshAccessToken() {
     });
 
     if (!response.ok) {
-      console.warn('[apiClient] Token refresh failed:', response.status);
+      console.warn("[apiClient] Token refresh failed:", response.status);
       return false;
     }
 
     const data = await response.json();
-    console.log('[apiClient] Token refreshed successfully');
+    console.log("[apiClient] Token refreshed successfully");
     return data.success === true;
   } catch (error) {
-    console.error('[apiClient] Token refresh error:', error);
+    console.error("[apiClient] Token refresh error:", error);
     return false;
   }
 }
@@ -82,12 +82,12 @@ export async function apiRequest(endpoint, options = {}) {
     clearTimeout(timeoutId);
 
     // AUTOMATIC TOKEN REFRESH on 401 (except for auth endpoints)
-    if (response.status === 401 && !endpoint.includes('/auth/refresh') && !endpoint.includes('/auth/login')) {
-      console.log('[apiClient] 401 detected, attempting token refresh...');
+    if (response.status === 401 && !endpoint.includes("/auth/refresh") && !endpoint.includes("/auth/login")) {
+      console.log("[apiClient] 401 detected, attempting token refresh...");
 
       // If already refreshing, wait for it to complete
       if (isRefreshing) {
-        console.log('[apiClient] Token refresh already in progress, queueing request...');
+        console.log("[apiClient] Token refresh already in progress, queueing request...");
         return new Promise((resolve) => {
           subscribeTokenRefresh(async () => {
             // Retry original request after token is refreshed
@@ -110,7 +110,7 @@ export async function apiRequest(endpoint, options = {}) {
         onTokenRefreshed();
 
         // Retry original request with new token
-        console.log('[apiClient] Retrying original request with new token...');
+        console.log("[apiClient] Retrying original request with new token...");
         const retryResponse = await fetch(url, {
           ...defaultOptions,
           ...options,
@@ -118,7 +118,7 @@ export async function apiRequest(endpoint, options = {}) {
         return retryResponse;
       } else {
         // Refresh failed - logout user
-        console.warn('[apiClient] Token refresh failed, logging out user');
+        console.warn("[apiClient] Token refresh failed, logging out user");
         localStorage.removeItem("kundinfo");
         window.dispatchEvent(new Event("storage"));
         const error = new Error(`Unauthorized: ${response.status}`);

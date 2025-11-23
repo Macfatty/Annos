@@ -73,8 +73,8 @@ export class OrderService {
   static async fetchAdminOrders(restaurantSlug = null, status = null) {
     try {
       const params = new URLSearchParams();
-      if (restaurantSlug) params.append("slug", restaurantSlug);
-      if (status) params.append("status", status);
+      if (restaurantSlug) {params.append("slug", restaurantSlug);}
+      if (status) {params.append("status", status);}
 
       const queryString = params.toString();
       const url = queryString

@@ -34,7 +34,7 @@ function MinProfil() {
         const data = await fetchProfile();
 
         // Validate that we got a proper user object
-        if (data && typeof data === 'object' && data.email) {
+        if (data && typeof data === "object" && data.email) {
           setProfil(data);
           localStorage.setItem("kundinfo", JSON.stringify(data));
         } else {
@@ -51,7 +51,7 @@ function MinProfil() {
             const parsed = JSON.parse(fallback);
 
             // Clean up contaminated localStorage (from before authService fix)
-            if (parsed.success !== undefined || (parsed.data && typeof parsed.data === 'object' && !parsed.email)) {
+            if (parsed.success !== undefined || (parsed.data && typeof parsed.data === "object" && !parsed.email)) {
               console.log("[MinProfil] Detected contaminated localStorage - clearing and redirecting to login");
               localStorage.removeItem("kundinfo");
               alert("Din session har förfallit. Vänligen logga in igen.");
