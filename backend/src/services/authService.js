@@ -102,15 +102,15 @@ class AuthService {
       const user = result.rows[0];
       
       // Generate tokens
-      const token = this.generateToken({ 
-        id: user.id, 
-        email: user.email, 
-        role: user.role 
+      const token = this.generateToken({
+        userId: user.id,  // Use 'userId' for consistency with legacy endpoints
+        email: user.email,
+        role: user.role
       });
-      
-      const refreshToken = this.generateRefreshToken({ 
-        id: user.id, 
-        email: user.email 
+
+      const refreshToken = this.generateRefreshToken({
+        userId: user.id,  // Use 'userId' for consistency
+        email: user.email
       });
 
       return {
@@ -165,15 +165,15 @@ class AuthService {
       }
 
       // Generate tokens
-      const token = this.generateToken({ 
-        id: user.id, 
-        email: user.email, 
-        role: user.role 
+      const token = this.generateToken({
+        userId: user.id,  // Use 'userId' for consistency with legacy endpoints
+        email: user.email,
+        role: user.role
       });
-      
-      const refreshToken = this.generateRefreshToken({ 
-        id: user.id, 
-        email: user.email 
+
+      const refreshToken = this.generateRefreshToken({
+        userId: user.id,  // Use 'userId' for consistency
+        email: user.email
       });
 
       return {
