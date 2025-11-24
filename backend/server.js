@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const { verifyJWT, verifyToken, verifyRole, verifyAdminForSlug, rateLimit, isValidStatusTransition } = require("./authMiddleware");
+const { requirePermission, requireAnyPermission } = require("./src/middleware/requirePermission");
+const AuditService = require("./src/services/auditService");
 const { createPaymentProvider, validatePaymentRequest, logPaymentActivity } = require("./payments");
 const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
@@ -349,9 +351,9 @@ app.get("/api/menu/:slug/accessories/grouped", (req, res) => {
 });
 
 // Skapa beställning
-app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req, res) => {
+app.post("/api/order", verifyJWT, requirePermission('orders:create'), async (req, res) => {
   const client = await pool.connect();
-  
+
   try {
     const { order, restaurant_slug, namn, telefon, adress, email, ovrigt } = req.body;
 
@@ -476,7 +478,14 @@ app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req,
 
     // Committa transaktionen
     await client.query('COMMIT');
-    
+
+    // Audit log: order created
+    await AuditService.logFromRequest(req, 'order:create', 'order', orderId, {
+      restaurant_slug,
+      total: totalInOre,
+      items_count: order.length
+    });
+
     res.json({
       message: "Beställning mottagen",
       orderId: orderId,
@@ -531,11 +540,12 @@ app.post("/api/order", verifyJWT, verifyRole(["customer", "admin"]), async (req,
 });
 
 // Hämta dagens ordrar för restaurang
-app.get("/api/admin/orders/today", verifyJWT, verifyRole(["admin", "restaurant"]), (req, res) => {
+app.get("/api/admin/orders/today", verifyJWT, requirePermission('orders:view:own'), (req, res) => {
   const { slug } = req.query;
-  
+
   // Kontrollera att användaren har behörighet för den begärda restaurangen
-  if (slug && req.user.restaurant_slug !== slug) {
+  // Admin kan se alla, restaurant kan bara se egna
+  if (slug && req.user.role !== 'admin' && req.user.restaurant_slug !== slug) {
     return res.status(403).json({ error: "Forbidden: Wrong restaurant slug" });
   }
   
@@ -561,11 +571,12 @@ app.get("/api/admin/orders/today", verifyJWT, verifyRole(["admin", "restaurant"]
 });
 
 // GET /api/admin/orders - Hämta ordrar för restaurang
-app.get("/api/admin/orders", verifyJWT, verifyRole(["admin", "restaurant"]), (req, res) => {
+app.get("/api/admin/orders", verifyJWT, requirePermission('orders:view:own'), (req, res) => {
   const { slug, status } = req.query;
-  
+
   // Kontrollera att användaren har behörighet för den begärda restaurangen
-  if (slug && req.user.role === "restaurant" && req.user.restaurant_slug !== slug) {
+  // Admin kan se alla, restaurant kan bara se egna
+  if (slug && req.user.role !== 'admin' && req.user.restaurant_slug !== slug) {
     return res.status(403).json({ error: "Forbidden: Wrong restaurant slug" });
   }
   
@@ -602,7 +613,7 @@ app.get("/api/admin/orders", verifyJWT, verifyRole(["admin", "restaurant"]), (re
 });
 
 // GET /api/courier/orders - Hämta kurirordrar
-app.get("/api/courier/orders", verifyJWT, verifyRole(["courier", "admin"]), async (req, res) => {
+app.get("/api/courier/orders", verifyJWT, requirePermission('orders:view:own'), async (req, res) => {
   try {
     const orders = await OrderService.getCourierOrders();
     res.json(orders);
@@ -613,42 +624,56 @@ app.get("/api/courier/orders", verifyJWT, verifyRole(["courier", "admin"]), asyn
 });
 
 // PATCH /api/courier/orders/:id/accept - Acceptera order
-app.patch("/api/courier/orders/:id/accept", verifyJWT, verifyRole(["courier", "admin"]), (req, res) => {
+app.patch("/api/courier/orders/:id/accept", verifyJWT, requirePermission('orders:update:status'), async (req, res) => {
   const { id } = req.params;
   const courierId = req.user.userId;
-  
-  tilldelaOrderTillKurir(id, courierId, (err) => {
+
+  tilldelaOrderTillKurir(id, courierId, async (err) => {
     if (err) {
       console.error("Fel vid orderacceptans:", err);
       return res.status(500).json({ error: "Kunde inte acceptera order" });
     }
-    res.json({ 
-      message: "Order accepterad", 
-      orderId: id, 
-      assignedTo: courierId 
+
+    // Audit log: order accepted by courier
+    await AuditService.logFromRequest(req, 'order:update', 'order', id, {
+      action: 'accepted',
+      courier_id: courierId
+    });
+
+    res.json({
+      message: "Order accepterad",
+      orderId: id,
+      assignedTo: courierId
     });
   });
 });
 
 // PATCH /api/courier/orders/:id/delivered - Markera order som levererad
-app.patch("/api/courier/orders/:id/delivered", verifyJWT, verifyRole(["courier", "admin"]), (req, res) => {
+app.patch("/api/courier/orders/:id/delivered", verifyJWT, requirePermission('orders:update:status'), async (req, res) => {
   const { id } = req.params;
-  
-  markeraOrderSomLevererad(id, (err) => {
+
+  markeraOrderSomLevererad(id, async (err) => {
     if (err) {
       console.error("Fel vid leverans:", err);
       return res.status(500).json({ error: "Kunde inte markera som levererad" });
     }
-    res.json({ 
-      message: "Order levererad", 
-      orderId: id, 
-      deliveredAt: new Date().toISOString() 
+
+    // Audit log: order delivered
+    await AuditService.logFromRequest(req, 'order:update', 'order', id, {
+      action: 'delivered',
+      deliveredAt: new Date().toISOString()
+    });
+
+    res.json({
+      message: "Order levererad",
+      orderId: id,
+      deliveredAt: new Date().toISOString()
     });
   });
 });
 
 // Markera order som klar
-app.put("/api/admin/orders/:id/klart", verifyJWT, verifyRole(["admin", "restaurant"]), (req, res) => {
+app.put("/api/admin/orders/:id/klart", verifyJWT, requirePermission('orders:update:status'), async (req, res) => {
   const { id } = req.params;
   
   // Kontrollera att ordern tillhör rätt restaurang för restaurant-användare
@@ -672,21 +697,34 @@ app.put("/api/admin/orders/:id/klart", verifyJWT, verifyRole(["admin", "restaura
       }
       
       // Fortsätt med markering
-      markeraOrderSomKlar(id, (err) => {
+      markeraOrderSomKlar(id, async (err) => {
         if (err) {
           console.error("Fel vid markering av order som klar:", err);
           return res.status(500).json({ error: "Kunde inte markera order som klar" });
         }
+
+        // Audit log: order marked as ready
+        await AuditService.logFromRequest(req, 'order:update', 'order', id, {
+          action: 'marked_ready',
+          restaurant_slug: orderRestaurantSlug
+        });
+
         res.json({ message: "Order markerad som klar" });
       });
     });
   } else {
     // Admin kan markera alla ordrar
-    markeraOrderSomKlar(id, (err) => {
+    markeraOrderSomKlar(id, async (err) => {
       if (err) {
         console.error("Fel vid markering av order som klar:", err);
         return res.status(500).json({ error: "Kunde inte markera order som klar" });
       }
+
+      // Audit log: order marked as ready (admin)
+      await AuditService.logFromRequest(req, 'order:update', 'order', id, {
+        action: 'marked_ready'
+      });
+
       res.json({ message: "Order markerad som klar" });
     });
   }
@@ -776,6 +814,12 @@ app.put("/api/profile", verifyJWT, async (req, res) => {
 
     const updatedUser = updateResult.rows[0];
 
+    // Audit log: profile updated
+    await AuditService.logFromRequest(req, 'user:update', 'user', userId, {
+      action: 'profile_update',
+      fields: ['namn', 'telefon', 'adress']
+    });
+
     res.json({
       ...updatedUser,
       role: req.user.role
@@ -787,7 +831,7 @@ app.put("/api/profile", verifyJWT, async (req, res) => {
 });
 
 // Hämta användarens beställningar
-app.get("/api/my-orders", verifyJWT, async (req, res) => {
+app.get("/api/my-orders", verifyJWT, requirePermission('orders:view:own'), async (req, res) => {
   try {
     const userId = req.user.userId;
 
@@ -921,7 +965,7 @@ app.post("/api/logout", (req, res) => {
 });
 
 // Hämta användarens beställningar (alternativ endpoint)
-app.get("/api/orders", verifyJWT, async (req, res) => {
+app.get("/api/orders", verifyJWT, requirePermission('orders:view:own'), async (req, res) => {
   try {
     const userId = req.user.userId;
 
