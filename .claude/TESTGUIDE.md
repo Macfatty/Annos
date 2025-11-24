@@ -28,7 +28,7 @@
 
 #### Steg 1: Se ny order (received)
 - [ ] Ordern visas i restaurang-vyn
-- [ ] Ordern har status badge "received" (gul/orange färg)
+- [ ] Ordern har status badge "received" (gul/orange färg)+
 - [ ] Knappen "Acceptera order" visas
 - [ ] **Texten är läsbar** (namn, adress, telefon synliga i dark mode)
 - [ ] **Customer notes visas** om det finns (t.ex. "lägg utanför min dörr")

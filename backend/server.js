@@ -895,11 +895,14 @@ app.post("/api/register", [
   }
 });
 
-// Logga in användare
-app.post("/api/login", [
-  body("email").isEmail().normalizeEmail(),
-  body("password").notEmpty()
-], async (req, res) => {
+// Logga in användare (med rate limiting: max 5 försök per 15 min)
+app.post("/api/login",
+  rateLimit(15 * 60 * 1000, 5), // 15 minuter, max 5 försök
+  [
+    body("email").isEmail().normalizeEmail(),
+    body("password").notEmpty()
+  ],
+  async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -959,9 +962,27 @@ app.post("/api/login", [
 });
 
 // Logga ut
-app.post("/api/logout", (req, res) => {
-  res.clearCookie('token');
-  res.json({ message: "Utloggning lyckades" });
+app.post("/api/logout", verifyJWT, async (req, res) => {
+  try {
+    const token = req.token;
+    const exp = req.user.exp * 1000; // JWT exp är i sekunder, konvertera till millisekunder
+
+    // Lägg till token i blacklist
+    const JwtBlacklistService = require('./src/services/jwtBlacklistService');
+    JwtBlacklistService.addToken(token, exp);
+
+    // Audit log: utloggning
+    await AuditService.logFromRequest(req, 'auth:logout', null, null, {
+      loggedOutAt: new Date().toISOString()
+    });
+
+    res.clearCookie('token');
+    res.clearCookie('refreshToken');
+    res.json({ message: "Utloggning lyckades" });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ error: "Logout misslyckades" });
+  }
 });
 
 // Hämta användarens beställningar (alternativ endpoint)

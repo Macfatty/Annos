@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const JwtBlacklistService = require("./src/services/jwtBlacklistService");
 
 // Rate limiting storage (i produktion bör detta vara Redis eller liknande)
 const rateLimitStore = new Map();
@@ -76,9 +77,16 @@ function verifyJWT(req, res, next) {
     return res.status(401).json({ error: 'Missing bearer token' });
   }
 
+  // 4. Kontrollera om token är blacklistad (utloggad)
+  if (JwtBlacklistService.isBlacklisted(token)) {
+    console.log('[AUTH] Token is blacklisted');
+    return res.status(401).json({ error: 'Token has been revoked' });
+  }
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // { userId, role, name, email, … }
+    req.token = token; // Spara token för senare användning (t.ex. logout)
     console.log('[AUTH] Token verified:', decoded.email || decoded.id);
     return next();
   } catch (error) {
