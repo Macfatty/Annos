@@ -18,6 +18,7 @@ import RestaurangVy from "./pages/restaurant/RestaurangVy";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import { useAuth, useCart, useTheme } from "./hooks";
 import { fetchMenu } from "./services/api";
+import { RoleProvider } from "./contexts/RoleContext";
 
 function App() {
   const navigate = useNavigate();
@@ -25,14 +26,16 @@ function App() {
   const path = location.pathname.toLowerCase();
 
   // Custom hooks
-  const { 
-    inloggad, 
-    authLoading, 
-    backendError, 
-    isAdmin, 
-    isCourier, 
-    isRestaurant, 
-    loggaUt 
+  const {
+    inloggad,
+    authLoading,
+    backendError,
+    isAdmin,
+    isCourier,
+    isRestaurant,
+    loggaUt,
+    role,
+    profil
   } = useAuth();
   
   const { 
@@ -156,7 +159,7 @@ function App() {
   }
 
   return (
-    <>
+    <RoleProvider role={role} profil={profil}>
       <div
         role="navigation"
         aria-label="Navigering"
@@ -414,7 +417,7 @@ function App() {
       {isCourier && (
         <button onClick={() => navigate("/kurir")}>🚚 Kurirpanel</button>
       )}
-    </>
+    </RoleProvider>
   );
 }
 

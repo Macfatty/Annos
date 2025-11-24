@@ -6,3 +6,4 @@
 export { useAuth } from "./useAuth";
 export { useCart } from "./useCart";
 export { useTheme } from "./useTheme";
+export { usePermissions } from "./usePermissions";
