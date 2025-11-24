@@ -963,27 +963,38 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 
 ---
 
-## 🏪 PHASE 2: Restaurang Management System
+## 🏪 PHASE 2: Restaurang Management System - FÖRENKLAD
 
 **Prioritet:** 🟠 HÖG
-**Estimerad tid:** ~10-12 timmar
-**Komplexitet:** MEDIUM-HIGH
+**Estimerad tid:** ~8-10 timmar (reducerat från 10-12h)
+**Komplexitet:** MEDIUM (reducerat från MEDIUM-HIGH)
 **Beroenden:** PHASE 1
+**Kompatibilitet:** ✅ **100% Bakåtkompatibel** (Se: `.claude/FULL_ROADMAP_COMPATIBILITY.md`)
 
 ### Mål:
-Admin kan enkelt lägga till och hantera restauranger och deras menyer. Restauranger ser endast sina egna orders.
+Admin kan enkelt lägga till och hantera restauranger. Restauranger ser endast sina egna orders.
+
+**VIKTIGT: Menyer behålls som JSON-filer (ingen DB migration)**
+
+**Anledningar:**
+- ✅ Befintlig menyhantering fungerar perfekt (JSON-filer)
+- ✅ Frontend förväntar sig befintlig JSON-struktur
+- ✅ Enklare implementation utan breaking changes
+- ✅ Git version control för menyer
+- ✅ Menyer ändras sällan (inte critical data)
 
 ### Tasks:
 
-#### 2.1 Database - Restaurant System
-- [ ] Skapa `restaurants` tabell (om inte finns)
-- [ ] Skapa `menu_items` tabell
-- [ ] Skapa `menu_categories` tabell
-- [ ] Lägg till `restaurant_id` på orders (kolla om finns)
+#### 2.1 Database - Restaurant Metadata (Förenklad)
+- [ ] Skapa `restaurants` tabell för metadata
+- [ ] ❌ SKIPPA `menu_items` tabell (behåll JSON)
+- [ ] ❌ SKIPPA `menu_categories` tabell (behåll JSON)
+- [ ] Verifiera att `orders.restaurant_slug` finns (borde redan finnas)
 
 **SQL Schema:**
 ```sql
-CREATE TABLE restaurants (
+-- Endast restaurant metadata (EJ menu items)
+CREATE TABLE IF NOT EXISTS restaurants (
   id SERIAL PRIMARY KEY,
   slug VARCHAR(100) UNIQUE NOT NULL,
   name VARCHAR(200) NOT NULL,
@@ -995,41 +1006,28 @@ CREATE TABLE restaurants (
   banner_url TEXT,
   is_active BOOLEAN DEFAULT true,
   opening_hours JSONB,
+  menu_file_path VARCHAR(255),  -- Pekar till JSON-fil (ex: "Data/menyer/campino.json")
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE menu_categories (
-  id SERIAL PRIMARY KEY,
-  restaurant_id INTEGER REFERENCES restaurants(id),
-  name VARCHAR(100) NOT NULL,
-  description TEXT,
-  display_order INTEGER DEFAULT 0,
-  is_active BOOLEAN DEFAULT true
-);
-
-CREATE TABLE menu_items (
-  id SERIAL PRIMARY KEY,
-  restaurant_id INTEGER REFERENCES restaurants(id),
-  category_id INTEGER REFERENCES menu_categories(id),
-  name VARCHAR(200) NOT NULL,
-  description TEXT,
-  price INTEGER NOT NULL, -- öre
-  image_url TEXT,
-  is_active BOOLEAN DEFAULT true,
-  options JSONB, -- allergener, tillval, etc
-  display_order INTEGER DEFAULT 0
-);
+-- Seed befintliga restauranger
+INSERT INTO restaurants (slug, name, description, menu_file_path, is_active) VALUES
+  ('campino', 'Campino', 'Italiensk pizza och pasta', 'Data/menyer/campino.json', true),
+  ('sunsushi', 'SunSushi', 'Japansk sushi och asiatisk mat', 'Data/menyer/sunsushi.json', true)
+ON CONFLICT (slug) DO NOTHING;
 ```
 
-#### 2.2 Backend - Restaurant Management API
-- [ ] `POST /api/admin/restaurants` - Skapa restaurang
-- [ ] `PUT /api/admin/restaurants/:id` - Uppdatera restaurang
-- [ ] `DELETE /api/admin/restaurants/:id` - Ta bort/inaktivera restaurang
+#### 2.2 Backend - Restaurant Management API (Förenklad)
+- [ ] `POST /api/admin/restaurants` - Skapa restaurang (metadata only)
+- [ ] `PUT /api/admin/restaurants/:id` - Uppdatera restaurang metadata
+- [ ] `DELETE /api/admin/restaurants/:id` - Inaktivera restaurang (soft delete)
 - [ ] `GET /api/admin/restaurants` - Lista alla restauranger
-- [ ] `POST /api/admin/restaurants/:id/menu` - Lägg till menu item
-- [ ] `PUT /api/admin/restaurants/:id/menu/:itemId` - Uppdatera menu item
-- [ ] `DELETE /api/admin/restaurants/:id/menu/:itemId` - Ta bort menu item
+- [ ] **MENU MANAGEMENT (JSON-baserad):**
+- [ ] `GET /api/admin/restaurants/:slug/menu/download` - Ladda ner JSON-fil
+- [ ] `POST /api/admin/restaurants/:slug/menu/upload` - Upload ny JSON-fil
+- [ ] `PUT /api/admin/restaurants/:slug/menu` - Uppdatera menu JSON direkt
+- [ ] `POST /api/admin/restaurants/:slug/menu/backup` - Backup nuvarande menu
 
 #### 2.3 Backend - Restaurant Isolation
 - [ ] Uppdatera `fetchAdminOrders` att filtrera på `restaurant_id`
@@ -1450,15 +1448,17 @@ CREATE TABLE support_messages (
 
 ## 🎯 Implementation Order (Rekommenderad)
 
-### Sprint 1 (10-12 timmar):
-**PHASE 1: Roll & Autentisering**
+### Sprint 1 (9-12 timmar):
+**PHASE 1: Roll & Permission System** (FÖRBÄTTRAD)
 - Kritisk foundation för allt annat
 - Måste göras först
+- Inkluderar permissions, audit logging, säkerhet
 
-### Sprint 2 (10-12 timmar):
-**PHASE 2: Restaurang Management**
+### Sprint 2 (8-10 timmar):
+**PHASE 2: Restaurang Management** (FÖRENKLAD)
 - Högt prioriterad
 - Bygger på PHASE 1
+- Behåller JSON-menyer (enklare implementation)
 
 ### Sprint 3 (8-10 timmar):
 **PHASE 3: Kurir Management**
@@ -1475,7 +1475,14 @@ CREATE TABLE support_messages (
 - Lägst prioritet
 - Kan göras sist
 
-**Total Estimerad Tid:** 44-54 timmar (5-7 arbetsdagar)
+### Sprint 6 (4-6 timmar) - OPTIONAL:
+**PHASE 6: Performance & Scaling (Redis)**
+- Låg prioritet
+- Behövs ej förrän 6-12 månader framåt
+- När traffic når 1000+ samtidiga användare
+
+**Total Estimerad Tid (PHASE 1-5):** 41-52 timmar (5-7 arbetsdagar)
+**Med PHASE 6 (framtida):** 45-58 timmar
 
 ---
 
@@ -1506,6 +1513,176 @@ CREATE TABLE support_messages (
 - ✅ Integration tests för permission system
 - ✅ E2E tests för critical flows
 - ✅ Security audit
+
+---
+
+## 🚀 PHASE 6: Performance & Scaling (Redis Integration)
+
+**Prioritet:** 🟢 LÅG (Framtida optimering)
+**Estimerad tid:** ~4-6 timmar
+**Komplexitet:** LOW
+**Beroenden:** PHASE 1-5 i produktion med high traffic
+**Timeline:** 6-12 månader efter PHASE 1-5 live
+
+### Mål:
+Optimera performance för high traffic och multi-server setup med Redis caching.
+
+### När Behövs Detta?
+
+**Triggers:**
+- ⏰ 1000+ samtidiga användare
+- ⏰ Multiple server instances (load balancing)
+- ⏰ DB queries > 100ms
+- ⏰ Permission checks blir flaskhals
+
+### Tasks:
+
+#### 6.1 Infrastructure Setup (1h)
+- [ ] Installera Redis server (Docker recommended)
+- [ ] Installera Redis client library (`npm install redis`)
+- [ ] Konfigurera Redis connection i `.env`
+- [ ] Setup monitoring för Redis
+
+**Installation:**
+```bash
+# Docker (REKOMMENDERAT)
+docker run -d --name redis -p 6379:6379 redis:alpine
+
+# .env
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=  # optional
+```
+
+#### 6.2 Rate Limiting Migration (1h)
+- [ ] Migrera från Map till Redis för rate limiting
+- [ ] Shared rate limiting över multiple servers
+- [ ] Testa med multiple server instances
+
+**Implementation:**
+```javascript
+const redis = require('redis');
+const client = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT
+});
+
+async function rateLimit(windowMs, maxRequests) {
+  return async (req, res, next) => {
+    const key = `ratelimit:${req.ip}:${req.path}`;
+    const count = await client.incr(key);
+
+    if (count === 1) {
+      await client.expire(key, Math.ceil(windowMs / 1000));
+    }
+
+    if (count > maxRequests) {
+      return res.status(429).json({ error: 'För många förfrågningar' });
+    }
+
+    next();
+  };
+}
+```
+
+#### 6.3 JWT Blacklist Migration (1h)
+- [ ] Migrera från Set till Redis för JWT blacklist
+- [ ] Persistent blacklist över server restarts
+- [ ] Auto-cleanup med TTL
+
+**Implementation:**
+```javascript
+// Blacklist token (24h TTL)
+await client.setex(`blacklist:${token}`, 86400, '1');
+
+// Check blacklist
+const isBlacklisted = await client.get(`blacklist:${token}`);
+if (isBlacklisted) {
+  return res.status(401).json({ error: 'Token revoked' });
+}
+```
+
+#### 6.4 Permission Caching (1-2h)
+- [ ] Cache user permissions i Redis (5 min TTL)
+- [ ] Invalidate cache när permissions ändras
+- [ ] Fallback till PostgreSQL om Redis unavailable
+
+**Implementation:**
+```javascript
+// PermissionService.js
+static async getUserPermissions(userId) {
+  const cacheKey = `permissions:user:${userId}`;
+
+  // Try Redis cache first
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    return JSON.parse(cached);
+  }
+
+  // Not in cache, query PostgreSQL
+  const result = await pool.query('SELECT ...');
+  const permissions = result.rows.map(row => row.name);
+
+  // Cache for 5 minutes
+  await redis.setex(cacheKey, 300, JSON.stringify(permissions));
+
+  return permissions;
+}
+```
+
+#### 6.5 Menu Caching (Optional, 1h)
+- [ ] Cache menu data i Redis
+- [ ] Invalidate när menu uppdateras
+- [ ] 1 hour TTL (menyer ändras sällan)
+
+#### 6.6 Session Management (Optional, 1h)
+- [ ] Move sessions från memory till Redis
+- [ ] Persistent sessions över server restarts
+
+### Acceptance Criteria:
+
+**Performance:**
+- ✅ Permission checks < 10ms (från 20-50ms)
+- ✅ Rate limiting fungerar över multiple servers
+- ✅ JWT blacklist persistent över restarts
+- ✅ Menu loading < 5ms (från 10-20ms)
+
+**Reliability:**
+- ✅ Graceful degradation om Redis går ner (fallback till PostgreSQL)
+- ✅ Auto-reconnect vid Redis connection loss
+- ✅ Monitoring och alerts för Redis health
+
+**Scalability:**
+- ✅ Support för multiple server instances
+- ✅ Horizontal scaling utan shared memory issues
+
+### Cost Estimate:
+
+**Redis Cloud (Managed):**
+- Free tier: 30MB (räcker för er use case)
+- Paid tier: $5-10/månad för 100MB
+
+**Self-hosted (Docker):**
+- $0 (gratis)
+- Kräver underhåll och monitoring
+
+**Rekommendation:** Redis Cloud free tier för development, sedan paid tier för production.
+
+### Migration Strategy:
+
+```
+STEG 1: Setup Redis (development)
+STEG 2: Implementera rate limiting med Redis
+STEG 3: Testa med single server
+STEG 4: Implementera JWT blacklist med Redis
+STEG 5: Implementera permission caching
+STEG 6: Load test med multiple servers
+STEG 7: Deploy till staging
+STEG 8: Monitor performance improvements
+STEG 9: Deploy till production
+```
+
+**NOTE:** Denna phase är OPTIONAL och behövs först när traffic når kritiska nivåer. PostgreSQL + in-memory caching räcker för första 6-12 månaderna.
 
 ---
 
