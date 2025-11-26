@@ -10,6 +10,7 @@ const { createPaymentProvider, validatePaymentRequest, logPaymentActivity } = re
 const { body, validationResult } = require("express-validator");
 const dotenv = require("dotenv");
 const authRouter = require("./routes/auth");
+const restaurantRouter = require("./src/routes/restaurants");
 const { ensureAssignedCourierId } = require("./migrateDatabase");
 const OrderService = require("./src/services/orderService");
 
@@ -61,6 +62,9 @@ app.use(cookieParser());
 
 // Använd auth-router
 app.use("/api/auth", authRouter);
+
+// Använd restaurant-router (PHASE 2)
+app.use("/api/restaurants", restaurantRouter);
 
 // Test-endpoint
 app.get("/api/test", (req, res) => {
