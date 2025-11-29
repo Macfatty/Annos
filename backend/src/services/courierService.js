@@ -822,6 +822,118 @@ class CourierService {
       client.release();
     }
   }
+
+  /**
+   * Assign multiple orders to a courier with optional route optimization
+   * Note: This is a simplified implementation as we don't have order tables yet
+   * In production, this would update order statuses and create assignments
+   *
+   * @param {number} courierId - Courier ID
+   * @param {Array} orderIds - Array of order IDs to assign
+   * @param {boolean} optimizeRoute - Whether to optimize the route (default: true)
+   * @param {number} assignedBy - User ID who assigned the orders (for audit)
+   * @returns {Promise<Object>} Assignment result with route if optimized
+   */
+  static async assignMultipleOrders(courierId, orderIds, optimizeRoute = true, assignedBy = null) {
+    const client = await pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      // Verify courier exists and is available
+      const courierResult = await client.query(
+        'SELECT * FROM courier_profiles WHERE id = $1',
+        [courierId]
+      );
+
+      if (courierResult.rows.length === 0) {
+        throw new Error(`Courier not found: ${courierId}`);
+      }
+
+      const courier = courierResult.rows[0];
+
+      if (!courier.is_available) {
+        throw new Error('Courier is not available for assignment');
+      }
+
+      // Validate order IDs
+      if (!Array.isArray(orderIds) || orderIds.length === 0) {
+        throw new Error('Order IDs must be a non-empty array');
+      }
+
+      // Note: In a real implementation, we would:
+      // 1. Fetch order details from orders table (addresses, coordinates)
+      // 2. Update order statuses to 'assigned'
+      // 3. Create order_assignments records
+      // 4. For now, we'll return a simplified response
+
+      const assignment = {
+        courier_id: courierId,
+        order_ids: orderIds,
+        total_orders: orderIds.length,
+        assigned_at: new Date().toISOString(),
+        optimized: optimizeRoute
+      };
+
+      // Audit log
+      try {
+        if (assignedBy) {
+          await AuditService.log({
+            userId: assignedBy,
+            action: 'courier:assign_orders',
+            resourceType: 'courier',
+            resourceId: courierId,
+            details: {
+              order_ids: orderIds,
+              order_count: orderIds.length,
+              optimized: optimizeRoute
+            }
+          });
+        }
+      } catch (auditError) {
+        console.error('Audit logging failed (non-critical):', auditError);
+      }
+
+      await client.query('COMMIT');
+
+      return assignment;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('Assign multiple orders error:', error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  /**
+   * Get courier's current active route
+   * This retrieves the route from RouteService's memory storage
+   *
+   * @param {number} courierId - Courier ID
+   * @returns {Promise<Object|null>} Active route or null
+   */
+  static async getCourierActiveRoute(courierId) {
+    try {
+      // Verify courier exists
+      const courier = await this.getCourierById(courierId);
+
+      if (!courier) {
+        throw new Error(`Courier not found: ${courierId}`);
+      }
+
+      // Import RouteService here to avoid circular dependency
+      const RouteService = require('./routeService');
+
+      // Get active route from memory
+      const route = RouteService.getCourierActiveRoute(courierId);
+
+      return route;
+    } catch (error) {
+      console.error('Get courier active route error:', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = CourierService;
