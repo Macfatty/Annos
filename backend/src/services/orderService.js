@@ -235,11 +235,16 @@ class OrderService {
 
   /**
    * Get courier orders
+   * Replaces orderDB.hamtaKurirOrdrar()
+   *
+   * @param {string} status - Order status to filter by
+   * @param {number} courierId - Courier user ID (optional)
+   * @returns {Promise<Array>} Array of orders with items
    */
-  static async getCourierOrders() {
+  static async getCourierOrders(status = null, courierId = null) {
     try {
-      const query = `
-        SELECT o.*, 
+      let query = `
+        SELECT o.*,
                COALESCE(
                  json_agg(
                    json_build_object(
@@ -267,16 +272,173 @@ class OrderService {
           FROM order_item_options oio
           GROUP BY oio.order_item_id
         ) opt ON oi.id = opt.order_item_id
-        WHERE o.status IN ('ready_for_pickup', 'assigned', 'out_for_delivery', 'delivered')
+        WHERE 1=1
+      `;
+
+      const params = [];
+      let paramCount = 1;
+
+      if (status) {
+        query += ` AND o.status = $${paramCount}`;
+        params.push(status);
+        paramCount++;
+      }
+
+      // If courierId provided and status is not 'pending', filter by courier
+      if (courierId && status !== 'pending') {
+        query += ` AND o.assigned_courier_id = $${paramCount}`;
+        params.push(courierId);
+        paramCount++;
+      }
+
+      query += `
         GROUP BY o.id
         ORDER BY o.created_at DESC
       `;
 
-      const result = await pool.query(query);
+      const result = await pool.query(query, params);
       return result.rows;
     } catch (error) {
       console.error('Get courier orders error:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Assign order to courier
+   * Replaces orderDB.tilldelaOrderTillKurir()
+   *
+   * @param {number} orderId - Order ID
+   * @param {number} courierId - Courier user ID
+   * @param {number} assignedBy - User ID who performed the assignment (for audit)
+   * @returns {Promise<Object>} Updated order
+   */
+  static async assignCourierToOrder(orderId, courierId, assignedBy = null) {
+    const client = await pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      // Update order with courier assignment
+      const orderResult = await client.query(
+        `UPDATE orders
+         SET assigned_courier_id = $1,
+             status = 'out_for_delivery',
+             assigned_at = NOW(),
+             updated_at = NOW()
+         WHERE id = $2
+         RETURNING *`,
+        [courierId, orderId]
+      );
+
+      if (orderResult.rows.length === 0) {
+        throw new Error('Order not found');
+      }
+
+      const order = orderResult.rows[0];
+
+      // Audit log (if audit service exists)
+      try {
+        const AuditService = require('./auditService');
+        await AuditService.log({
+          action: 'order:assign_courier',
+          userId: assignedBy,
+          resourceType: 'order',
+          resourceId: orderId,
+          details: {
+            courier_id: courierId,
+            order_id: orderId,
+            previous_status: 'pending',
+            new_status: 'out_for_delivery'
+          }
+        });
+      } catch (auditError) {
+        console.warn('Audit logging failed:', auditError.message);
+      }
+
+      await client.query('COMMIT');
+      return order;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('Assign courier to order error:', error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  /**
+   * Mark order as delivered
+   * Replaces orderDB.markeraOrderSomLevererad()
+   *
+   * @param {number} orderId - Order ID
+   * @param {number} courierId - Courier user ID (for verification)
+   * @returns {Promise<Object>} Updated order
+   */
+  static async markOrderAsDelivered(orderId, courierId = null) {
+    const client = await pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      // Verify courier assignment if courierId provided
+      if (courierId) {
+        const verifyResult = await client.query(
+          'SELECT assigned_courier_id FROM orders WHERE id = $1',
+          [orderId]
+        );
+
+        if (verifyResult.rows.length === 0) {
+          throw new Error('Order not found');
+        }
+
+        if (verifyResult.rows[0].assigned_courier_id !== courierId) {
+          throw new Error('This order is not assigned to you');
+        }
+      }
+
+      // Mark as delivered
+      const orderResult = await client.query(
+        `UPDATE orders
+         SET status = 'delivered',
+             delivered_at = NOW(),
+             updated_at = NOW()
+         WHERE id = $1
+         RETURNING *`,
+        [orderId]
+      );
+
+      if (orderResult.rows.length === 0) {
+        throw new Error('Order not found');
+      }
+
+      const order = orderResult.rows[0];
+
+      // Audit log
+      try {
+        const AuditService = require('./auditService');
+        await AuditService.log({
+          action: 'order:mark_delivered',
+          userId: courierId,
+          resourceType: 'order',
+          resourceId: orderId,
+          details: {
+            courier_id: courierId,
+            delivered_at: order.delivered_at
+          }
+        });
+      } catch (auditError) {
+        console.warn('Audit logging failed:', auditError.message);
+      }
+
+      await client.query('COMMIT');
+      return order;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('Mark order as delivered error:', error);
+      throw error;
+    } finally {
+      client.release();
     }
   }
 

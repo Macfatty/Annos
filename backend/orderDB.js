@@ -250,9 +250,12 @@ function hamtaOrderMedDetaljer(orderId, callback) {
 }
 
 // Hämta kurirordrar
+// DEPRECATED: Use OrderService.getCourierOrders() instead
 function hamtaKurirOrdrar(status, courierId, callback) {
+  console.warn('DEPRECATED: hamtaKurirOrdrar() is deprecated. Use OrderService.getCourierOrders() instead.');
+
   let query = `
-    SELECT o.*, 
+    SELECT o.*,
            COALESCE(
              json_agg(
                json_build_object(
@@ -263,7 +266,7 @@ function hamtaKurirOrdrar(status, courierId, callback) {
                  'line_total', oi.line_total,
                  'options', COALESCE(opt.options, '[]'::json)
                )
-             ) FILTER (WHERE oi.id IS NOT NULL), 
+             ) FILTER (WHERE oi.id IS NOT NULL),
              '[]'::json
            ) as items
     FROM orders o
@@ -283,16 +286,16 @@ function hamtaKurirOrdrar(status, courierId, callback) {
     ) opt ON true
     WHERE o.status = $1
   `;
-  
+
   const params = [status];
-  
+
   if (courierId && status !== 'pending') {
     query += ` AND o.assigned_courier_id = $2`;
     params.push(courierId);
   }
-  
+
   query += ` GROUP BY o.id ORDER BY o.created_at DESC`;
-  
+
   pool.query(query, params, (err, result) => {
     if (err) {
       console.error("Fel vid hämtning av kurirordrar:", err);
@@ -303,15 +306,18 @@ function hamtaKurirOrdrar(status, courierId, callback) {
 }
 
 // Tilldela order till kurir
+// DEPRECATED: Use OrderService.assignCourierToOrder() instead
 function tilldelaOrderTillKurir(orderId, courierId, callback) {
+  console.warn('DEPRECATED: tilldelaOrderTillKurir() is deprecated. Use OrderService.assignCourierToOrder() instead.');
+
   const query = `
-    UPDATE orders 
-    SET assigned_courier_id = $1, 
+    UPDATE orders
+    SET assigned_courier_id = $1,
         status = 'out_for_delivery',
         updated_at = $2
     WHERE id = $3
   `;
-  
+
   const now = new Date().toISOString();
   pool.query(query, [courierId, now, orderId], (err, result) => {
     if (err) {
@@ -323,15 +329,18 @@ function tilldelaOrderTillKurir(orderId, courierId, callback) {
 }
 
 // Markera order som levererad
+// DEPRECATED: Use OrderService.markOrderAsDelivered() instead
 function markeraOrderSomLevererad(orderId, callback) {
+  console.warn('DEPRECATED: markeraOrderSomLevererad() is deprecated. Use OrderService.markOrderAsDelivered() instead.');
+
   const query = `
-    UPDATE orders 
-    SET status = 'delivered', 
+    UPDATE orders
+    SET status = 'delivered',
         delivered_at = $1,
         updated_at = $1
     WHERE id = $2
   `;
-  
+
   const now = new Date().toISOString();
   pool.query(query, [now, orderId], (err, result) => {
     if (err) {
