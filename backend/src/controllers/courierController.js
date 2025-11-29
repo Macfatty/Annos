@@ -471,6 +471,267 @@ async function getGlobalStats(req, res) {
   }
 }
 
+/**
+ * Update courier GPS location
+ * Courier can update their own location
+ */
+async function updateLocation(req, res) {
+  try {
+    const { id } = req.params;
+    const { latitude, longitude } = req.body;
+    const updatedBy = req.user?.id;
+
+    // Validate required fields
+    if (latitude === undefined || longitude === undefined) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'latitude and longitude are required'
+      });
+    }
+
+    // Validate data types
+    if (typeof latitude !== 'number' || typeof longitude !== 'number') {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'latitude and longitude must be numbers'
+      });
+    }
+
+    // Get courier to check ownership
+    const courier = await CourierService.getCourierById(parseInt(id));
+
+    // Security: Courier can only update their own location, unless admin
+    if (req.user?.role !== 'admin' && courier.user_id !== req.user?.id) {
+      return res.status(403).json({
+        success: false,
+        error: 'Forbidden',
+        message: 'You can only update your own location'
+      });
+    }
+
+    const updatedCourier = await CourierService.updateCourierLocation(
+      parseInt(id),
+      latitude,
+      longitude,
+      updatedBy
+    );
+
+    res.json({
+      success: true,
+      data: updatedCourier,
+      message: 'Location updated successfully'
+    });
+  } catch (error) {
+    console.error(`Error updating courier location ${req.params.id}:`, error);
+
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: 'Courier not found',
+        message: error.message
+      });
+    }
+
+    if (error.message.includes('Latitude') || error.message.includes('Longitude')) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: error.message
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update location',
+      message: error.message
+    });
+  }
+}
+
+/**
+ * Get nearby couriers
+ * Public endpoint
+ */
+async function getNearby(req, res) {
+  try {
+    const { latitude, longitude, radius, vehicleType } = req.query;
+
+    // Validate required fields
+    if (!latitude || !longitude) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'latitude and longitude query parameters are required'
+      });
+    }
+
+    // Parse and validate numbers
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
+    const radiusKm = radius ? parseFloat(radius) : 5;
+
+    if (isNaN(lat) || isNaN(lng)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'latitude and longitude must be valid numbers'
+      });
+    }
+
+    if (isNaN(radiusKm) || radiusKm <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'radius must be a positive number'
+      });
+    }
+
+    const couriers = await CourierService.getCouriersNearby(
+      lat,
+      lng,
+      radiusKm,
+      vehicleType || null
+    );
+
+    res.json({
+      success: true,
+      data: couriers,
+      count: couriers.length,
+      search_params: {
+        latitude: lat,
+        longitude: lng,
+        radius_km: radiusKm,
+        vehicle_type: vehicleType || 'all'
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching nearby couriers:', error);
+
+    if (error.message.includes('Latitude') || error.message.includes('Longitude') || error.message.includes('Radius')) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: error.message
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch nearby couriers',
+      message: error.message
+    });
+  }
+}
+
+/**
+ * Get courier's current location
+ * Courier can view their own location
+ */
+async function getCurrentLocation(req, res) {
+  try {
+    const { id } = req.params;
+
+    // Get courier to check ownership
+    const courier = await CourierService.getCourierById(parseInt(id));
+
+    // Security: Courier can only view their own location, unless admin
+    if (req.user?.role !== 'admin' && courier.user_id !== req.user?.id) {
+      return res.status(403).json({
+        success: false,
+        error: 'Forbidden',
+        message: 'You can only view your own location'
+      });
+    }
+
+    const location = await CourierService.getCourierCurrentLocation(parseInt(id));
+
+    res.json({
+      success: true,
+      data: location
+    });
+  } catch (error) {
+    console.error(`Error fetching courier location ${req.params.id}:`, error);
+
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: 'Courier not found',
+        message: error.message
+      });
+    }
+
+    if (error.message.includes('not enabled') || error.message.includes('not available')) {
+      return res.status(400).json({
+        success: false,
+        error: 'Location unavailable',
+        message: error.message
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch location',
+      message: error.message
+    });
+  }
+}
+
+/**
+ * Toggle GPS tracking
+ * Admin only
+ */
+async function toggleGPS(req, res) {
+  try {
+    const { id } = req.params;
+    const { enabled } = req.body;
+    const updatedBy = req.user?.id;
+
+    // Validate required fields
+    if (enabled === undefined) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'enabled field is required'
+      });
+    }
+
+    // Validate boolean type
+    if (typeof enabled !== 'boolean') {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        message: 'enabled must be a boolean value'
+      });
+    }
+
+    const courier = await CourierService.toggleGPS(parseInt(id), enabled, updatedBy);
+
+    res.json({
+      success: true,
+      data: courier,
+      message: `GPS tracking ${enabled ? 'enabled' : 'disabled'} successfully`
+    });
+  } catch (error) {
+    console.error(`Error toggling GPS for courier ${req.params.id}:`, error);
+
+    if (error.message.includes('not found')) {
+      return res.status(404).json({
+        success: false,
+        error: 'Courier not found',
+        message: error.message
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to toggle GPS',
+      message: error.message
+    });
+  }
+}
+
 module.exports = {
   getAllCouriers,
   getCourierById,
@@ -483,5 +744,9 @@ module.exports = {
   deactivateContract,
   getAvailableCouriers,
   getCourierStats,
-  getGlobalStats
+  getGlobalStats,
+  updateLocation,
+  getNearby,
+  getCurrentLocation,
+  toggleGPS
 };

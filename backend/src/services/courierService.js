@@ -534,6 +534,294 @@ class CourierService {
       throw error;
     }
   }
+
+  /**
+   * Update courier GPS location
+   *
+   * @param {number} courierId - Courier ID
+   * @param {number} latitude - Latitude (-90 to 90)
+   * @param {number} longitude - Longitude (-180 to 180)
+   * @param {number} updatedBy - User ID who updated the location (for audit)
+   * @returns {Promise<Object>} Updated courier profile
+   */
+  static async updateCourierLocation(courierId, latitude, longitude, updatedBy = null) {
+    const client = await pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      // Validate latitude range
+      if (latitude < -90 || latitude > 90) {
+        throw new Error('Latitude must be between -90 and 90 degrees');
+      }
+
+      // Validate longitude range
+      if (longitude < -180 || longitude > 180) {
+        throw new Error('Longitude must be between -180 and 180 degrees');
+      }
+
+      // Update location
+      const result = await client.query(
+        `UPDATE courier_profiles
+         SET current_latitude = $1,
+             current_longitude = $2,
+             last_location_update = NOW(),
+             gps_enabled = true,
+             updated_at = NOW()
+         WHERE id = $3
+         RETURNING *`,
+        [latitude, longitude, courierId]
+      );
+
+      if (result.rows.length === 0) {
+        throw new Error(`Courier not found: ${courierId}`);
+      }
+
+      const courier = result.rows[0];
+
+      // Audit log
+      try {
+        if (updatedBy) {
+          await AuditService.log({
+            userId: updatedBy,
+            action: 'courier:update_location',
+            resourceType: 'courier',
+            resourceId: courierId,
+            details: {
+              latitude,
+              longitude,
+              timestamp: new Date().toISOString()
+            }
+          });
+        }
+      } catch (auditError) {
+        console.error('Audit logging failed (non-critical):', auditError);
+      }
+
+      await client.query('COMMIT');
+
+      return courier;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('Update courier location error:', error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  /**
+   * Get couriers nearby a location
+   * Uses Haversine formula to calculate distance
+   *
+   * @param {number} latitude - Search center latitude
+   * @param {number} longitude - Search center longitude
+   * @param {number} radiusKm - Search radius in kilometers (default: 5)
+   * @param {string} vehicleType - Optional vehicle type filter
+   * @returns {Promise<Array>} Array of nearby couriers with distance
+   */
+  static async getCouriersNearby(latitude, longitude, radiusKm = 5, vehicleType = null) {
+    try {
+      // Validate latitude range
+      if (latitude < -90 || latitude > 90) {
+        throw new Error('Latitude must be between -90 and 90 degrees');
+      }
+
+      // Validate longitude range
+      if (longitude < -180 || longitude > 180) {
+        throw new Error('Longitude must be between -180 and 180 degrees');
+      }
+
+      // Validate radius
+      if (radiusKm <= 0) {
+        throw new Error('Radius must be greater than 0');
+      }
+
+      // Build query with Haversine formula in subquery
+      let query = `
+        SELECT *
+        FROM (
+          SELECT
+            cp.*,
+            u.email AS courier_email,
+            COALESCE(u.namn, u.email) AS courier_name,
+            (
+              6371 * acos(
+                cos(radians($1)) *
+                cos(radians(cp.current_latitude)) *
+                cos(radians(cp.current_longitude) - radians($2)) +
+                sin(radians($1)) *
+                sin(radians(cp.current_latitude))
+              )
+            ) AS distance_km
+          FROM courier_profiles cp
+          JOIN users u ON cp.user_id = u.id
+          WHERE cp.is_available = true
+            AND cp.gps_enabled = true
+            AND cp.current_latitude IS NOT NULL
+            AND cp.current_longitude IS NOT NULL
+      `;
+
+      const params = [latitude, longitude];
+      let paramCounter = 3;
+
+      // Add vehicle type filter if specified
+      if (vehicleType) {
+        query += ` AND cp.vehicle_type = $${paramCounter}`;
+        params.push(vehicleType);
+        paramCounter++;
+      }
+
+      // Close subquery and add WHERE clause for radius filter and ordering
+      query += `
+        ) AS nearby_couriers
+        WHERE distance_km <= $${paramCounter}
+        ORDER BY distance_km ASC
+      `;
+      params.push(radiusKm);
+
+      const result = await pool.query(query, params);
+
+      // Round distance to 2 decimal places
+      return result.rows.map(courier => ({
+        ...courier,
+        distance_km: Math.round(courier.distance_km * 100) / 100
+      }));
+    } catch (error) {
+      console.error('Get couriers nearby error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get courier's current GPS location
+   *
+   * @param {number} courierId - Courier ID
+   * @returns {Promise<Object>} Current location data
+   */
+  static async getCourierCurrentLocation(courierId) {
+    try {
+      const result = await pool.query(
+        `SELECT
+           id,
+           user_id,
+           current_latitude,
+           current_longitude,
+           last_location_update,
+           gps_enabled
+         FROM courier_profiles
+         WHERE id = $1`,
+        [courierId]
+      );
+
+      if (result.rows.length === 0) {
+        throw new Error(`Courier not found: ${courierId}`);
+      }
+
+      const courier = result.rows[0];
+
+      // Check if GPS is enabled
+      if (!courier.gps_enabled) {
+        throw new Error('GPS tracking is not enabled for this courier');
+      }
+
+      // Check if location is available
+      if (courier.current_latitude === null || courier.current_longitude === null) {
+        throw new Error('Location not available for this courier');
+      }
+
+      return {
+        courier_id: courier.id,
+        user_id: courier.user_id,
+        latitude: courier.current_latitude,
+        longitude: courier.current_longitude,
+        last_update: courier.last_location_update,
+        gps_enabled: courier.gps_enabled
+      };
+    } catch (error) {
+      console.error('Get courier location error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Toggle GPS tracking for a courier
+   *
+   * @param {number} courierId - Courier ID
+   * @param {boolean} enabled - Enable or disable GPS
+   * @param {number} updatedBy - User ID who toggled GPS (for audit)
+   * @returns {Promise<Object>} Updated courier profile
+   */
+  static async toggleGPS(courierId, enabled, updatedBy = null) {
+    const client = await pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      // If disabling, clear coordinates
+      let query;
+      let params;
+
+      if (!enabled) {
+        query = `
+          UPDATE courier_profiles
+          SET gps_enabled = $1,
+              current_latitude = NULL,
+              current_longitude = NULL,
+              last_location_update = NULL,
+              updated_at = NOW()
+          WHERE id = $2
+          RETURNING *
+        `;
+        params = [enabled, courierId];
+      } else {
+        query = `
+          UPDATE courier_profiles
+          SET gps_enabled = $1,
+              updated_at = NOW()
+          WHERE id = $2
+          RETURNING *
+        `;
+        params = [enabled, courierId];
+      }
+
+      const result = await client.query(query, params);
+
+      if (result.rows.length === 0) {
+        throw new Error(`Courier not found: ${courierId}`);
+      }
+
+      const courier = result.rows[0];
+
+      // Audit log
+      try {
+        if (updatedBy) {
+          await AuditService.log({
+            userId: updatedBy,
+            action: 'courier:toggle_gps',
+            resourceType: 'courier',
+            resourceId: courierId,
+            details: {
+              gps_enabled: enabled,
+              coordinates_cleared: !enabled
+            }
+          });
+        }
+      } catch (auditError) {
+        console.error('Audit logging failed (non-critical):', auditError);
+      }
+
+      await client.query('COMMIT');
+
+      return courier;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('Toggle GPS error:', error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
 }
 
 module.exports = CourierService;

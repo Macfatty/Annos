@@ -18,6 +18,9 @@ const { requirePermission } = require('../middleware/requirePermission');
 // GET /api/couriers/available - Get all available couriers
 router.get('/available', courierController.getAvailableCouriers);
 
+// GET /api/couriers/nearby - Get nearby couriers (GPS-based)
+router.get('/nearby', courierController.getNearby);
+
 /**
  * Courier routes (requires authentication + courier:view permission)
  */
@@ -47,6 +50,24 @@ router.get(
   verifyJWT,
   requirePermission('courier:view'),
   courierController.getCourierStats
+);
+
+// PATCH /api/couriers/:id/location - Update courier GPS location
+// Couriers can update their own location
+router.patch(
+  '/:id/location',
+  verifyJWT,
+  requirePermission('courier:view'),
+  courierController.updateLocation
+);
+
+// GET /api/couriers/:id/location - Get courier current GPS location
+// Couriers can view their own location
+router.get(
+  '/:id/location',
+  verifyJWT,
+  requirePermission('courier:view'),
+  courierController.getCurrentLocation
 );
 
 /**
@@ -115,6 +136,15 @@ router.get(
   verifyJWT,
   requirePermission('courier:manage'),
   courierController.getGlobalStats
+);
+
+// PATCH /api/couriers/:id/gps - Toggle GPS tracking
+// Admin only
+router.patch(
+  '/:id/gps',
+  verifyJWT,
+  requirePermission('courier:manage'),
+  courierController.toggleGPS
 );
 
 module.exports = router;
