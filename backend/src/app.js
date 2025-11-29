@@ -10,6 +10,7 @@ const orderRoutes = require("./routes/orders");
 const menuRoutes = require("./routes/menu_simple");
 const courierRoutes = require("./routes/couriers");
 const routeRoutes = require("./routes/routes");
+const analyticsRoutes = require("./routes/analytics");
 const legacyApp = require("../server");
 
 /**
@@ -47,6 +48,7 @@ app.use("/api/order", orderRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/couriers", courierRoutes);
 app.use("/api/routes", routeRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 // Legacy application routes for backward compatibility
 // This includes profile endpoints (GET/PUT /api/profile) that read from database
