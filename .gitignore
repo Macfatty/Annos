@@ -156,3 +156,8 @@ backend/exports/
 .claude/*.bak
 # But allow template
 !.claude/session-tracker.template.json
+
+# Private/confidential documents
+.private/
+*.private.md
+*CONFIDENTIAL*.md
