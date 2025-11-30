@@ -13,6 +13,7 @@ const routeRoutes = require("./routes/routes");
 const analyticsRoutes = require("./routes/analytics");
 const paymentRoutes = require("./routes/payments");
 const performanceRoutes = require("./routes/performance");
+const mobileRoutes = require("./routes/mobile");
 const legacyApp = require("../server");
 
 /**
@@ -53,6 +54,7 @@ app.use("/api/routes", routeRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/performance", performanceRoutes);
+app.use("/api/mobile", mobileRoutes);
 
 // Legacy application routes for backward compatibility
 // This includes profile endpoints (GET/PUT /api/profile) that read from database
