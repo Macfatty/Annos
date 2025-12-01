@@ -315,6 +315,79 @@ Alla endpoints dokumenteras i `docs/functions.md` med:
 - Data-minimering i kurir-API
 - Säker lagring av betalningsdata
 
+## 🌿 Git Flow Workflow
+
+Projektet använder **Git Flow** för branch-hantering och versionshantering.
+
+### Branch-struktur
+
+- **`main`** - Produktionskod (stabil, alltid deployable)
+- **`develop`** - Integrationsbranch (nästa release)
+- **`feature/*`** - Nya funktioner (från `develop`)
+- **`release/*`** - Release-förberedelser (från `develop`)
+- **`hotfix/*`** - Akuta produktionsfixar (från `main`)
+
+### Snabbstart
+
+**Ny feature:**
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b feature/my-new-feature
+# ... arbeta och committa ...
+git checkout develop
+git merge --no-ff feature/my-new-feature
+git push origin develop
+```
+
+**Release:**
+```bash
+git checkout -b release/1.0.0 develop
+npm version 1.0.0 --no-git-tag-version
+git commit -am "chore: bump version to 1.0.0"
+git checkout main
+git merge --no-ff release/1.0.0
+git tag -a v1.0.0 -m "Release 1.0.0"
+git push origin main --tags
+git checkout develop
+git merge --no-ff release/1.0.0
+```
+
+**Hotfix:**
+```bash
+git checkout -b hotfix/1.0.1 main
+# ... fixa kritiskt fel ...
+git checkout main
+git merge --no-ff hotfix/1.0.1
+git tag -a v1.0.1 -m "Hotfix 1.0.1"
+git push origin main --tags
+git checkout develop
+git merge --no-ff hotfix/1.0.1
+```
+
+### Commit-konventioner
+
+Använd [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat(auth): add JWT token refresh
+fix(payment): resolve Swish timeout
+docs: update Git Flow guide
+chore: bump version to 1.0.0
+```
+
+### Dokumentation
+
+- **Komplett guide:** [`docs/GIT-FLOW-GUIDE.md`](docs/GIT-FLOW-GUIDE.md)
+- **Referens:** https://danielkummer.github.io/git-flow-cheatsheet/
+
+### Branch Cleanup
+
+Rensa gamla branches:
+```bash
+./.claude/cleanup-branches.sh
+```
+
 ## 📃 Licens
 
 MIT
