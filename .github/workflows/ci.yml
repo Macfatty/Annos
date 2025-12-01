@@ -1,31 +1,125 @@
 name: CI
 
+# Kör workflow vid push till main/develop och vid alla pull requests
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
+    branches: [ main, develop ]
+
+# Tillåt manuell körning från GitHub UI
+  workflow_dispatch:
 
 jobs:
+  # Job 1: Frontend Linting
   lint-frontend:
+    name: Frontend - ESLint
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node
+      - name: Checkout kod
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-      - name: Install dependencies
+
+      - name: Installera dependencies
         run: npm ci
         working-directory: frontend
-      - name: Run ESLint
+
+      - name: Kör ESLint
         run: npm run lint
         working-directory: frontend
 
-  test-backend:
+  # Job 2: Frontend Build Test
+  build-frontend:
+    name: Frontend - Build Test
     runs-on: ubuntu-latest
-    
+    needs: lint-frontend
+
+    steps:
+      - name: Checkout kod
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Installera dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Bygg frontend
+        run: npm run build
+        working-directory: frontend
+
+      - name: Verifiera build output
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Error: dist directory not created"
+            exit 1
+          fi
+          echo "Build successful - dist directory created"
+          ls -lah dist/
+        working-directory: frontend
+
+  # Job 3: Frontend Security Audit
+  security-frontend:
+    name: Frontend - Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout kod
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Installera dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Kör npm audit
+        run: npm audit --audit-level=high
+        working-directory: frontend
+        continue-on-error: true
+
+      - name: Kör npm audit (detaljerad rapport)
+        run: |
+          echo "=== NPM AUDIT RAPPORT ==="
+          npm audit --json > audit-report.json || true
+          cat audit-report.json
+
+          # Räkna antalet sårbarheter
+          CRITICAL=$(cat audit-report.json | grep -o '"critical":[0-9]*' | grep -o '[0-9]*' || echo "0")
+          HIGH=$(cat audit-report.json | grep -o '"high":[0-9]*' | grep -o '[0-9]*' || echo "0")
+
+          echo "Critical vulnerabilities: $CRITICAL"
+          echo "High vulnerabilities: $HIGH"
+
+          # Fail job om critical sårbarheter hittas
+          if [ "$CRITICAL" != "0" ]; then
+            echo "❌ CRITICAL vulnerabilities found!"
+            exit 1
+          fi
+        working-directory: frontend
+
+  # Job 4: Backend Tests
+  test-backend:
+    name: Backend - Tests (PostgreSQL)
+    runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:14
@@ -40,35 +134,44 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     env:
       DB_HOST: localhost
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: testdb
       DB_PORT: 5432
-      JWT_SECRET: test-secret-key-for-testing-only
+      JWT_SECRET: test-secret-key-for-testing-only-minimum-256-bits-required-for-hs256
+      REFRESH_SECRET: test-refresh-secret-key-for-testing-only-minimum-256-bits
       NODE_ENV: test
-    
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node
+      - name: Checkout kod
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
           cache-dependency-path: backend/package-lock.json
-      - name: Install dependencies
+
+      - name: Installera dependencies
         run: npm ci
         working-directory: backend
-      - name: Setup test database
+
+      - name: Vänta på PostgreSQL
         run: |
-          # Wait for PostgreSQL to be ready
+          echo "Waiting for PostgreSQL to be ready..."
           until pg_isready -h localhost -p 5432 -U postgres; do
-            echo "Waiting for PostgreSQL..."
+            echo "PostgreSQL is unavailable - sleeping"
             sleep 2
           done
-          # Create tables for testing
+          echo "PostgreSQL is up and running!"
+
+      - name: Setup test database
+        run: |
+          echo "Creating database tables..."
           node createTables.js
         working-directory: backend
         env:
@@ -77,7 +180,93 @@ jobs:
           DB_PASSWORD: postgres
           DB_NAME: testdb
           DB_PORT: 5432
-      - name: Run tests
+
+      - name: Kör tests
         run: npm test
         working-directory: backend
 
+      - name: Test resultat
+        if: always()
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "✅ All tests passed!"
+          else
+            echo "❌ Some tests failed"
+            exit 1
+          fi
+
+  # Job 5: Backend Security Audit
+  security-backend:
+    name: Backend - Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout kod
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Installera dependencies
+        run: npm ci
+        working-directory: backend
+
+      - name: Kör npm audit
+        run: npm audit --audit-level=high
+        working-directory: backend
+        continue-on-error: true
+
+      - name: Kör npm audit (detaljerad rapport)
+        run: |
+          echo "=== NPM AUDIT RAPPORT ==="
+          npm audit --json > audit-report.json || true
+          cat audit-report.json
+
+          # Räkna antalet sårbarheter
+          CRITICAL=$(cat audit-report.json | grep -o '"critical":[0-9]*' | grep -o '[0-9]*' || echo "0")
+          HIGH=$(cat audit-report.json | grep -o '"high":[0-9]*' | grep -o '[0-9]*' || echo "0")
+
+          echo "Critical vulnerabilities: $CRITICAL"
+          echo "High vulnerabilities: $HIGH"
+
+          # Fail job om critical sårbarheter hittas
+          if [ "$CRITICAL" != "0" ]; then
+            echo "❌ CRITICAL vulnerabilities found!"
+            exit 1
+          fi
+        working-directory: backend
+
+  # Job 6: Code Quality Summary
+  quality-summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    needs: [lint-frontend, build-frontend, security-frontend, test-backend, security-backend]
+    if: always()
+
+    steps:
+      - name: Check all jobs status
+        run: |
+          echo "=== CI PIPELINE SUMMARY ==="
+          echo ""
+          echo "Frontend Lint: ${{ needs.lint-frontend.result }}"
+          echo "Frontend Build: ${{ needs.build-frontend.result }}"
+          echo "Frontend Security: ${{ needs.security-frontend.result }}"
+          echo "Backend Tests: ${{ needs.test-backend.result }}"
+          echo "Backend Security: ${{ needs.security-backend.result }}"
+          echo ""
+
+          # Kontrollera om någon job failade
+          if [ "${{ needs.lint-frontend.result }}" != "success" ] || \
+             [ "${{ needs.build-frontend.result }}" != "success" ] || \
+             [ "${{ needs.security-frontend.result }}" != "success" ] || \
+             [ "${{ needs.test-backend.result }}" != "success" ] || \
+             [ "${{ needs.security-backend.result }}" != "success" ]; then
+            echo "❌ CI Pipeline FAILED - Se detaljer ovan"
+            exit 1
+          else
+            echo "✅ CI Pipeline SUCCESS - Alla kvalitetskontroller passerade!"
+          fi
