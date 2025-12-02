@@ -101,15 +101,19 @@ jobs:
           npm audit --json > audit-report.json || true
           cat audit-report.json
 
-          # Räkna antalet sårbarheter
-          CRITICAL=$(cat audit-report.json | grep -o '"critical":[0-9]*' | grep -o '[0-9]*' || echo "0")
-          HIGH=$(cat audit-report.json | grep -o '"high":[0-9]*' | grep -o '[0-9]*' || echo "0")
+          # Räkna antalet sårbarheter med jq
+          CRITICAL=$(cat audit-report.json | grep -oP '"critical":\s*\K[0-9]+' || echo "0")
+          HIGH=$(cat audit-report.json | grep -oP '"high":\s*\K[0-9]+' || echo "0")
+
+          # Sätt default till 0 om tom
+          CRITICAL=${CRITICAL:-0}
+          HIGH=${HIGH:-0}
 
           echo "Critical vulnerabilities: $CRITICAL"
           echo "High vulnerabilities: $HIGH"
 
           # Fail job om critical sårbarheter hittas
-          if [ "$CRITICAL" != "0" ]; then
+          if [ "$CRITICAL" -gt 0 ]; then
             echo "❌ CRITICAL vulnerabilities found!"
             exit 1
           fi
@@ -226,15 +230,19 @@ jobs:
           npm audit --json > audit-report.json || true
           cat audit-report.json
 
-          # Räkna antalet sårbarheter
-          CRITICAL=$(cat audit-report.json | grep -o '"critical":[0-9]*' | grep -o '[0-9]*' || echo "0")
-          HIGH=$(cat audit-report.json | grep -o '"high":[0-9]*' | grep -o '[0-9]*' || echo "0")
+          # Räkna antalet sårbarheter med jq
+          CRITICAL=$(cat audit-report.json | grep -oP '"critical":\s*\K[0-9]+' || echo "0")
+          HIGH=$(cat audit-report.json | grep -oP '"high":\s*\K[0-9]+' || echo "0")
+
+          # Sätt default till 0 om tom
+          CRITICAL=${CRITICAL:-0}
+          HIGH=${HIGH:-0}
 
           echo "Critical vulnerabilities: $CRITICAL"
           echo "High vulnerabilities: $HIGH"
 
           # Fail job om critical sårbarheter hittas
-          if [ "$CRITICAL" != "0" ]; then
+          if [ "$CRITICAL" -gt 0 ]; then
             echo "❌ CRITICAL vulnerabilities found!"
             exit 1
           fi
