@@ -5,7 +5,8 @@
 const express = require('express');
 const router = express.Router();
 const mobileController = require('../controllers/mobileController');
-const { verifyJWT, checkPermission } = require('../middleware/authMiddleware');
+const { verifyJWT } = require('../middleware/authMiddleware');
+const { requirePermission } = require('../middleware/requirePermission');
 
 // All routes require authentication
 router.use(verifyJWT);
@@ -19,7 +20,7 @@ router.get('/websocket/info', mobileController.getWebSocketInfo);
 
 // Courier Location Tracking
 router.get('/courier/:courierId/location', mobileController.getCourierLocation);
-router.get('/couriers/locations', checkPermission('admin'), mobileController.getAllCourierLocations);
+router.get('/couriers/locations', requirePermission('admin'), mobileController.getAllCourierLocations);
 
 // Order Tracking
 router.get('/order/:orderId/tracking', mobileController.getOrderTracking);
@@ -28,13 +29,13 @@ router.get('/order/:orderId/tracking', mobileController.getOrderTracking);
 router.get('/courier/deliveries', mobileController.getCourierActiveDeliveries);
 
 // Real-time Stats (admin only)
-router.get('/stats/realtime', checkPermission('admin'), mobileController.getRealtimeStats);
+router.get('/stats/realtime', requirePermission('admin'), mobileController.getRealtimeStats);
 
 // Testing endpoints
 router.post('/test/notification', mobileController.sendTestNotification);
-router.get('/test/notification/history', checkPermission('admin'), mobileController.getNotificationHistory);
+router.get('/test/notification/history', requirePermission('admin'), mobileController.getNotificationHistory);
 
 // System announcements (admin only)
-router.post('/announcement', checkPermission('admin'), mobileController.broadcastAnnouncement);
+router.post('/announcement', requirePermission('admin'), mobileController.broadcastAnnouncement);
 
 module.exports = router;

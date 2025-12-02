@@ -23,7 +23,7 @@ function Start() {
     support: {
       titel: "Kontakt & Support",
       innehåll:
-        "Har du frågor eller problem? Kontakta oss på support@annos.se eller ring 010-123 45 67."
+        "Har du frågor eller problem? Kontakta oss på support@example.com eller ring 010-123 45 67."
     },
     villkor: {
       titel: "Användarvillkor",

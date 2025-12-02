@@ -7,7 +7,8 @@
 const express = require('express');
 const router = express.Router();
 const paymentController = require('../controllers/paymentController');
-const { verifyJWT, checkPermission } = require('../middleware/authMiddleware');
+const { verifyJWT } = require('../middleware/authMiddleware');
+const { requirePermission } = require('../middleware/requirePermission');
 
 /**
  * POST /api/payments/calculate
@@ -17,7 +18,7 @@ const { verifyJWT, checkPermission } = require('../middleware/authMiddleware');
 router.post(
   '/calculate',
   verifyJWT,
-  checkPermission('courier:view'),
+  requirePermission('courier:view'),
   paymentController.calculatePayment
 );
 
@@ -29,7 +30,7 @@ router.post(
 router.post(
   '/',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   paymentController.createPayment
 );
 
@@ -41,7 +42,7 @@ router.post(
 router.get(
   '/:id',
   verifyJWT,
-  checkPermission('courier:view'),
+  requirePermission('courier:view'),
   paymentController.getPaymentById
 );
 
@@ -53,7 +54,7 @@ router.get(
 router.get(
   '/courier/:courierId',
   verifyJWT,
-  checkPermission('courier:view'),
+  requirePermission('courier:view'),
   paymentController.getCourierPayments
 );
 
@@ -65,7 +66,7 @@ router.get(
 router.post(
   '/:id/approve',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   paymentController.approvePayment
 );
 
@@ -77,7 +78,7 @@ router.post(
 router.post(
   '/:id/reject',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   paymentController.rejectPayment
 );
 
@@ -89,7 +90,7 @@ router.post(
 router.post(
   '/:id/pay',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   paymentController.markAsPaid
 );
 
@@ -101,7 +102,7 @@ router.post(
 router.get(
   '/invoices/:id',
   verifyJWT,
-  checkPermission('courier:view'),
+  requirePermission('courier:view'),
   paymentController.getInvoiceById
 );
 
@@ -113,7 +114,7 @@ router.get(
 router.get(
   '/courier/:courierId/invoices',
   verifyJWT,
-  checkPermission('courier:view'),
+  requirePermission('courier:view'),
   paymentController.getCourierInvoices
 );
 
