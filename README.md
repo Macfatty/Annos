@@ -258,22 +258,69 @@ node backend/tasks/generatePayouts.js --from=2024-01-01 --to=2024-01-31
 
 ## 🧪 Testning och Kvalitet
 
-### ESLint
+### Automatisk CI Pipeline
+
+Projektet använder GitHub Actions för automatisk kvalitetskontroll. Vid varje push till `main` eller `develop` och vid alla pull requests körs följande:
+
+**🔍 Frontend:**
+- ✅ ESLint kodkvalitetskontroll
+- ✅ Production build test
+- ✅ Säkerhetsscanning (npm audit)
+- ❌ Kritiska sårbarheter blockerar merge
+
+**🔧 Backend:**
+- ✅ Jest enhetstester med PostgreSQL
+- ✅ Säkerhetsscanning (npm audit)
+- ❌ Kritiska sårbarheter blockerar merge
+
+**📊 Quality Summary:**
+- Automatisk sammanfattning av alla jobb
+- Tydlig visuell feedback (✅/❌)
+- Blockerar merge vid fel
+
+Workflow-fil: `.github/workflows/ci.yml`
+
+### Lokal Testning
+
+**ESLint:**
 ```bash
 cd frontend
 npm run lint  # Måste vara helt rent
 ```
 
-### Backend-tester
+**Backend-tester:**
 ```bash
 cd backend
-npm test
+npm test  # Kör alla Jest-tester
 ```
 
-### Bygg
+**Frontend build:**
 ```bash
 cd frontend
 npm run build  # Måste lyckas
+```
+
+**Säkerhetsscanning:**
+```bash
+# Frontend
+cd frontend
+npm audit --audit-level=high
+
+# Backend
+cd backend
+npm audit --audit-level=high
+```
+
+### Pre-push Hooks
+
+Både frontend och backend har `prepush` scripts som körs automatiskt:
+
+```json
+// frontend/package.json
+"prepush": "npm run lint && npm run build"
+
+// backend/package.json
+"prepush": "npm test"
 ```
 
 ## 📚 Dokumentation

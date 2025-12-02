@@ -5,10 +5,11 @@
 const express = require('express');
 const router = express.Router();
 const performanceController = require('../controllers/performanceController');
-const { verifyJWT, checkPermission } = require('../middleware/authMiddleware');
+const { verifyJWT } = require('../middleware/authMiddleware');
+const { requirePermission } = require('../middleware/requirePermission');
 
 // All routes require admin permission
-router.use(verifyJWT, checkPermission('admin'));
+router.use(verifyJWT, requirePermission('admin'));
 
 // Snapshots
 router.post('/snapshot', performanceController.captureSnapshot);

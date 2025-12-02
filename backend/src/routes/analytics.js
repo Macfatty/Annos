@@ -7,7 +7,8 @@
 const express = require('express');
 const router = express.Router();
 const analyticsController = require('../controllers/analyticsController');
-const { verifyJWT, checkPermission } = require('../middleware/authMiddleware');
+const { verifyJWT } = require('../middleware/authMiddleware');
+const { requirePermission } = require('../middleware/requirePermission');
 
 /**
  * GET /api/analytics/courier/:id
@@ -17,7 +18,7 @@ const { verifyJWT, checkPermission } = require('../middleware/authMiddleware');
 router.get(
   '/courier/:id',
   verifyJWT,
-  checkPermission('courier:view'),
+  requirePermission('courier:view'),
   analyticsController.getCourierPerformance
 );
 
@@ -29,7 +30,7 @@ router.get(
 router.get(
   '/system',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   analyticsController.getSystemStatistics
 );
 
@@ -41,7 +42,7 @@ router.get(
 router.get(
   '/activity',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   analyticsController.getActivityByHour
 );
 
@@ -53,7 +54,7 @@ router.get(
 router.get(
   '/revenue',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   analyticsController.getRevenueMetrics
 );
 
@@ -65,7 +66,7 @@ router.get(
 router.get(
   '/leaderboard',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   analyticsController.getLeaderboard
 );
 
@@ -77,7 +78,7 @@ router.get(
 router.get(
   '/dashboard',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   analyticsController.getDashboardSummary
 );
 
@@ -89,7 +90,7 @@ router.get(
 router.post(
   '/refresh',
   verifyJWT,
-  checkPermission('admin'),
+  requirePermission('admin'),
   analyticsController.refreshAnalytics
 );
 

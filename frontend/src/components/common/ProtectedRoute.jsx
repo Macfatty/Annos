@@ -49,7 +49,7 @@ export function ProtectedRoute({
 
   // Check if user has ANY of the required permissions
   if (requireAny && !hasAnyPermission(requireAny)) {
-    console.warn(`Access denied: Missing any of permissions`, requireAny);
+    console.warn("Access denied: Missing any of permissions", requireAny);
     return (
       <div style={{ padding: "2rem", textAlign: "center" }}>
         <h2>🔒 Åtkomst nekad</h2>
@@ -63,7 +63,7 @@ export function ProtectedRoute({
 
   // Check if user has ALL of the required permissions
   if (requireAll && !hasAllPermissions(requireAll)) {
-    console.warn(`Access denied: Missing all of permissions`, requireAll);
+    console.warn("Access denied: Missing all of permissions", requireAll);
     return (
       <div style={{ padding: "2rem", textAlign: "center" }}>
         <h2>🔒 Åtkomst nekad</h2>

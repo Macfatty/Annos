@@ -151,8 +151,8 @@ describe("API endpoints", () => {
     expect(res.body.every(o => o.restaurant_slug === "campino")).toBe(true);
   });
 
-  test("GET /api/admin/orders/today returns 403 for wrong slug", async () => {
-    const token = jwt.sign({ userId: 1, role: "admin", restaurant_slug: "campino" }, SECRET);
+  test("GET /api/admin/orders/today returns 403 for wrong slug (restaurant user)", async () => {
+    const token = jwt.sign({ userId: 2, role: "restaurant", restaurant_slug: "campino" }, SECRET);
     const res = await request(app)
       .get("/api/admin/orders/today?slug=bistro")
       .set("Authorization", `Bearer ${token}`);
