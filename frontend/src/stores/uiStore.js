@@ -7,8 +7,8 @@
  * - Loading states
  */
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export const useUIStore = create(
   persist(
@@ -39,7 +39,7 @@ export const useUIStore = create(
         set({ loading }),
     }),
     {
-      name: 'ui-storage', // LocalStorage key
+      name: "ui-storage", // LocalStorage key
     }
   )
 );

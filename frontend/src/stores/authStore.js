@@ -7,8 +7,8 @@
  * - Login/logout actions
  */
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export const useAuthStore = create(
   persist(
@@ -36,7 +36,7 @@ export const useAuthStore = create(
         })),
     }),
     {
-      name: 'auth-storage', // LocalStorage key
+      name: "auth-storage", // LocalStorage key
       partialize: (state) => ({
         // Only persist these fields
         user: state.user,
