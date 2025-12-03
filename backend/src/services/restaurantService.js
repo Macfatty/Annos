@@ -69,14 +69,14 @@ class RestaurantService {
       // 1. Create restaurant record
       const result = await client.query(`
         INSERT INTO restaurants (
-          slug, namn, description, address, phone, email,
+          slug, namn, beskrivning, address, phone, email,
           logo_url, banner_url, opening_hours, menu_file_path, is_active
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING *
       `, [
         restaurantData.slug,
         restaurantData.namn,
-        restaurantData.description || null,
+        restaurantData.beskrivning || null,
         restaurantData.address || null,
         restaurantData.phone || null,
         restaurantData.email || null,
@@ -134,7 +134,7 @@ class RestaurantService {
       let paramCounter = 1;
 
       const allowedFields = [
-        'namn', 'description', 'address', 'phone', 'email',
+        'namn', 'beskrivning', 'address', 'phone', 'email',
         'logo_url', 'banner_url', 'opening_hours', 'is_active'
       ];
 
