@@ -139,11 +139,11 @@ function CouriersPage() {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body1">
-                        {courier.namn || courier.name || "N/A"}
+                        {courier.courier_name || courier.namn || courier.name || "N/A"}
                       </Typography>
                     </TableCell>
-                    <TableCell>{courier.email || "N/A"}</TableCell>
-                    <TableCell>{courier.telefon || courier.phone || "N/A"}</TableCell>
+                    <TableCell>{courier.courier_email || courier.email || "N/A"}</TableCell>
+                    <TableCell>{courier.phone || courier.telefon || "N/A"}</TableCell>
                     <TableCell>
                       <Chip
                         icon={getStatusIcon(courier.is_available ?? courier.isAvailable)}
@@ -154,7 +154,7 @@ function CouriersPage() {
                     </TableCell>
                     <TableCell align="right">
                       <Typography variant="body2" color="textSecondary">
-                        {courier.delivery_count ?? courier.deliveryCount ?? 0}
+                        {courier.total_deliveries ?? courier.delivery_count ?? courier.deliveryCount ?? 0}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -192,7 +192,7 @@ function CouriersPage() {
               </Typography>
               <Typography variant="h5">
                 {couriers.reduce(
-                  (sum, c) => sum + (c.delivery_count ?? c.deliveryCount ?? 0),
+                  (sum, c) => sum + (c.total_deliveries ?? c.delivery_count ?? c.deliveryCount ?? 0),
                   0
                 )}
               </Typography>

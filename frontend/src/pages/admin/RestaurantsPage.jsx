@@ -51,7 +51,7 @@ function RestaurantsPage() {
   const fetchRestaurants = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3001/api/admin/restaurants", {
+      const response = await fetch("http://localhost:3001/api/restaurants", {
         credentials: "include",
       });
 

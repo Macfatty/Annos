@@ -44,12 +44,12 @@ function AdminHeader({ onMenuClick }) {
         </Typography>
 
         {/* Search bar (hidden on xs) */}
-        <Box sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}>
+        <Box sx={{ flexGrow: 1, display: { xs: "none", sm: "block" }, mr: 2 }}>
           <SearchBar />
         </Box>
 
         {/* Right side actions */}
-        <Box sx={{ display: "flex", gap: 1 }}>
+        <Box sx={{ display: "flex", gap: 1, flexShrink: 0 }}>
           <ThemeToggle />
           <NotificationButton />
           <ProfileMenu />

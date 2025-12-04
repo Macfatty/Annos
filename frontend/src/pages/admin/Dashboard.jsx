@@ -67,7 +67,15 @@ function Dashboard() {
 
         const ordersData = await ordersRes.json();
 
-        setMetrics(analyticsData.data);
+        // Normalize analytics data from snake_case to camelCase
+        const normalizedMetrics = {
+          todayOrders: parseInt(analyticsData.data?.today?.orders_today || analyticsData.data?.system?.orders_today || 0),
+          todayRevenue: parseFloat(analyticsData.data?.today?.revenue_today || 0),
+          activeCouriers: parseInt(analyticsData.data?.system?.active_couriers || 0),
+          avgDeliveryTime: parseFloat(analyticsData.data?.system?.avg_delivery_time_minutes || 0),
+        };
+
+        setMetrics(normalizedMetrics);
         setRecentOrders(ordersData.data?.orders || ordersData.data || []);
         setError(null);
       } catch (err) {
