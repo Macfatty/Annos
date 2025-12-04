@@ -12,10 +12,12 @@ function normalizeUserPayload(payload, fallbackEmail) {
   }
 
   return {
+    id: candidate.id,
     namn: candidate.namn ?? "",
     email: candidate.email ?? fallbackEmail ?? "",
     telefon: candidate.telefon ?? "",
     adress: candidate.adress ?? "",
+    role: candidate.role ?? "customer", // Preserve role, default to customer
   };
 }
 
@@ -226,28 +228,26 @@ export class AuthService {
         method: "POST",
         body: JSON.stringify({ token }),
       });
-      
+
       if (!res.ok) {
         throw new Error("Google-inloggning misslyckades");
       }
-      
-      const data = await res.json();
-      
-      // Spara användarinfo
-      localStorage.setItem(
-        "kundinfo",
-        JSON.stringify({
-          namn: data.namn,
-          email: data.email,
-          telefon: data.telefon,
-          adress: data.adress || "",
-        })
-      );
-      
-      // Cross-tab sync
-      window.dispatchEvent(new Event("storage"));
-      
-      return data;
+
+      const payload = await res.json();
+      const normalizedUser = normalizeUserPayload(payload?.data ?? payload);
+
+      if (!normalizedUser) {
+        throw new Error("Google-inloggning misslyckades");
+      }
+
+      persistUser(normalizedUser);
+
+      return {
+        success: payload.success ?? true,
+        message: payload.message,
+        user: normalizedUser,
+        token: payload?.data?.token ?? payload.token,
+      };
     } catch (error) {
       console.error("Fel vid Google-inloggning:", error);
       throw error;
@@ -263,28 +263,26 @@ export class AuthService {
         method: "POST",
         body: JSON.stringify({ token }),
       });
-      
+
       if (!res.ok) {
         throw new Error("Apple-inloggning misslyckades");
       }
-      
-      const data = await res.json();
-      
-      // Spara användarinfo
-      localStorage.setItem(
-        "kundinfo",
-        JSON.stringify({
-          namn: data.namn,
-          email: data.email,
-          telefon: data.telefon,
-          adress: data.adress || "",
-        })
-      );
-      
-      // Cross-tab sync
-      window.dispatchEvent(new Event("storage"));
-      
-      return data;
+
+      const payload = await res.json();
+      const normalizedUser = normalizeUserPayload(payload?.data ?? payload);
+
+      if (!normalizedUser) {
+        throw new Error("Apple-inloggning misslyckades");
+      }
+
+      persistUser(normalizedUser);
+
+      return {
+        success: payload.success ?? true,
+        message: payload.message,
+        user: normalizedUser,
+        token: payload?.data?.token ?? payload.token,
+      };
     } catch (error) {
       console.error("Fel vid Apple-inloggning:", error);
       throw error;
