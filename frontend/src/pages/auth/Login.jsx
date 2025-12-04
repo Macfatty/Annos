@@ -1,21 +1,34 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, loginWithGoogle, loginWithApple } from "../../services/api";
+import { useAuthStore } from "../../stores/authStore";
 
 function Login({ onLoginSuccess }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [losenord, setLosenord] = useState("");
+  const setUser = useAuthStore((state) => state.setUser);
 
   const loggaIn = async () => {
     try {
-      await login(email, losenord);
+      const response = await login(email, losenord);
+
+      // Update Zustand store with user data
+      if (response && response.user) {
+        setUser(response.user);
+      }
 
       if (onLoginSuccess) {
         onLoginSuccess();
       }
 
-      navigate("/valj-restaurang");
+      // Redirect based on user role
+      const userRole = response?.user?.role;
+      if (userRole === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/valj-restaurang");
+      }
     } catch (err) {
       console.error(err);
       alert(err.message || "Kunde inte logga in.");
@@ -24,8 +37,24 @@ function Login({ onLoginSuccess }) {
 
   const loggaInMedGoogle = async () => {
     try {
-      await loginWithGoogle(window.googleToken || "");
-      navigate("/valj-restaurang");
+      const response = await loginWithGoogle(window.googleToken || "");
+
+      // Update Zustand store with user data
+      if (response && response.user) {
+        setUser(response.user);
+      }
+
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
+
+      // Redirect based on user role
+      const userRole = response?.user?.role;
+      if (userRole === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/valj-restaurang");
+      }
     } catch (err) {
       console.error(err);
       alert(err.message || "Kunde inte logga in med Google.");
@@ -34,8 +63,24 @@ function Login({ onLoginSuccess }) {
 
   const loggaInMedApple = async () => {
     try {
-      await loginWithApple(window.appleToken || "");
-      navigate("/valj-restaurang");
+      const response = await loginWithApple(window.appleToken || "");
+
+      // Update Zustand store with user data
+      if (response && response.user) {
+        setUser(response.user);
+      }
+
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
+
+      // Redirect based on user role
+      const userRole = response?.user?.role;
+      if (userRole === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/valj-restaurang");
+      }
     } catch (err) {
       console.error(err);
       alert(err.message || "Kunde inte logga in med Apple.");
