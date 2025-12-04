@@ -10,7 +10,7 @@ import Register from "./pages/auth/Register";
 import Start from "./pages/Start";
 import ValjRestaurang from "./pages/restaurant/ValjRestaurang";
 import MinProfil from "./pages/customer/MinProfil";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import Tack from "./pages/customer/Tack";
 import AdminPanel from "./pages/admin/AdminPanel";
 import KurirVy from "./pages/courier/KurirVy";
@@ -19,6 +19,13 @@ import ErrorBoundary from "./components/common/ErrorBoundary";
 import { useAuth, useCart, useTheme } from "./hooks";
 import { fetchMenu } from "./services/api";
 import { RoleProvider } from "./contexts/RoleContext";
+import RequireAuth from "./components/auth/RequireAuth";
+import AdminLayout from "./layouts/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard";
+import OrdersPage from "./pages/admin/OrdersPage";
+import RestaurantsPage from "./pages/admin/RestaurantsPage";
+import CouriersPage from "./pages/admin/CouriersPage";
+import AnalyticsPage from "./pages/admin/AnalyticsPage";
 
 function App() {
   const navigate = useNavigate();
@@ -231,11 +238,26 @@ function App() {
         <Route path="/valj-restaurang" element={<ValjRestaurang />} />
         <Route path="/profil" element={<MinProfil />} />
         <Route path="/mina-bestallningar" element={<MinaBeställningar />} />
-        <Route path="/admin" element={
+
+        {/* New Admin Routes with nested layout */}
+        <Route path="/admin" element={<RequireAuth role="admin" />}>
+          <Route element={<AdminLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="orders" element={<OrdersPage />} />
+            <Route path="restaurants" element={<RestaurantsPage />} />
+            <Route path="couriers" element={<CouriersPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+          </Route>
+        </Route>
+
+        {/* Old admin panel (kept for reference/fallback) */}
+        <Route path="/admin-legacy" element={
           <ErrorBoundary>
             <AdminPanel />
           </ErrorBoundary>
         } />
+
         <Route path="/kurir" element={
           <ErrorBoundary>
             <KurirVy />
