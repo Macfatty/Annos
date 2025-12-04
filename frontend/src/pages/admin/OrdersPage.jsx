@@ -71,7 +71,7 @@ function OrdersPage() {
       }
 
       const response = await fetch(
-        `http://localhost:3001/api/admin/orders?${params.toString()}`,
+        `http://localhost:3001/api/order/admin/all?${params.toString()}`,
         {
           credentials: "include",
         }
@@ -115,7 +115,7 @@ function OrdersPage() {
 
   const handleViewOrder = async (orderId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/orders/${orderId}`, {
+      const response = await fetch(`http://localhost:3001/api/order/${orderId}`, {
         credentials: "include",
       });
 
@@ -139,7 +139,7 @@ function OrdersPage() {
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/orders/${orderId}/status`, {
+      const response = await fetch(`http://localhost:3001/api/order/${orderId}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

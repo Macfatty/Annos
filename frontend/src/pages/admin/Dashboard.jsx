@@ -57,7 +57,7 @@ function Dashboard() {
         const analyticsData = await analyticsRes.json();
 
         // Fetch recent orders
-        const ordersRes = await fetch("http://localhost:3001/api/admin/orders?limit=5", {
+        const ordersRes = await fetch("http://localhost:3001/api/order/admin/all?limit=5", {
           credentials: "include",
         });
 

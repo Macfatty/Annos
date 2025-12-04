@@ -135,10 +135,18 @@ function RestaurantsPage() {
   const handleSubmit = async () => {
     try {
       const url = editMode
-        ? `http://localhost:3001/api/admin/restaurants/${selectedRestaurant.id}`
-        : "http://localhost:3001/api/admin/restaurants";
+        ? `http://localhost:3001/api/restaurants/${selectedRestaurant.slug}`
+        : "http://localhost:3001/api/restaurants";
 
       const method = editMode ? "PUT" : "POST";
+
+      // Map formData to backend expected format (Swedish field names)
+      const requestData = {
+        slug: formData.slug,
+        namn: formData.name,
+        address: formData.address,
+        phone: formData.phone,
+      };
 
       const response = await fetch(url, {
         method,
@@ -146,7 +154,7 @@ function RestaurantsPage() {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify(formData),
+        body: JSON.stringify(requestData),
       });
 
       if (!response.ok) {
@@ -163,14 +171,14 @@ function RestaurantsPage() {
     }
   };
 
-  const handleDelete = async (restaurantId) => {
+  const handleDelete = async (restaurant) => {
     if (!window.confirm("Är du säker på att du vill radera denna restaurang?")) {
       return;
     }
 
     try {
       const response = await fetch(
-        `http://localhost:3001/api/admin/restaurants/${restaurantId}`,
+        `http://localhost:3001/api/restaurants/${restaurant.slug}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -275,7 +283,7 @@ function RestaurantsPage() {
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={() => handleDelete(restaurant.id)}
+                    onClick={() => handleDelete(restaurant)}
                   >
                     <Delete />
                   </IconButton>
